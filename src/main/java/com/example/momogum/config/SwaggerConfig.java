@@ -16,8 +16,7 @@ public class SwaggerConfig {
     public OpenAPI MOMOGUM_API(){
         Info info=new Info()
                 .title("머머금_API")
-                .description("TEAM 머머g API입니다 <br><br>" +
-                        "인증이 필요한 API 호출 시, Authorization 헤더에 Bearer Accesstoken을 넣고 요청해주세요")
+                .description("TEAM 머머g API입니다")
                 .version("1.0");
 
         String jwtSchemeName="JWTToken";

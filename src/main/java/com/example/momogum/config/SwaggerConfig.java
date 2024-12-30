@@ -16,7 +16,7 @@ public class SwaggerConfig {
     public OpenAPI MOMOGUM_API(){
         Info info=new Info()
                 .title("머머금_API")
-                .description("TEAM 머머g API입니다")
+                .description("TEAM 머머금 API입니다")
                 .version("1.0");
 
         String jwtSchemeName="JWTToken";

@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/test")
-public class TestController {
+@RequestMapping("/health")
+public class HealthController {
 
     @GetMapping
-    public String test() {
-        return "CICD 파이프라인 구축 완료";
+    public String healthCheck() {
+        return "OK";
     }
 }

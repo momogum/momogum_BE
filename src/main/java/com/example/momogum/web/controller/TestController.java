@@ -11,6 +11,6 @@ public class TestController {
 
     @GetMapping
     public String test() {
-        return "Hello World3";
+        return "CICD 파이프라인 구축 완료";
     }
 }

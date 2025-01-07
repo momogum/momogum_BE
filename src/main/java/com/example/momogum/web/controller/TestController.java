@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build;
-
 @RestController
 @RequestMapping("/test")
 @Tag(name = "기술명세서 예시 템플릿 API")

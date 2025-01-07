@@ -120,38 +120,4 @@ public class StoryController {
         List<StoryDTO.GetMemberStoryResponseDTO> resultList = List.of(tempResult);
         return ApiResponse.onSuccess(resultList);
     }
-
-
-
-    /**
-     * 스토리 하이라이트 생성
-     *
-     *  0. 하이라이트에 넣을 스토리 넣기
-     *  1. 커버 이미지 생성
-     *  2. 하이라이트 이름
-     *
-     * */
-
-
-
-    /**
-     * 보관중인 스토리 하이라이트에 추가 (와이어프레임 상에 없는 기능) -> 토글식으로 구현하는 것도 방법이려나
-     *
-     *  1. 스토리 식별자를 통해서 하이라이트에 추가
-     *
-     * */
-
-
-
-    // 스토리 수정기능이 필요하려나?
-
-
-
-    /**
-     * 스토리 삭제
-     *
-     * 이건 바로 삭제로 할지 며칠간 보관하고 복구가 가능하도록 구현할지
-     *
-     * 일단 바로 삭제로 생각하고 구현
-     * */
 }

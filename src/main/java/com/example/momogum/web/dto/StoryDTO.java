@@ -108,4 +108,39 @@ public class StoryDTO {
         String imagePath;
 
     }
+
+
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetFollowResponseDTO{
+
+        @Schema(description = "스토리를 올린 회원의 프로필 이미지 입니다 <br>," +
+                "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
+        String memberImagePath;
+
+        @Schema(description = "스토리를 올린 회원의 Nickname 입니다")
+        String nickname;
+
+        @Schema(description = "스토리가 조회 된 적이 있는지를 표시하는 필드입니다")
+        Boolean isRead;
+
+    }
+
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetMemberStoryResponseDTO{
+
+        @Schema(description = "스토리 이미지 입니다 <br>," +
+                "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
+        String imagePath;
+
+    }
 }

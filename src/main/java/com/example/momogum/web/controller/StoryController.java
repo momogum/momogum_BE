@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/story")
 @Tag(name = "스토리 관련 API")
@@ -62,13 +64,28 @@ public class StoryController {
      *  - 인스타 스토리같이 조회되는 기능이라면 읽지 않은 스토리를 우선적으로 조회하고,
      *      그 다음 조회하지 않은 스토리를 조회해야함
      * */
+    @Operation(summary = "팔로우한 회원들의 스토리 조회 API")
+    @GetMapping("/memberId/{memberId}")
+    public ApiResponse<List<StoryDTO.GetFollowResponseDTO>> getFollowStories(
+            @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
+            @PathVariable Long memberId) {
+
+        StoryDTO.GetFollowResponseDTO tempResult = StoryDTO.GetFollowResponseDTO.builder()
+                .memberImagePath("temp")
+                .isRead(Boolean.FALSE)
+                .nickname("temp")
+                .build();
+
+        List<StoryDTO.GetFollowResponseDTO> resultList = List.of(tempResult);
+        return ApiResponse.onSuccess(resultList);
+    }
 
 
     /**
      * 개별 스토리 조회
      * */
-    @Operation(summary = "개별 스토리 조회 API 입니다")
-    @GetMapping("/{storyId}")
+    @Operation(summary = "개별 스토리 조회 API")
+    @GetMapping("/storyId/{storyId}")
     public ApiResponse<StoryDTO.GetResponseDTO> getOne(@PathVariable Long storyId) {
 
         return ApiResponse.onSuccess(StoryDTO.GetResponseDTO.builder()
@@ -89,6 +106,20 @@ public class StoryController {
      *  2. 그걸 가지고 회원에 매핑된 스토리 전부 조회
      *
      * */
+    @Operation(summary = "회원 보관 스토리 API")
+    @GetMapping("/memberId/{memberId}/all")
+    public ApiResponse<List<StoryDTO.GetMemberStoryResponseDTO>> getMemberStories(
+            @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
+            @PathVariable Long memberId) {
+
+        StoryDTO.GetMemberStoryResponseDTO tempResult = StoryDTO.GetMemberStoryResponseDTO
+                .builder()
+                .imagePath("temp")
+                .build();
+
+        List<StoryDTO.GetMemberStoryResponseDTO> resultList = List.of(tempResult);
+        return ApiResponse.onSuccess(resultList);
+    }
 
 
 

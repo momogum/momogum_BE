@@ -1,6 +1,7 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.web.dto.HighLightDTO;
 import com.example.momogum.web.dto.StoryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,15 +26,15 @@ public class HighLightController {
      * */
     @Operation(summary = "스토리 하이라이트 생성 API")
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<StoryDTO.CreateResponseDTO> create(
+    public ApiResponse<HighLightDTO.CreateResponseDTO> create(
             @Parameter(description = "스토리 하이라이트의 배경화면으로, 사용되는 이미지 파일입니다.")
             @RequestPart(value = "file") MultipartFile multipartFile,
             @Parameter(description = "기술명세서 하단의 스키마를 확인해주세요")
-            @RequestBody StoryDTO.CreateRequestDTO createRequestDTO) {
+            @RequestBody HighLightDTO.CreateRequestDTO createRequestDTO) {
 
-        return ApiResponse.onSuccess(StoryDTO.CreateResponseDTO.builder()
+        return ApiResponse.onSuccess(HighLightDTO.CreateResponseDTO.builder()
                 // API 구현시에는 수정될 예정입니다 FIXME
-                .storyId(1L)
+                .id(1L)
                 .build());
     }
 

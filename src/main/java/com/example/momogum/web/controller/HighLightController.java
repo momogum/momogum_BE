@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/highLight")
 @Tag(name = "스토리 하이라이트 관련 API")
@@ -33,7 +35,7 @@ public class HighLightController {
 
         return ApiResponse.onSuccess(HighLightDTO.CreateHighLightResponseDTO.builder()
                 // API 구현시에는 수정될 예정입니다 FIXME
-                .id(1L)
+                .highLightId(1L)
                 .build());
     }
 
@@ -45,8 +47,23 @@ public class HighLightController {
      * 보관중인 스토리 하이라이트에 추가 (와이어프레임 상에 없는 기능) -> 토글식으로 구현하는 것도 방법이려나
      *
      *  1. 스토리 식별자를 통해서 하이라이트에 추가
+     *  2. 스토리에 매핑된 하이라이트 아이디를 업데이트 하는 식으로 하면 될듯??
      *
      * */
+    @Operation(summary = "하이라이트 스토리 추가 API")
+    @PostMapping("/highLightId/{highLightId}")
+    public ApiResponse<HighLightDTO.CreateHighLightResponseDTO> addHighLight(
+            @Parameter(name = "storyId", description = "하이라이트에 추가할 스토리를 입력해주세요")
+            @RequestBody List<Long> storyId,
+            @Parameter(name = "highLightId", description = "추가 할 하이라이트 ID를 입력해주세요")
+            @PathVariable Long highLightId){
+
+        return ApiResponse.onSuccess(HighLightDTO.CreateHighLightResponseDTO.builder()
+                // API 구현시에는 수정될 예정입니다 FIXME
+                .highLightId(1L)
+                .build());
+
+    }
 
 
 
@@ -55,7 +72,7 @@ public class HighLightController {
 
 
     /**
-     * 스토리 삭제
+     * 하이라이트 삭제
      *
      * 이건 바로 삭제로 할지 며칠간 보관하고 복구가 가능하도록 구현할지
      *

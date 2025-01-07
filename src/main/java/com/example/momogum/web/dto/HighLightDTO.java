@@ -29,7 +29,7 @@ public class HighLightDTO {
     public static class CreateHighLightResponseDTO {
 
         @Schema(description = "하이라이트 식별 ID 입니다")
-        Long id;
+        Long highLightId;
 
     }
 }

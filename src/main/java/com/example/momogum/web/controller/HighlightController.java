@@ -1,12 +1,10 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.web.dto.HighLightDTO;
-import com.example.momogum.web.dto.StoryDTO;
+import com.example.momogum.web.dto.HighlightDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/highLight")
+@RequestMapping("/highlight")
 @Tag(name = "스토리 하이라이트 관련 API")
-public class HighLightController {
+public class HighlightController {
 
 
     /**
@@ -29,15 +27,15 @@ public class HighLightController {
      * */
     @Operation(summary = "스토리 하이라이트 생성 API")
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<HighLightDTO.CreateHighLightResponseDTO> create(
+    public ApiResponse<HighlightDTO.CreateHighlightResponseDTO> create(
             @Parameter(description = "스토리 하이라이트의 배경화면으로, 사용되는 이미지 파일입니다.")
             @RequestPart(value = "file") MultipartFile multipartFile,
             @Parameter(description = "기술명세서 하단의 스키마를 확인해주세요")
-            @RequestBody HighLightDTO.CreateHighLightRequestDTO createRequestDTO) {
+            @RequestBody HighlightDTO.CreateHighlightRequestDTO createRequestDTO) {
 
-        return ApiResponse.onSuccess(HighLightDTO.CreateHighLightResponseDTO.builder()
+        return ApiResponse.onSuccess(HighlightDTO.CreateHighlightResponseDTO.builder()
                 // API 구현시에는 수정될 예정입니다 FIXME
-                .highLightId(1L)
+                .highlightId(1L)
                 .build());
     }
 
@@ -53,16 +51,16 @@ public class HighLightController {
      *
      * */
     @Operation(summary = "하이라이트 스토리 추가 API")
-    @PostMapping("/highLightId/{highLightId}")
-    public ApiResponse<HighLightDTO.CreateHighLightResponseDTO> addHighLight(
+    @PostMapping("/highlightId/{highLightId}")
+    public ApiResponse<HighlightDTO.CreateHighlightResponseDTO> addHighLight(
             @Parameter(name = "storyId", description = "하이라이트에 추가할 스토리를 입력해주세요")
             @RequestBody List<Long> storyId,
             @Parameter(name = "highLightId", description = "추가 할 하이라이트 ID를 입력해주세요")
             @PathVariable Long highLightId){
 
-        return ApiResponse.onSuccess(HighLightDTO.CreateHighLightResponseDTO.builder()
+        return ApiResponse.onSuccess(HighlightDTO.CreateHighlightResponseDTO.builder()
                 // API 구현시에는 수정될 예정입니다 FIXME
-                .highLightId(1L)
+                .highlightId(1L)
                 .build());
     }
 
@@ -75,15 +73,15 @@ public class HighLightController {
      * 하이라이트 조회
      * */
     @Operation(summary = "하이라이트 조회 API")
-    @GetMapping("/highLightId/{highLightId}")
-    public ApiResponse<HighLightDTO.GetHighLightResponseDTO> getHighLight(
-            @Parameter(name = "highLightId", description = "조회 할 하이라이트 ID를 입력해주세요")
-            @PathVariable Long highLightId){
+    @GetMapping("/highlightId/{highlight}")
+    public ApiResponse<HighlightDTO.GetHighlightResponseDTO> getHighlight(
+            @Parameter(name = "highlightId", description = "조회 할 하이라이트 ID를 입력해주세요")
+            @PathVariable Long highlight){
 
         String imagePath = "temp";
         List<String> imagePaths = List.of(imagePath);
 
-        return ApiResponse.onSuccess(HighLightDTO.GetHighLightResponseDTO
+        return ApiResponse.onSuccess(HighlightDTO.GetHighlightResponseDTO
                 .builder()
                 .imagePaths(imagePaths)
                 .build());
@@ -98,10 +96,10 @@ public class HighLightController {
      * */
     @Operation(summary = "하이라이트 삭제 API",
             description = "삭제 요청 후 3일 이후에 삭제됩니다")
-    @PatchMapping("/highLightId/{highLightId}")
+    @PatchMapping("/highlightId/{highlightId}")
     public ApiResponse<String> deleteHighLight(
-            @Parameter(name = "highLightId", description = "삭제 할 하이라이트 ID를 입력해주세요")
-            @PathVariable Long highLightId){
+            @Parameter(name = "highlightId", description = "삭제 할 하이라이트 ID를 입력해주세요")
+            @PathVariable Long highlightId){
 
         return ApiResponse.onSuccess("하이라이트가 삭제되었습니다");
     }

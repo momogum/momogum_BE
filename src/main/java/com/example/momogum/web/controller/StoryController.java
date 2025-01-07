@@ -1,8 +1,13 @@
 package com.example.momogum.web.controller;
 
+import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.web.dto.StoryDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/story")
@@ -28,12 +33,24 @@ public class StoryController {
      *      -> 다시 방문하고 싶지 않아요
      *  8. 전체 평점 ( 0.1점 씩 올라감, 5점만점)
      * */
+    @Operation(summary = "스토리 생성 API")
+    @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<StoryDTO.CreateResponseDTO> create(
+            @Parameter(description = "스토리 생성 시, 사용되는 이미지 파일입니다.")
+            @RequestPart(value = "file") MultipartFile multipartFile,
+            @Parameter(description = "기술명세서 하단의 스키마를 확인해주세요")
+            @RequestBody StoryDTO.CreateRequestDTO createRequestDTO) {
 
+        return ApiResponse.onSuccess(StoryDTO.CreateResponseDTO.builder()
+                // API 구현시에는 수정될 예정입니다 FIXME
+                .storyId(1L)
+                .build());
+    }
 
 
 
     /**
-     * 스토리 조회
+     * 스토리 조회 (내가 확인한게 스토리 조회가 맞는지 모르겠음)
      *
      *  1. 자신이 팔로우하고 있는 회원들의 스토리를 조회
      *  2. 최신순으로 조회
@@ -45,6 +62,24 @@ public class StoryController {
      *  - 인스타 스토리같이 조회되는 기능이라면 읽지 않은 스토리를 우선적으로 조회하고,
      *      그 다음 조회하지 않은 스토리를 조회해야함
      * */
+
+
+    /**
+     * 개별 스토리 조회
+     * */
+    @Operation(summary = "개별 스토리 조회 API 입니다")
+    @GetMapping("/{storyId}")
+    public ApiResponse<StoryDTO.GetResponseDTO> getOne(@PathVariable Long storyId) {
+
+        return ApiResponse.onSuccess(StoryDTO.GetResponseDTO.builder()
+                .score(1)
+                .foodCategory("temp")
+                .keyword("temp")
+                .location("temp")
+                .review("temp")
+                .imagePath("temp")
+                .build());
+    }
 
 
     /**

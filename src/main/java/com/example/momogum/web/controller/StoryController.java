@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/story")
 @Tag(name = "스토리 관련 API")
 public class StoryController {
 
@@ -28,6 +28,7 @@ public class StoryController {
      *      -> 다시 방문하고 싶지 않아요
      *  8. 전체 평점 ( 0.1점 씩 올라감, 5점만점)
      * */
+
 
 
 

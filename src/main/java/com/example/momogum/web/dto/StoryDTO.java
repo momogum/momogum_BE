@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class StoryDTO {
 
     @Getter
@@ -140,7 +142,7 @@ public class StoryDTO {
 
         @Schema(description = "스토리 이미지 입니다 <br>," +
                 "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
-        String imagePath;
+        List<String> imagePaths;
 
     }
 }

@@ -112,12 +112,33 @@ public class StoryController {
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
 
+        String imagePath = "temp";
+        List<String> imagePaths = List.of(imagePath);
+
         StoryDTO.GetStoryMemberStoryResponseDTO tempResult = StoryDTO.GetStoryMemberStoryResponseDTO
                 .builder()
-                .imagePath("temp")
+                .imagePaths(imagePaths)
                 .build();
 
         List<StoryDTO.GetStoryMemberStoryResponseDTO> resultList = List.of(tempResult);
         return ApiResponse.onSuccess(resultList);
+    }
+
+
+    /**
+     * 스토리 삭제
+     *
+     * 이건 바로 삭제로 할지 며칠간 보관하고 복구가 가능하도록 구현할지
+     *
+     * 일단 바로 삭제로 생각하고 구현
+     * */
+    @Operation(summary = "스토리 삭제 API",
+            description = "삭제 요청 후 3일 이후에 삭제됩니다")
+    @PatchMapping("/storyId/{storyId}")
+    public ApiResponse<String> deleteStory(
+            @Parameter(name = "storyId", description = "삭제 할 스토리 ID를 입력해주세요")
+            @PathVariable Long storyId){
+
+        return ApiResponse.onSuccess("스토리가 삭제되었습니다");
     }
 }

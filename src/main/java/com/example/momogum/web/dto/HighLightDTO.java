@@ -32,4 +32,16 @@ public class HighLightDTO {
         Long highLightId;
 
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetHighLightResponseDTO {
+
+        @Schema(description = "스토리 이미지 입니다 <br>," +
+                "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
+        List<String> imagePaths;
+
+    }
 }

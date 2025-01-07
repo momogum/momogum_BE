@@ -37,13 +37,13 @@ public class StoryController {
      * */
     @Operation(summary = "스토리 생성 API")
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<StoryDTO.CreateResponseDTO> create(
+    public ApiResponse<StoryDTO.CreateStoryResponseDTO> create(
             @Parameter(description = "스토리 생성 시, 사용되는 이미지 파일입니다.")
             @RequestPart(value = "file") MultipartFile multipartFile,
             @Parameter(description = "기술명세서 하단의 스키마를 확인해주세요")
-            @RequestBody StoryDTO.CreateRequestDTO createRequestDTO) {
+            @RequestBody StoryDTO.CreateStoryRequestDTO createRequestDTO) {
 
-        return ApiResponse.onSuccess(StoryDTO.CreateResponseDTO.builder()
+        return ApiResponse.onSuccess(StoryDTO.CreateStoryResponseDTO.builder()
                 // API 구현시에는 수정될 예정입니다 FIXME
                 .storyId(1L)
                 .build());
@@ -66,17 +66,17 @@ public class StoryController {
      * */
     @Operation(summary = "팔로우한 회원들의 스토리 조회 API")
     @GetMapping("/memberId/{memberId}")
-    public ApiResponse<List<StoryDTO.GetFollowResponseDTO>> getFollowStories(
+    public ApiResponse<List<StoryDTO.GetStoryFollowResponseDTO>> getFollowStories(
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
 
-        StoryDTO.GetFollowResponseDTO tempResult = StoryDTO.GetFollowResponseDTO.builder()
+        StoryDTO.GetStoryFollowResponseDTO tempResult = StoryDTO.GetStoryFollowResponseDTO.builder()
                 .memberImagePath("temp")
                 .isRead(Boolean.FALSE)
                 .nickname("temp")
                 .build();
 
-        List<StoryDTO.GetFollowResponseDTO> resultList = List.of(tempResult);
+        List<StoryDTO.GetStoryFollowResponseDTO> resultList = List.of(tempResult);
         return ApiResponse.onSuccess(resultList);
     }
 
@@ -86,9 +86,9 @@ public class StoryController {
      * */
     @Operation(summary = "개별 스토리 조회 API")
     @GetMapping("/storyId/{storyId}")
-    public ApiResponse<StoryDTO.GetResponseDTO> getOne(@PathVariable Long storyId) {
+    public ApiResponse<StoryDTO.GetStoryResponseDTO> getOne(@PathVariable Long storyId) {
 
-        return ApiResponse.onSuccess(StoryDTO.GetResponseDTO.builder()
+        return ApiResponse.onSuccess(StoryDTO.GetStoryResponseDTO.builder()
                 .score(1)
                 .foodCategory("temp")
                 .keyword("temp")
@@ -108,16 +108,16 @@ public class StoryController {
      * */
     @Operation(summary = "회원 보관 스토리 API")
     @GetMapping("/memberId/{memberId}/all")
-    public ApiResponse<List<StoryDTO.GetMemberStoryResponseDTO>> getMemberStories(
+    public ApiResponse<List<StoryDTO.GetStoryMemberStoryResponseDTO>> getMemberStories(
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
 
-        StoryDTO.GetMemberStoryResponseDTO tempResult = StoryDTO.GetMemberStoryResponseDTO
+        StoryDTO.GetStoryMemberStoryResponseDTO tempResult = StoryDTO.GetStoryMemberStoryResponseDTO
                 .builder()
                 .imagePath("temp")
                 .build();
 
-        List<StoryDTO.GetMemberStoryResponseDTO> resultList = List.of(tempResult);
+        List<StoryDTO.GetStoryMemberStoryResponseDTO> resultList = List.of(tempResult);
         return ApiResponse.onSuccess(resultList);
     }
 }

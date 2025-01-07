@@ -12,7 +12,7 @@ public class HighLightDTO {
 
 
     @Getter
-    public static class CreateRequestDTO{
+    public static class CreateHighLightRequestDTO {
 
         @Schema(description = "하이라이트에 추가 할 스토리를 선택합니다")
         List<Long> storyId;
@@ -26,7 +26,7 @@ public class HighLightDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateResponseDTO{
+    public static class CreateHighLightResponseDTO {
 
         @Schema(description = "하이라이트 식별 ID 입니다")
         Long id;

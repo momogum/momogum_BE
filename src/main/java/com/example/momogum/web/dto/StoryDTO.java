@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class StoryDTO {
 
     @Getter
-    public static class CreateRequestDTO{
+    public static class CreateStoryRequestDTO {
 
         // 시큐리티 구현되는대로 수정하기 FIXME
         @Schema(description = "회원의 식별자를 입력 받습니다 <br>," +
@@ -54,7 +54,7 @@ public class StoryDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateResponseDTO{
+    public static class CreateStoryResponseDTO {
 
         @Schema(description = "스토리 식별ID 입니다")
         Long storyId;
@@ -67,7 +67,7 @@ public class StoryDTO {
 
 
     @Getter
-    public static class GetRequestDTO{
+    public static class GetStoryRequestDTO {
 
         @Schema(description = "스토리 식별ID 입니다")
         Long storyId;
@@ -79,7 +79,7 @@ public class StoryDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetResponseDTO{
+    public static class GetStoryResponseDTO {
 
         @Max(5)
         @Min(0)
@@ -116,7 +116,7 @@ public class StoryDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetFollowResponseDTO{
+    public static class GetStoryFollowResponseDTO {
 
         @Schema(description = "스토리를 올린 회원의 프로필 이미지 입니다 <br>," +
                 "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
@@ -136,7 +136,7 @@ public class StoryDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetMemberStoryResponseDTO{
+    public static class GetStoryMemberStoryResponseDTO {
 
         @Schema(description = "스토리 이미지 입니다 <br>," +
                 "추후 구현 방식에 따라 응답이 달라질 수 있습니다")

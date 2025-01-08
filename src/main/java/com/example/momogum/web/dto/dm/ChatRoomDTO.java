@@ -83,6 +83,21 @@ public class ChatRoomDTO {
         private Long roomId;
     }
 
+    // 채팅방 고정 요청 DTO
+    @Getter
+    public static class PinChatRoomRequest {
+        private Long roomId;
+    }
+
+    // 채팅방 고정 응답 DTO
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class PinChatRoomResponse {
+        private Long roomId;
+    }
+
 
     // 채팅방 나가기 응답 DTO
     @NoArgsConstructor

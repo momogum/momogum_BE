@@ -2,8 +2,8 @@ package com.example.momogum.web.controller;
 
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.web.dto.TestDTO;
 import com.example.momogum.web.dto.dm.ChatRoomDTO;
+import com.example.momogum.web.dto.dm.WebSocketDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -16,27 +16,29 @@ public class DmController {
 
     @GetMapping("/rooms")
     @Operation(summary = "채팅방 전체 조회 API",
-            description = "dm 창 들어갔을 때 모든 채팅방이 보일 수 있도록 전체 조회하는 API입니다. 현재 구상중인 사항으론" +
-                    "각 채팅방에서 가장 마지막에 보낸 채팅 + 채팅방 이름 보이도록 생각중입니다.")
+            description = "dm 창 들어갔을 때 모든 채팅방이 보일 수 있도록 전체 조회하는 API입니다.<br> " +
+                    "현재 구상중인 사항으론 각 채팅방에서 가장 마지막에 보낸 채팅 + 채팅방 이름 보이도록 생각중입니다.")
     public ApiResponse<ChatRoomDTO.ChatRoomListResponse> getChatRooms(
             @RequestParam Integer page,
-            @RequestParam Integer size) {
+            @RequestParam Integer size
+    ) {
         return ApiResponse.onSuccess(ChatRoomDTO.ChatRoomListResponse.builder().build());
     }
 
     @PostMapping("/rooms")
-    @Operation(summary = "채팅방 만들기 & 채팅 시작 하기 API",
-            description = "처음 채팅 시작하기 눌러서 상대를 초대하여 진행되는 채팅방 만들기 API입니다. 이때 채팅방으로 입장되면 " +
-                    "밑에 작성되어 있는 핸드셰이크가 진행되어야 할 듯 합니다.")
+    @Operation(summary = "채팅방 만들기 API",
+            description = "처음 채팅 시작하기 눌러서 상대를 초대하여 진행되는 채팅방 만들기 API입니다." +
+                    "<br>이때 채팅방으로 입장되면 밑에 작성되어 있는 핸드셰이크가 진행되어야 할 듯 합니다.")
     public ApiResponse<ChatRoomDTO.CreateChatRoomResponse> createChatRoom(
-            @RequestBody TestDTO.TestRequestDTO request
+            @RequestBody ChatRoomDTO.CreateChatRoomRequest request
     ) {
         return ApiResponse.onSuccess(ChatRoomDTO.CreateChatRoomResponse.builder().build());
     }
 
     @GetMapping("/rooms/{roomId}")
     @Operation(summary = "채팅방 단일 조회",
-            description = "")
+            description = "채팅방에 들어갔을 때 나와야하는 정보들을 담을 예정입니다. <br>" +
+                    "양쪽에서 보낸 메세지들을 메세지DTO를 list화 하여 보내 드릴 예정입니다.")
     public ApiResponse<ChatRoomDTO.ChatRoomResponse> getChatRoom(
             @PathVariable Long roomId
     ) {
@@ -46,39 +48,42 @@ public class DmController {
 
     @GetMapping("/rooms/search")
     @Operation(summary = "채팅방 검색 API",
-            description = "채팅방 검색 기능을 담당할 API입니다.")
+            description = "채팅방 검색 기능을 담당할 API입니다.<br>" +
+                    "채팅방을 검색했을 때 keyword라는 string 표현으로 request가 들어오면 해당 " +
+                    "keyword를 통해서 검색할 예정입니다.")
     public ApiResponse<ChatRoomDTO.SearchChatRoomResponse> searchChatRooms(
-            ChatRoomDTO.SearchChatRoomRequest request,
-            @RequestParam String keyword) {
+            @RequestParam String keyword
+    ) {
         return ApiResponse.onSuccess(ChatRoomDTO.SearchChatRoomResponse.builder().build());
     }
 
     @GetMapping("/rooms/{roomId}/pin")
     @Operation(summary = "채팅방 고정 API",
-            description = "현재 고민중인 것은 고정된 기록을 db에서 다루어야할지 혹은 프론트 엔드에서 처리가 가능한지 입니다. 논의 후 진행하겠습니다.")
-    public ApiResponse<TestDTO.TestResponseDTO> pinChatRoom(
-            @PathVariable Long roomId) {
-        return null;
-        // return ApiResponse.onSuccess()
+            description = "현재 고민중인 것은 고정된 기록을 db에서 다루어야할지 혹은 프론트 엔드에서 처리가 가능한지 입니다.<br>" +
+                    " 논의 후 진행하겠습니다.")
+    public ApiResponse<ChatRoomDTO.PinChatRoomResponse> pinChatRoom(
+            @RequestBody ChatRoomDTO.PinChatRoomRequest request,
+            @PathVariable Long roomId
+    ) {
+        return ApiResponse.onSuccess(ChatRoomDTO.PinChatRoomResponse.builder().build());
     }
 
 
     @PatchMapping("/rooms/{roomId}")
     @Operation(summary = "채팅방 나가기 API",
-            description = "채팅방을 나갈 때 사용되는 API입니다. 양방향에서 진행되는 채팅이기에 한명이 나가도 다른 한명은 존재해야해서" +
+            description = "채팅방을 나갈 때 사용되는 API입니다. 양방향에서 진행되는 채팅이기에 한명이 나가도 다른 한명은 존재 해야해서 <br>" +
                     "boolean형태로 active 상태를 둘거고 해당 상태를 바꾸는 방향으로 설계했습니다.")
     public ApiResponse<ChatRoomDTO.LeaveChatRoomResponse> leaveChatRoom(
             @PathVariable Long roomId
-    )
-    {
+    ) {
         return ApiResponse.onSuccess(ChatRoomDTO.LeaveChatRoomResponse.builder().build());
     }
 
     @PatchMapping("rooms/{roomId}/name")
     @Operation(summary = "채팅방 이름 변경 API",
-            description = "")
+            description = "채팅방 이름을 변경하는 API입니다. 1:1 채팅이 아닌 여러명과의 채팅방에서만 적용 가능하게 할 생각입니다.")
     public ApiResponse<ChatRoomDTO.ChangeRoomNameResponse> changeRoomName(
-            ChatRoomDTO.ChangeRoomNameRequest request,
+            @RequestBody ChatRoomDTO.ChangeRoomNameRequest request,
             @PathVariable Long roomId
     ) {
         return ApiResponse.onSuccess(ChatRoomDTO.ChangeRoomNameResponse.builder().build());
@@ -88,12 +93,20 @@ public class DmController {
 
     //WS 핸드셰이크를 위한 API
 
-    @GetMapping("/rooms/{roomId}/message")
+    @GetMapping("/rooms/{roomId}/handshake")
     @Operation(summary = "채팅 시작 API입니다.",
             description = "채팅방에 들어 갔을 때 해당 API가 사용 되어야 소켓 통신을 통한 실시간 채팅으로 전환됩니다.(핸드셰이크)")
-    public ApiResponse<TestDTO.TestResponseDTO> handShake(@PathVariable String roomId)
-    {
-        return null;
-        // return ApiResponse.onSuccess()
+    public ApiResponse<WebSocketDTO.HandShakeResponse> handShake(@PathVariable String roomId
+    ) {
+        return ApiResponse.onSuccess(WebSocketDTO.HandShakeResponse.builder().build());
+    }
+
+    @GetMapping("ws/chat")
+    @Operation(summary = "웹소켓 API입니다.",
+            description = "확정된 사안이 아닙니다. 웹소켓의 경우에는 따로 API가 있어 실행되기에 참고용으로 확인해주시면 감사하겠습니다. <br>" +
+                    "빠른 시일 내에 개발 완료되면 직접 연락드리겠습니다.")
+    public ApiResponse<WebSocketDTO.WebSocketMessageDTO> wsapiexampe() {
+        WebSocketDTO.WebSocketMessageDTO example = new WebSocketDTO.WebSocketMessageDTO();
+        return ApiResponse.onSuccess(example);
     }
 }

@@ -1,0 +1,113 @@
+package com.example.momogum.web.controller.mealPlan;
+
+import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.domain.common.mealPlan.Proposal;
+import com.example.momogum.web.dto.mealPlan.MealPlanDTO;
+import com.example.momogum.web.dto.user.UserDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static com.example.momogum.web.dto.mealPlan.MealPlanDTO.*;
+import static com.example.momogum.web.dto.user.UserDTO.*;
+
+@RestController
+@RequestMapping("/MealPlan")
+@Tag(name = "약속잡기 관련 API")
+public class MealPlanController {
+
+    /**
+     * 1. 추가된 사람들 프로필 조회 API
+     */
+    @Operation(summary = "추가된 사람들 프로필 조회 API",
+            description = "특정 모임에 추가된 유저의 프로필 목록을 반환합니다.")
+    @GetMapping("/{mealPlanId}/profiles")
+    public ApiResponse<List<UserResponseDTO>> getProfiles(@PathVariable Long mealPlanId) {
+        // API 구현 시 수정 예정 FIXME
+
+        return ApiResponse.onSuccess(List.of(
+                UserResponseDTO.builder()
+                        .id(1L)
+                        .name("머머금")
+                        .nickname("머머")
+                        .profileImage("/path/to/image")
+                        .build()
+        ));
+    }
+
+
+    /**
+     * 2. 모임에 유저 추가 API
+     */
+    @Operation(summary = "모임에 사람 추가 API",
+            description = "특정 모임에 유저를 추가합니다.")
+    @PostMapping("/{mealPlanId}/profiles")
+    public ApiResponse<List<UserResponseDTO>> addProfile(@PathVariable Long mealPlanId, @RequestBody Long userId) {
+        // API 구현 시 수정 예정 FIXME
+        return ApiResponse.onSuccess(List.of(
+                UserResponseDTO.builder()
+                        .id(1L) //userId
+                        .name("머머금")
+                        .nickname("머머")
+                        .profileImage("/path/to/image")
+                        .build()
+        ));
+    }
+
+    /**
+     * 3. 모임 정보 저장
+     */
+    @Operation(summary = "모임 정보 저장 API",
+            description = "모임의 세부 정보를 JSON 형식으로 저장합니다.")
+    @PostMapping("/create")
+    public ApiResponse<CreateMealPlanResponseDTO> createMealPlan(@RequestBody MealPlanResponseDTO mealPlan) {
+        // API 구현 시 수정 예정 FIXME
+        return ApiResponse.onSuccess(
+                CreateMealPlanResponseDTO.builder()
+                        .mealPlanId(1L)
+                        .build());
+    }
+
+    /**
+     * 4. 모임 정보 조회
+     */
+    @Operation(summary = "모임 정보 확인",
+            description = "특정 모임의 세부 정보를 반환합니다.")
+    @GetMapping("/{mealPlanId}")
+    public ApiResponse<MealPlanResponseDTO> getMealPlan(@PathVariable Long mealPlanId) {
+        // API 구현 시 수정 예정 FIXME
+        return ApiResponse.onSuccess(
+                MealPlanResponseDTO.builder()
+                        .id(mealPlanId)
+                        .title("커피 한 잔 잡쉈어?")
+                        .proposal(Proposal.COFFEE)
+                        .menu("브런치")
+                        .date(LocalDate.of(2025, 1, 10))
+                        .location("한양대학로 55")
+                        .notes("10시까지 오세요.")
+                        .createdAt("2025-01-10T12:00:00")
+                        .users(List.of(
+                                UserDTO.UserResponseDTO.builder()
+                                        .id(1L)
+                                        .name("머머금")
+                                        .nickname("머머")
+                                        .profileImage("/path/to/image")
+                                        .build()
+                        ))
+                        .build());
+    }
+
+    /**
+     * 5. 모임 삭제
+     */
+    @Operation(summary = "모임 삭제 API",
+            description = "특정 모임을 삭제합니다.")
+    @DeleteMapping("/{mealPlanId}")
+    public ApiResponse<String> deleteMealPlan(@PathVariable Long mealPlanId) {
+        return ApiResponse.onSuccess("특정 모임을 삭제합니다");
+    }
+
+}

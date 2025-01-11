@@ -24,7 +24,7 @@ public class MealPlanController {
      */
     @Operation(summary = "추가된 사람들 프로필 조회 API",
             description = "특정 모임에 추가된 유저의 프로필 목록을 반환합니다.")
-    @GetMapping("/{mealPlanId}/profiles")
+    @GetMapping("mealPlanId/{mealPlanId}/profiles")
     public ApiResponse<List<UserResponseDTO>> getProfiles(@PathVariable Long mealPlanId) {
         // API 구현 시 수정 예정 FIXME
         //MealPlan과 User 엔티티 연관관계 맺고 있다고 가정
@@ -46,7 +46,7 @@ public class MealPlanController {
      */
     @Operation(summary = "모임에 사람 추가 API",
             description = "특정 모임에 유저를 추가합니다.")
-    @PostMapping("/{mealPlanId}/profiles")
+    @PostMapping("mealPlanId/{mealPlanId}/profiles")
     public ApiResponse<List<UserResponseDTO>> addProfile(@PathVariable Long mealPlanId, @RequestBody Long userId) {
         // API 구현 시 수정 예정 FIXME
         //약속잡기 페이지에서 user를 +버튼으로 추가합니다.
@@ -79,7 +79,7 @@ public class MealPlanController {
      */
     @Operation(summary = "모임 정보 확인",
             description = "특정 모임의 세부 정보를 반환합니다.")
-    @GetMapping("/{mealPlanId}")
+    @GetMapping("mealPlanId/{mealPlanId}")
     public ApiResponse<MealPlanResponseDTO> getMealPlan(@PathVariable Long mealPlanId) {
         // API 구현 시 수정 예정 FIXME
         //mealPlanId를 통해 해당 mealPlan을 repository에서 조회할 예정입니다.
@@ -109,7 +109,7 @@ public class MealPlanController {
      */
     @Operation(summary = "모임 삭제 API",
             description = "특정 모임을 삭제합니다.")
-    @DeleteMapping("/{mealPlanId}")
+    @DeleteMapping("mealPlanId/{mealPlanId}")
     public ApiResponse<String> deleteMealPlan(@PathVariable Long mealPlanId) {
         return ApiResponse.onSuccess("특정 모임을 삭제합니다");
     }

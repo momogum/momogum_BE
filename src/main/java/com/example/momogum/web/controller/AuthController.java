@@ -19,6 +19,7 @@ public class AuthController {
     @Operation(summary = "카카오 로그인 API", description = "카카오 소셜 로그인 요청을 처리합니다.")
     @PostMapping("/login/kakao")
     public ApiResponse<AuthDTO.AuthResponseDTO> kakaoLogin(@RequestBody AuthDTO.AuthRequestDTO request) {
+        // Redis로 토큰 관리하는 로직으로 변경
         return ApiResponse.onSuccess(
                 AuthDTO.AuthResponseDTO.builder()
                         .email("kakaoUser@example.com")

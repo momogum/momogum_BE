@@ -52,7 +52,7 @@ public class UserProfileController {
             .followersCount(user.getFollowersCount())
             .followingsCount(user.getFollowingsCount())
             .build())
-        )
+        );
   }
 
   /**

@@ -3,6 +3,7 @@ package com.example.momogum.web.dto.mealPlan;
 
 import com.example.momogum.domain.common.mealPlan.Proposal;
 import com.example.momogum.web.dto.user.UserDTO;
+import com.example.momogum.web.dto.user.UserDTO.UserResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,7 +35,7 @@ public class MealPlanDTO {
         @Schema(description = "약속잡기 식별 ID 입니다.")
         Long id;
 
-        @Schema(description = "약속 부제목입니다.")
+        @Schema(description = "약속 제안입니다. ex) 커피 한 잔 할까요?")
         Proposal proposal;
 
         @Schema(description = "약속 제목입니다.")
@@ -57,7 +58,7 @@ public class MealPlanDTO {
         String createdAt;
 
         @Schema(description = "참여자 목록입니다.")
-        List<UserDTO.UserResponseDTO> users;
+        List<UserResponseDTO> users;
 
     }
 

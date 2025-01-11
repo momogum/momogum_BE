@@ -27,6 +27,8 @@ public class MealPlanController {
     @GetMapping("/{mealPlanId}/profiles")
     public ApiResponse<List<UserResponseDTO>> getProfiles(@PathVariable Long mealPlanId) {
         // API 구현 시 수정 예정 FIXME
+        //MealPlan과 User 엔티티 연관관계 맺고 있다고 가정
+        // mealPlanId로 해당 mealPlan에 연관되어있는 user를 조회합니다.
 
         return ApiResponse.onSuccess(List.of(
                 UserResponseDTO.builder()
@@ -47,6 +49,7 @@ public class MealPlanController {
     @PostMapping("/{mealPlanId}/profiles")
     public ApiResponse<List<UserResponseDTO>> addProfile(@PathVariable Long mealPlanId, @RequestBody Long userId) {
         // API 구현 시 수정 예정 FIXME
+        //약속잡기 페이지에서 user를 +버튼으로 추가합니다.
         return ApiResponse.onSuccess(List.of(
                 UserResponseDTO.builder()
                         .id(1L) //userId
@@ -79,6 +82,7 @@ public class MealPlanController {
     @GetMapping("/{mealPlanId}")
     public ApiResponse<MealPlanResponseDTO> getMealPlan(@PathVariable Long mealPlanId) {
         // API 구현 시 수정 예정 FIXME
+        //mealPlanId를 통해 해당 mealPlan을 repository에서 조회할 예정입니다.
         return ApiResponse.onSuccess(
                 MealPlanResponseDTO.builder()
                         .id(mealPlanId)

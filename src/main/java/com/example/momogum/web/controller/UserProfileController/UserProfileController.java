@@ -29,7 +29,6 @@ public class UserProfileController {
    * 3. 프로필 편집 기능
    * 4. 밥일기 조회 (월 별 페이징)
    * 5. 또 오고 싶어요 기능?
-   * 6. 설정 편집
    */
 
   /**

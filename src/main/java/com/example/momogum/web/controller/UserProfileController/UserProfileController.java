@@ -5,6 +5,8 @@ import com.example.momogum.web.dto.MealDiaryDTO;
 import com.example.momogum.web.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -41,18 +43,29 @@ public class UserProfileController {
   @Operation(summary = "유저 정보 조회 API",description= " 유저의 기본 정보를 반환")
   @GetMapping("/{nickname}")
   public ApiResponse<UserDTO.Response> getUserProfile(@PathVariable String nickname) {
-    return userService.getUserByNickname(nickname)
-        .map(user->ApiResponse.onSuccess(UserDTO.Response.builder()
-            .id(user.getId())
-            .nickName(user.getNickname())             // 유저 닉네임
-            .name(user.getName())                     // 유저 실명
-            .bio(user.getBio())                       // 한줄 소개
-            .profileImage(user.getProfileImage())     // 프로필 이미지
-            // 유저에 필드로 넣을지 서비스 레이어에서 계산할 지 모르겠습니다
-            .followersCount(user.getFollowersCount())
-            .followingsCount(user.getFollowingsCount())
-            .build())
-        );
+
+
+    return ApiResponse.onSuccess(UserDTO.Response.builder()
+            .id(1L)
+            .nickname("temp")
+            .name("temp")
+            .bio("temp")
+            .profileImage("temp")
+            .followersCount(0)
+            .followingCount(0)
+            .build());
+//    return userService.getUserByNickname(nickname)
+//        .map(user->ApiResponse.onSuccess(UserDTO.Response.builder()
+//            .id(user.getId())
+//            .nickName(user.getNickname())             // 유저 닉네임
+//            .name(user.getName())                     // 유저 실명
+//            .bio(user.getBio())                       // 한줄 소개
+//            .profileImage(user.getProfileImage())     // 프로필 이미지
+//            // 유저에 필드로 넣을지 서비스 레이어에서 계산할 지 모르겠습니다
+//            .followersCount(user.getFollowersCount())
+//            .followingsCount(user.getFollowingsCount())
+//            .build())
+//        );
   }
 
   /**
@@ -62,10 +75,36 @@ public class UserProfileController {
   @Operation(summary = "팔로워 조회", description = "유저의 팔로워 목록 반환")
   @GetMapping("/{nickname}/followers")
   public ApiResponse<List<UserDTO.Response>> getFollowers(@PathVariable String nickname) {
-    return userService.getUserByNickname(nickname)
-        .map(user -> ApiResponse.onSuccess(userService.getFollowers(user.getId())))
-        .orElseGet(() -> ApiResponse.onFailure("유저를 찾을 수 없습니다.", 404));
+
+    // 임시 데이터 생성
+    List<UserDTO.Response> followers = new ArrayList<>();
+    followers.add(UserDTO.Response.builder()
+            .id(1L)
+            .nickname("follower1")
+            .name("John Doe")
+            .bio("This is a bio of follower1")
+            .profileImage("https://example.com/profile1.jpg")
+            .followersCount(10)
+            .followingCount(5)
+            .build());
+
+    followers.add(UserDTO.Response.builder()
+            .id(2L)
+            .nickname("follower2")
+            .name("Jane Doe")
+            .bio("This is a bio of follower2")
+            .profileImage("https://example.com/profile2.jpg")
+            .followersCount(15)
+            .followingCount(8)
+            .build());
+
+    return ApiResponse.onSuccess(followers);
   }
+
+//    return userService.getUserByNickname(nickname)
+//        .map(user -> ApiResponse.onSuccess(userService.getFollowers(user.getId())))
+//        .orElseGet(() -> ApiResponse.onFailure("유저를 찾을 수 없습니다.", 404));
+//  }
 
   /**
    * 팔로잉 조회
@@ -73,9 +112,29 @@ public class UserProfileController {
   @Operation(summary = "팔로잉 조회", description = "유저가 팔로우하는 유저 목록 반환")
   @GetMapping("/{nickName}/followings")
   public ApiResponse<List<UserDTO.Response>> getFollowings(@PathVariable String nickName) {
-    return userService.getUserBynickName(nickName)
-        .map(user -> ApiResponse.onSuccess(userService.getFollowings(user.getId())))
-        .orElseGet(() -> ApiResponse.onFailure("유저를 찾을 수 없습니다.", 404));
+    // 임시 데이터 생성
+    List<UserDTO.Response> followers = new ArrayList<>();
+    followers.add(UserDTO.Response.builder()
+            .id(1L)
+            .nickname("follower1")
+            .name("John Doe")
+            .bio("This is a bio of follower1")
+            .profileImage("https://example.com/profile1.jpg")
+            .followersCount(10)
+            .followingCount(5)
+            .build());
+
+    followers.add(UserDTO.Response.builder()
+            .id(2L)
+            .nickname("follower2")
+            .name("Jane Doe")
+            .bio("This is a bio of follower2")
+            .profileImage("https://example.com/profile2.jpg")
+            .followersCount(15)
+            .followingCount(8)
+            .build());
+
+    return ApiResponse.onSuccess(followers);
   }
 
   /**
@@ -87,17 +146,15 @@ public class UserProfileController {
   public ApiResponse<UserDTO.Response> editUserProfile(
       @PathVariable String nickname,
       @RequestBody UserDTO.Edit editDTO) {
-    return userService.editUserProfile(Nickname, editDTO)
-        .map(user -> ApiResponse.onSuccess(UserDTO.Response.builder()
-            .id(user.getId())
-            .nickName(user.getNickname())
-            .name(user.getName())
-            .bio(user.getBio())
-            .profileImage(user.getProfileImage())
-            .followersCount(userService.countFollowers(user.getId())) // 동기화된 followers 수 반환
-            .followingCount(userService.countFollowings(user.getId()))
-            .build()));
-  }
+    return ApiResponse.onSuccess(UserDTO.Response.builder()
+            .id(1L)
+            .nickname("temp")
+            .name("temp")
+            .bio("temp")
+            .profileImage("temp")
+            .followersCount(0)
+            .followingCount(0)
+            .build());}
 
   /**
    * 월별 밥일기 조회
@@ -105,15 +162,14 @@ public class UserProfileController {
    * 1. 월별로 조회 가능
    */
 
-  @Operation(summary = "유저프로필 밥일기 월별 조회", description = "밥일기 월별 페이징")
-  @GetMapping("/{nickname}/mealDiary/{year}/{month}")
-  public ApiResponse<MealDiaryDTO.Response> getMonthlyDiaryImages(
-      @PathVariable String nickname,
-      @PathVariable int year,
-      @PathVariable int month) {
-    MealDiaryDTO.Response response = mealDiaryService.getMonthlyDiaryImages(nickname, year, month);
-    return ApiResponse.onSuccess(response);
-  }
+    @Operation(summary = "유저프로필 밥일기 월별 조회", description = "밥일기 월별 페이징")
+    @GetMapping("/{nickname}/mealDiary/{year}/{month}")
+    public void getMonthlyDiaryImages(
+            @PathVariable String nickname,
+    @PathVariable int year,
+    @PathVariable int month) {
+
+    }
 
   /**
    * 밥일기 상세 정보 조회
@@ -123,11 +179,9 @@ public class UserProfileController {
 
   @Operation(summary = "유저프로필 밥일기 조회",description = "밥일기 상세 정보 조회")
   @GetMapping("/{nickname}/mealDiary/{mealDiaryId}")
-  public ApiResponse<MealDiaryDTO.Detail> getMealDiaryDetail(
+  public void getMealDiaryDetail(
       @PathVariable String nickname,
       @PathVariable Long mealDiaryId) {
-    MealDiaryDTO.Detail response = mealDiaryService.getMealDiaryDetail(nickname, mealDiaryId);
-    return ApiResponse.onSuccess(response);
   }
 
   /**

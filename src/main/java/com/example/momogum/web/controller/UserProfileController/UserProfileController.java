@@ -7,6 +7,8 @@ import com.example.momogum.web.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/UserProfile")
+@RequiredArgsConstructor
 @Tag(name = "UserProfile API",description = "유저프로필 API")
 public class UserProfileController {
+
   private final UserService userService;
 
   /**

@@ -1,7 +1,6 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.UserService;
 import com.example.momogum.web.dto.MealDiaryDTO;
 import com.example.momogum.web.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "UserProfile API",description = "유저프로필 API")
 public class UserProfileController {
-
-  private final UserService userService;
 
   /**
    * 유저 프로필 기능

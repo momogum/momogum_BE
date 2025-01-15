@@ -1,5 +1,6 @@
 package com.example.momogum.domain;
 
+import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserPreferenceEntity {
+public class UserPreferenceEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long preferenceId;
@@ -33,5 +34,4 @@ public class UserPreferenceEntity {
     @ElementCollection
     private List<String> leastFavoriteCategories;
 
-    private LocalDateTime updatedAt;
 }

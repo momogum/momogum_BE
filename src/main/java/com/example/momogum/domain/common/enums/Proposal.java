@@ -1,4 +1,4 @@
-package com.example.momogum.domain.common.mealPlan;
+package com.example.momogum.domain.common.enums;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

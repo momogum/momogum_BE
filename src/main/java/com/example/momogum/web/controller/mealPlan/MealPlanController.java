@@ -1,8 +1,7 @@
 package com.example.momogum.web.controller.mealPlan;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.domain.common.mealPlan.Proposal;
-import com.example.momogum.web.dto.mealPlan.MealPlanDTO;
+import com.example.momogum.domain.common.enums.Proposal;
 import com.example.momogum.web.dto.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

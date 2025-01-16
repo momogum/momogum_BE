@@ -1,8 +1,7 @@
 package com.example.momogum.web.dto.mealPlan;
 
 
-import com.example.momogum.domain.common.mealPlan.Proposal;
-import com.example.momogum.web.dto.user.UserDTO;
+import com.example.momogum.domain.common.enums.Proposal;
 import com.example.momogum.web.dto.user.UserDTO.UserResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

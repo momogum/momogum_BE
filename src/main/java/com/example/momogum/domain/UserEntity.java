@@ -39,7 +39,7 @@ public class UserEntity extends BaseEntity {
     private String about;
 
     // 노션에서 해당 정보가 안나와있어 주석처리 했습니다. 나중에 필요하시면 활성화 해서 사용해주시면 될 듯합니다.
-//    private String websiteLink;
+    // private String websiteLink;
 
     // 소셜 로그인 제공자 정보
     @Enumerated(EnumType.STRING)

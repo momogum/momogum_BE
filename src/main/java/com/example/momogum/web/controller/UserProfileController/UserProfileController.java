@@ -47,15 +47,8 @@ public class UserProfileController {
   @GetMapping("/{userId}")
   public ApiResponse<UserDTO.Response> getUserProfile(@PathVariable Long userId) {
 
-    return userProfileService.getUserById(userId)
-        .map(user -> ApiResponse.onSuccess(UserDTO.Response.builder()
-            .id(user.getId())
-            .nickname(user.getNickname())             // 유저 닉네임
-            .name(user.getName())                     // 유저 실명
-            .profileImage(user.getProfileImage())     // 프로필 이미지
-            .about(user.getAbout())                   // 유저 한줄 소개
-            .build()))
-        .orElseThrow(() -> new GeneralException(ErrorStatus._UNAUTHORIZED));  // 로그인하지 않으면 접근 불가
+    UserDTO.Response userProfile = userProfileService.getUserProfile(userId);
+    return ApiResponse.onSuccess(userProfile);
   }
 
 

@@ -8,6 +8,7 @@ import com.example.momogum.repository.followRepo.FollowRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowStatsDTO;
+import com.example.momogum.web.dto.UserDTO;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +27,17 @@ public class UserProfileService {
    * 유저 정보 ID로 조회
    **/
 
-  public Optional<UserEntity> getUserById(Long userId) {
-    return userEntityRepository.findById(userId);
+  public UserDTO.Response getUserProfile(Long userId) {
+    UserEntity user = userEntityRepository.findById(userId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
+
+    return UserDTO.Response.builder()
+        .id(user.getId())
+        .nickname(user.getNickname())
+        .name(user.getName())
+        .profileImage(user.getProfileImage())
+        .about(user.getAbout())
+        .build();
   }
 
   /**

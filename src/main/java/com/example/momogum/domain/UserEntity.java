@@ -3,6 +3,8 @@ package com.example.momogum.domain;
 import com.example.momogum.domain.common.BaseEntity;
 import com.example.momogum.domain.common.enums.LoginType;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
@@ -44,4 +46,13 @@ public class UserEntity extends BaseEntity {
     // 소셜 로그인 제공자 정보
     @Enumerated(EnumType.STRING)
     private LoginType provider;
+
+    //유저와 팔로워,팔로우 관계 설정하기 위해서 추가하였습니다.
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowEntity> followings = new ArrayList<>(); // 내가 팔로우한 사람들
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FollowEntity> followers = new ArrayList<>(); // 나를 팔로우한 사람들
+
+
 }

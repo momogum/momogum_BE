@@ -4,6 +4,8 @@ import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.service.UserProfileService;
+import com.example.momogum.web.dto.FollowDTO;
+import com.example.momogum.web.dto.FollowDTO.FollowStatsDTO;
 import com.example.momogum.web.dto.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,9 +40,7 @@ public class UserProfileController {
    */
 
   /**
-   *  유저 정보 조회
-   *  1. 유저 닉네임, 실명, 팔로워/팔로잉(총 인원), 프로필 사진 조회
-   *  2. 한 줄 소개
+   * 유저 정보 조회 1. 유저 닉네임, 실명, 팔로워/팔로잉(총 인원), 프로필 사진 조회 2. 한 줄 소개
    */
 
   @Operation(summary = "유저 정보 조회 API", description = " 유저의 기본 정보를 반환")
@@ -48,7 +48,7 @@ public class UserProfileController {
   public ApiResponse<UserDTO.Response> getUserProfile(@PathVariable Long userId) {
 
     return userProfileService.getUserById(userId)
-        .map(user->ApiResponse.onSuccess(UserDTO.Response.builder()
+        .map(user -> ApiResponse.onSuccess(UserDTO.Response.builder()
             .id(user.getId())
             .nickname(user.getNickname())             // 유저 닉네임
             .name(user.getName())                     // 유저 실명
@@ -59,6 +59,17 @@ public class UserProfileController {
   }
 
 
+  /**
+   * 팔로워/ 팔로잉 수 조회
+   */
+  @Operation(summary = "팔로워/팔로잉 수 카운트 API", description = "팔로워/팔로잉 수 카운트 반환")
+  @GetMapping("/{userId}/follows")
+  public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
+
+    FollowDTO.FollowStatsDTO followStats= userProfileService.getFollowStats(userId);
+
+    return ApiResponse.onSuccess(followStats);
+  }
 }
 
 //  /**

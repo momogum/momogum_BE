@@ -26,4 +26,9 @@ public class MealDiaryImage {
     private MealDiary mealDiary;
 
 
+    public void setMealDiary(MealDiary mealDiary) {
+        if (this.mealDiary != null){
+            this.mealDiary = mealDiary;
+        }
+    }
 }

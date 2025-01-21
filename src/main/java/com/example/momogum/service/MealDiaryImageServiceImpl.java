@@ -6,6 +6,9 @@ import com.amazonaws.services.kms.model.NotFoundException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
+import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryImageRepository;
@@ -58,7 +61,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
             mealDiaryImageRepository.saveAll(images);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to upload images", e);
+            throw new ImageHandler(ErrorStatus.IMAGE_UPLOAD_ERROR);
         }
 
         return images.stream()
@@ -83,7 +86,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
         List<MealDiaryImage> byMealDiary = mealDiaryImageRepository.findByMealDiary(mealDiary);
 
         if (findImagesByMealDiary == null || findImagesByMealDiary.isEmpty()) {
-            throw new FileNotFoundException("No images found for MealDiaryId: " + mealDiaryId);
+            throw new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND);
         }
 
         // 엔티티 매니저를 사용하여 flush() 호출
@@ -98,7 +101,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
                 // 데이터베이스에서 이미지 레코드 삭제
                 mealDiaryImageRepository.delete(mealDiaryImage);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to delete image from S3 or database: " + mealDiaryImage.getFileName(), e);
+                throw new ImageHandler(ErrorStatus.IMAGE_REMOVE_ERROR);
             }
         }
     }
@@ -114,7 +117,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
     public String findImageByFileName(String fileName) {
 
         MealDiaryImage image = mealDiaryImageRepository.findByFileName(fileName).orElseThrow(
-                () -> new RuntimeException("Image not found: " + fileName));
+                () -> new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND)
 
         return image.getImageLink();
     }
@@ -155,7 +158,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata));
             log.info("Image uploaded successfully: {}");
         } catch (AmazonServiceException e) {
-            throw new RuntimeException("S3 service error: " + e.getMessage(), e);
+            throw new ImageHandler(ErrorStatus.IMAGE_UPLOAD_ERROR);
         } catch (SdkClientException e) {
             throw new RuntimeException("S3 client error: " + e.getMessage(), e);
         } catch (Exception e) {
@@ -177,7 +180,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
 
     private MealDiary findMealDiary(Long mealDiaryId) {
         return mealDiaryRepository.findById(mealDiaryId).orElseThrow(
-                () -> new NotFoundException("Feed not found"));
+                () -> new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND));
     }
 }
 

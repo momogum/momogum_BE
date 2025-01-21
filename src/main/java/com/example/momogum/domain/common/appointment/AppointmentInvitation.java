@@ -1,5 +1,6 @@
-package com.example.momogum.domain;
+package com.example.momogum.domain.common.appointment;
 
+import com.example.momogum.domain.User;
 import com.example.momogum.domain.common.BaseEntity;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import jakarta.persistence.*;
@@ -26,7 +27,7 @@ public class AppointmentInvitation extends BaseEntity {
     // 초대받은 사용자 Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private User user;
 
     // 초대된 약속 Id
     @ManyToOne(fetch = FetchType.LAZY)

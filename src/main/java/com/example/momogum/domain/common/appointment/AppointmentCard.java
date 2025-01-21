@@ -1,4 +1,4 @@
-package com.example.momogum.domain;
+package com.example.momogum.domain.common.appointment;
 
 import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.*;

@@ -16,13 +16,4 @@ public class UserDTO {
     private final String profileImage;
   }
 
-  @Getter
-  @Setter   //유저 응답 존재
-  public static class Edit {
-    private String nickname;
-    private String name;
-    private String bio;
-    private String profileImage;
-  }
-
 }

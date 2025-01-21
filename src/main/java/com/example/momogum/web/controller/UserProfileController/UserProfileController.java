@@ -7,16 +7,20 @@ import com.example.momogum.service.UserProfileService;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowStatsDTO;
 import com.example.momogum.web.dto.UserDTO;
+import com.example.momogum.web.dto.user.UserEditDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,11 +63,36 @@ public class UserProfileController {
   @GetMapping("/{userId}/follows")
   public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
 
-    FollowDTO.FollowStatsDTO followStats= userProfileService.getFollowStats(userId);
+    FollowDTO.FollowStatsDTO followStats = userProfileService.getFollowStats(userId);
 
     return ApiResponse.onSuccess(followStats);
   }
+
+  /**
+   * 팔로워/ 팔로잉 멤버 조회
+   */
+
+  /**
+   * 유저 프로필 수정 API
+   */
+
+  @Operation(summary = "유저 프로필 수정 API", description = "유저 프로필을 수정하고 수정된 정보를 반환합니다.")
+  @PutMapping("/{userId}/profile")
+  public ApiResponse<UserEditDTO.Response> updateUserProfile(
+      @PathVariable Long userId, @RequestBody @Valid UserEditDTO.Request request) {
+
+    UserEditDTO.Response updatedProfile = userProfileService.updateUserProfile(userId, request);
+
+    return ApiResponse.onSuccess(updatedProfile);
+  }
+
 }
+
+  /**
+   *
+   */
+
+
 
 //  /**
 //   * 팔로워 조회

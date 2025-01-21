@@ -15,4 +15,6 @@ public interface MealDiaryImageRepository extends JpaRepository<MealDiaryImage, 
 
     @Query("select i from MealDiaryImage i where i.fileName = :fileName")
     Optional<MealDiaryImage> findByFileName(@Param("fileName")String fileName);
+
+    void deleteByMealDiary(MealDiary mealDiary);
 }

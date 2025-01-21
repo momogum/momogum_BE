@@ -45,7 +45,7 @@ public class MealDiary extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "mealDiary", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mealDiary")
     private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
 
 

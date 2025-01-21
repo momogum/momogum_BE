@@ -4,14 +4,13 @@ import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.service.TokenService;
 import com.example.momogum.web.dto.AuthDTO;
+import com.example.momogum.web.dto.user.KakaoResponseDTO;
+import com.example.momogum.web.dto.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Slf4j
 @RestController
@@ -27,20 +26,64 @@ public class AuthController {
 
     /**
      * 카카오 로그인 API
-     * 클라이언트가 제공한 카카오 인증 토큰을 검증하고, 유저 정보를 가져와 JWT를 발급합니다.
+     * 클라이언트가 제공한 카카오 인증 토큰을 검증하고, 신규 유저인 경우 추가 입력 단계로 진행합니다.
      */
-    @Operation(summary = "카카오 로그인 API", description = "카카오 소셜 로그인 요청을 처리하고 JWT를 발급합니다.")
+    @Operation(summary = "카카오 로그인 API", description = "카카오 소셜 로그인 요청을 처리하고, 신규 유저인 경우 추가 입력이 필요합니다.")
     @PostMapping("/login/kakao")
-    public ApiResponse<AuthDTO.TokenResponseDTO> kakaoLogin(@RequestBody AuthDTO.AuthRequestDTO request) {
+    public ApiResponse<UserDTO.UserResponseDTO> kakaoLogin(@RequestBody AuthDTO.AuthRequestDTO request) {
         log.info("받은 액세스 토큰: {}", request.getAccessToken());
         String kakaoAccessToken = request.getAccessToken();
 
-        HttpServletRequest requests = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String clientIp = requests.getRemoteAddr();
-        log.info("클라이언트 IP: {}", clientIp);
+        // 사용자 존재 여부 확인
+        boolean isExistingUser = tokenService.isExistingUser(kakaoAccessToken);
 
-        // 사용자 정보 저장 또는 업데이트
-        UserEntity user = tokenService.processUserLogin(kakaoAccessToken);
+        if (isExistingUser) {
+            // 기존 사용자 처리
+            UserEntity user = tokenService.processExistingUserLogin(kakaoAccessToken);
+
+            // JWT 토큰 생성
+            String accessToken = tokenService.createAccessToken(user.getId().toString());
+            String refreshToken = tokenService.createRefreshToken(user.getId().toString());
+
+            // Redis에 토큰 저장
+            tokenService.saveTokens(accessToken, refreshToken, user.getId().toString());
+
+            return ApiResponse.onSuccess(
+                    UserDTO.UserResponseDTO.builder()
+                            .id(user.getId())
+                            .name(user.getName())
+                            .nickname(user.getNickname())
+                            .profileImage(user.getProfileImage())
+                            .isNewUser(false)
+                            .build()
+            );
+        } else {
+            // 신규 사용자
+            KakaoResponseDTO kakaoResponseDTO = tokenService.fetchKakaoUserInfo(kakaoAccessToken);
+            return ApiResponse.onSuccess(
+                    UserDTO.UserResponseDTO.builder()
+                            .id(null) // 신규 사용자이므로 ID 없음
+                            .name(kakaoResponseDTO.getKakao_account().getProfile().getNickname())
+                            .nickname(null)
+                            .profileImage(kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url())
+                            .isNewUser(true)
+                            .build()
+            );
+        }
+    }
+
+    // 프론트 단에서, kakaoLogin의 응답으로 신규 유저임을 확인받은 경우, 이 경로로 요청을 보내게 됩니다.
+    @Operation(summary = "신규 사용자 추가 API", description = "신규 사용자 정보 입력 후 DB에 저장합니다.")
+    @PostMapping("/signup/kakao")
+    public ApiResponse<AuthDTO.TokenResponseDTO> kakaoSignUp(@RequestBody AuthDTO.SignUpRequestDTO request) {
+        log.info("신규 사용자 정보 입력 요청 - 이름: {}, 닉네임: {}", request.getName(), request.getNickname());
+
+        // 신규 사용자 처리
+        UserEntity user = tokenService.processNewUserLogin(
+                request.getAccessToken(),
+                request.getName(),
+                request.getNickname()
+        );
 
         // JWT 토큰 생성
         String accessToken = tokenService.createAccessToken(user.getId().toString());
@@ -49,7 +92,7 @@ public class AuthController {
         // Redis에 토큰 저장
         tokenService.saveTokens(accessToken, refreshToken, user.getId().toString());
 
-        // 응답 반환
+        // JWT 응답 반환
         return ApiResponse.onSuccess(
                 AuthDTO.TokenResponseDTO.builder()
                         .accessToken(accessToken)
@@ -57,23 +100,54 @@ public class AuthController {
                         .build()
         );
     }
+
     /**
      * 카카오 리디렉션 URI 처리 API
      * 카카오 인증 서버에서 리디렉션된 요청을 처리합니다.
      */
-    @GetMapping("/callback/kakao")
     @Operation(summary = "카카오 OAuth 콜백", description = "카카오 인증 서버에서 리디렉션된 요청을 처리합니다.")
-    public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
-        System.out.println("카카오 인증 코드: " + code);
+    @GetMapping("/callback/kakao")
+    public ApiResponse<?> kakaoCallback(@RequestParam String code) {
+        log.info("카카오 인증 코드: {}", code);
 
         // 인증 코드를 통해 액세스 토큰 요청
         String accessToken = tokenService.requestAccessTokenFromKakao(code);
 
-        // 사용자 로그인 처리 (토큰 저장 등)
-        UserEntity user = tokenService.processUserLogin(accessToken);
+        // 유저가 기존 유저인지 여부 확인
+        boolean isExistingUser = tokenService.isExistingUser(accessToken);
 
-        // 클라이언트에 처리된 결과 반환 (임시)
-        return ResponseEntity.ok("카카오 인증 및 사용자 처리 완료. 사용자: " + user.getNickname());
+        if (isExistingUser) {
+            // 기존 사용자 처리
+            UserEntity user = tokenService.processExistingUserLogin(accessToken);
+
+            // JWT 토큰 생성
+            String accessTokenJWT = tokenService.createAccessToken(user.getId().toString());
+            String refreshTokenJWT = tokenService.createRefreshToken(user.getId().toString());
+
+            // Redis에 토큰 저장
+            tokenService.saveTokens(accessTokenJWT, refreshTokenJWT, user.getId().toString());
+
+            // 기존 사용자용 응답 반환
+            return ApiResponse.onSuccess(
+                    AuthDTO.TokenResponseDTO.builder()
+                            .accessToken(accessTokenJWT)
+                            .refreshToken(refreshTokenJWT)
+                            .build()
+            );
+        } else {
+            // 신규 사용자 처리
+            KakaoResponseDTO kakaoResponseDTO = tokenService.fetchKakaoUserInfo(accessToken);
+
+            // 신규 사용자 응답 반환 (추가 정보 입력 단계)
+            return ApiResponse.onSuccess(
+                    UserDTO.UserResponseDTO.builder()
+                            .id(null)
+                            .name(kakaoResponseDTO.getKakao_account().getProfile().getNickname())
+                            .profileImage(kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url())
+                            .isNewUser(true)
+                            .build()
+            );
+        }
     }
 
 
@@ -103,13 +177,23 @@ public class AuthController {
      */
     @Operation(summary = "회원 정보 조회 API", description = "특정 회원의 정보를 반환합니다.")
     @GetMapping("/users/{userId}")
-    public ApiResponse<AuthDTO.AuthResponseDTO> getUserInfo(@PathVariable Long userId) {
-        // FIXME: 실제 DB에서 조회하는 로직 추가 필요
+    public ApiResponse<UserDTO.UserResponseDTO> getUserInfo(@PathVariable Long userId) {
+        log.info("회원 정보 조회 요청 - 유저 ID: {}", userId);
+
+        // 데이터베이스에서 회원 정보 조회
+        UserEntity user = tokenService.findUserById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+
+        // 응답 생성 및 반환
         return ApiResponse.onSuccess(
-                AuthDTO.AuthResponseDTO.builder()
-                        .name("머머금")
-                        .provider("kakao")
+                UserDTO.UserResponseDTO.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .nickname(user.getNickname())
+                        .profileImage(user.getProfileImage())
+                        .isNewUser(false) // 회원 조회는 항상 기존 사용자임
                         .build()
         );
     }
+
 }

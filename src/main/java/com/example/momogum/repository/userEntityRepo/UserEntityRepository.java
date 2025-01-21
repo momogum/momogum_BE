@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByProviderAndProviderId(LoginType provider, String providerId);
+    Optional<UserEntity> findById(Long Id);
 }

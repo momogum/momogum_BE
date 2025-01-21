@@ -6,6 +6,7 @@ import com.example.momogum.web.dto.user.KakaoResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import java.util.Map;
+import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,19 +38,56 @@ public class TokenService {
         return "refresh-token-" + userId;
     }
 
-    // 로그인 처리 과정
+    // 기존 유저 로그인 처리
     @Transactional
-    public UserEntity processUserLogin(String accessToken) {
-        // RestTemplate 설정
+    public UserEntity processExistingUserLogin(String accessToken) {
+        KakaoResponseDTO kakaoResponseDTO = fetchKakaoUserInfo(accessToken);
+
+        String providerId = kakaoResponseDTO.getId();
+        String profileImage = kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url();
+
+        return userEntityRepository.findByProviderAndProviderId(LoginType.KAKAO, providerId)
+                .map(existingUser -> {
+                    existingUser.setProfileImage(profileImage); // 프로필 이미지만 업데이트
+                    return userEntityRepository.save(existingUser);
+                })
+                .orElseThrow(() -> new RuntimeException("기존 유저를 찾을 수 없습니다."));
+    }
+
+    // 신규 유저 로그인 처리
+    @Transactional
+    public UserEntity processNewUserLogin(String accessToken, String nameInput, String nicknameInput) {
+        KakaoResponseDTO kakaoResponseDTO = fetchKakaoUserInfo(accessToken);
+
+        String providerId = kakaoResponseDTO.getId();
+        String profileImage = kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url();
+
+        UserEntity newUser = UserEntity.builder()
+                .provider(LoginType.KAKAO)
+                .providerId(providerId)
+                .name(nameInput) // 입력된 이름
+                .nickname(nicknameInput) // 입력된 닉네임
+                .profileImage(profileImage)
+                .build();
+        return userEntityRepository.save(newUser);
+    }
+
+    // 유저 존재 여부 확인
+    public boolean isExistingUser(String accessToken) {
+        KakaoResponseDTO kakaoResponseDTO = fetchKakaoUserInfo(accessToken);
+        String providerId = kakaoResponseDTO.getId();
+        return userEntityRepository.findByProviderAndProviderId(LoginType.KAKAO, providerId).isPresent();
+    }
+
+    // 카카오 API 호출 로직 분리
+    public KakaoResponseDTO fetchKakaoUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
-        log.info("사용된 액세스 토큰: {}", accessToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
-            // 카카오 API 호출
             ResponseEntity<KakaoResponseDTO> response = restTemplate.exchange(
                     "https://kapi.kakao.com/v2/user/me",
                     HttpMethod.GET,
@@ -57,47 +95,15 @@ public class TokenService {
                     KakaoResponseDTO.class
             );
 
-            // 상태 코드와 응답 로그 출력
             log.info("카카오 API 호출 성공 - 상태 코드: {}", response.getStatusCode());
-            log.info("카카오 API 응답 본문: {}", response.getBody());
-
-            // 응답 데이터에서 필요한 정보 추출
-            KakaoResponseDTO kakaoResponseDTO = response.getBody();
-            if (kakaoResponseDTO == null) {
-                throw new RuntimeException("카카오 API 호출 실패: 응답이 비어 있습니다.");
-            }
-
-            String providerId = kakaoResponseDTO.getId();
-            String nickname = kakaoResponseDTO.getKakao_account().getProfile().getNickname();
-            String profileImage = kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url();
-
-            // 사용자 DB 저장 또는 업데이트
-            return userEntityRepository.findByProviderAndProviderId(LoginType.KAKAO, providerId)
-                    .map(existingUser -> {
-                        existingUser.setNickname(nickname);
-                        existingUser.setProfileImage(profileImage);
-                        return userEntityRepository.save(existingUser);
-                    })
-                    .orElseGet(() -> {
-                        UserEntity newUser = UserEntity.builder()
-                                .provider(LoginType.KAKAO)
-                                .providerId(providerId)
-                                .nickname(nickname)
-                                .profileImage(profileImage)
-                                .build();
-                        return userEntityRepository.save(newUser);
-                    });
+            return response.getBody();
         } catch (HttpClientErrorException e) {
-            // HTTP 상태 코드와 오류 본문 디버깅
             log.error("카카오 API 호출 실패 - 상태 코드: {}", e.getStatusCode());
             log.error("카카오 API 오류 응답 본문: {}", e.getResponseBodyAsString());
             throw new RuntimeException("카카오 API 호출 실패: " + e.getMessage());
-        } catch (Exception e) {
-            // 기타 예외 디버깅
-            log.error("카카오 API 호출 중 예외 발생", e);
-            throw new RuntimeException("카카오 API 호출 실패: " + e.getMessage());
         }
     }
+
 
     public String requestAccessTokenFromKakao(String code) {
         RestTemplate restTemplate = new RestTemplate();
@@ -135,5 +141,9 @@ public class TokenService {
     public void saveTokens(String accessToken, String refreshToken, String userId) {
         redisTemplate.opsForValue().set(accessToken, userId, 30, TimeUnit.MINUTES);
         redisTemplate.opsForValue().set(refreshToken, userId, 7, TimeUnit.DAYS);
+    }
+
+    public Optional<UserEntity> findUserById(Long userId) {
+        return userEntityRepository.findById(userId);
     }
 }

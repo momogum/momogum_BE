@@ -44,4 +44,20 @@ public class AuthDTO {
         @Schema(description = "JWT Refresh Token. Access Token이 만료되었을 때 새로운 Access Token을 발급받기 위해 사용합니다.", example = "eyJhbGciOiJIUzUxMiJ9...")
         private String refreshToken;
     }
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SignUpRequestDTO {
+
+        @Schema(description = "카카오 액세스 토큰", example = "your-access-token")
+        private String accessToken;
+
+        @Schema(description = "사용자가 입력한 이름", example = "홍길동")
+        private String name;
+
+        @Schema(description = "사용자가 입력한 닉네임", example = "길동이")
+        private String nickname;
+    }
+
 }

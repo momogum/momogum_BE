@@ -32,7 +32,6 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
 
     private final AmazonS3 amazonS3;
     private final EntityManager entityManager;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final MealDiaryRepository mealDiaryRepository;

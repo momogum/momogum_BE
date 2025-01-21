@@ -19,16 +19,22 @@ public class ViewMealDiaryDTO {
     @Builder
     public static class ViewMealDiaryResponse {
 
-        @Schema(description = "")
-        private Long id;
+        @Schema(description = "밥일기 Id")
+        private Long mealDiaryId;
 
-        @Schema(description = "")
+        @Schema(description = "음식 사진 URL 입니다.")
+        private List<String> foodImageURLs;
+
+        @Schema(description = "회원 프로필 사진 URL")
+        private String userImageURL;
+
+        @Schema(description = "음식 카테고리 (한식(KOREA),중식(CHINA),일식(JAPAN),아시안(ASIAN),패스트푸드(FASTFOOD),카페(CAFE)")
         private FoodCategory foodCategory;
 
-        @Schema(description = "")
+        @Schema(description = "음식 이름")
         private String keyWord;
 
-        @Schema(description = "")
+        @Schema(description = "재방문 의사 표시 (REVISIT 이 재방문)")
         private IsRevisit isRevisit;
     }
 
@@ -36,7 +42,7 @@ public class ViewMealDiaryDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
-    @Builder
+    @Builder(toBuilder = true)
     public static class ViewMealDiaryResponseListDTO {
 
         private List<ViewMealDiaryResponse> viewMealDiaryResponseList;

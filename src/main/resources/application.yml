@@ -22,3 +22,18 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+
+
+
+cloud:
+  aws:
+    s3:
+      bucket: momogum-bucket
+    credentials:
+      accessKey: ${S3_ACCESSKEY}
+      secretKey: ${S3_SECRETKEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false

@@ -17,6 +17,10 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
     @Query("SELECT m.id FROM MealDiary m WHERE m.isRevisit = :isRevisit ORDER BY m.likesCount DESC")
     List<Long> findAllByIsRevisit(@Param("isRevisit") String isRevisit);
 
+    @Query("SELECT m.id FROM MealDiary m WHERE m.foodCategory = :foodCategory ORDER BY m.likesCount DESC")
+    List<Long> findAllByFoodCategory(@Param("foodCategory") String foodCategory);
+
+
     List<MealDiary> findByIdIn(List<Long> ids);
 
 }

@@ -1,8 +1,10 @@
-package com.example.momogum.web.controller.mealPlan;
+package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.MealDiaryImageService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -24,9 +26,10 @@ public class MealDiaryImageController {
 
 
     //이미지 파일들 s3에 저장 후 테이블 추가
-    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "이미지 저장 API", description = "저장해야하는 이미지 파일과 밥일기ID를 넣어주세요")
+    @PostMapping(value = "/mealDiaryId/{mealDairyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<List<String>> addImages(@RequestPart List<MultipartFile> files,
-                                               @RequestParam Long mealDiaryId) {
+                                               @PathVariable Long mealDiaryId) {
 
         String dirName = "meal_diary_images";
         List<String> result = mealDiaryImageService.uploadImages(files, dirName, mealDiaryId);
@@ -35,14 +38,16 @@ public class MealDiaryImageController {
     }
 
     // 이미지 삭제
-    @DeleteMapping("/")
-    public ApiResponse<String> deleteImage(@RequestParam Long mealDiaryId) throws FileNotFoundException {
+    @Operation(summary = "이미지 삭제 API", description = "삭제해야하는 밥일기ID를 넣어주세요")
+    @DeleteMapping("/mealDiaryId/{mealDairyId}")
+    public ApiResponse<String> deleteImage(@PathVariable Long mealDairyId) throws FileNotFoundException {
 
-        mealDiaryImageService.deleteImage(mealDiaryId);
+        mealDiaryImageService.deleteImage(mealDairyId);
         return ApiResponse.onSuccess("Image deleted successfully");
     }
 
     // 이미지 조회
+    @Operation(summary = "단일 이미지 조회 API", description = "조회해야하는 이미지 filename을 넣어주세요")
     @GetMapping("/")
     public ApiResponse<String> getImageByFileName(
             @RequestParam String fileName) {
@@ -52,8 +57,9 @@ public class MealDiaryImageController {
         return ApiResponse.onSuccess(result);
     }
 
-    @GetMapping("/all/{mealDairyId}")
-    public ApiResponse<List<String>> getImagesByFeedId(
+    @Operation(summary = "이미지 조회 API", description = "조회 해야하는 밥일기ID를 넣어주세요")
+    @GetMapping("/mealDiaryId/{mealDairyId}")
+    public ApiResponse<List<String>> getImagesByMealDiaryId(
             @PathVariable Long mealDairyId) {
 
         List<String> result = mealDiaryImageService.findImagesByMealId(mealDairyId);

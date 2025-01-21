@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mealDiaries")
+@RequestMapping("/meal-diaries")
 @Tag(name = "밥일기 관련 API")
 public class MealDiaryController {
 

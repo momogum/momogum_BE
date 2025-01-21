@@ -117,7 +117,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
     public String findImageByFileName(String fileName) {
 
         MealDiaryImage image = mealDiaryImageRepository.findByFileName(fileName).orElseThrow(
-                () -> new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND)
+                () -> new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND));
 
         return image.getImageLink();
     }

@@ -20,10 +20,15 @@ jobs:
           distribution: "adopt"
 
 
+      - name: Remove existing application.yml (if exists)
+        run: |
+          rm -f src/main/resources/application.yml
+
       - name: Make application.yml
         run: |
           mkdir -p src/main/resources
           echo "${{ secrets.APPLICATION }}" > src/main/resources/application-dev.yml
+          mv src/main/resources/application-dev.yml src/main/resources/application.yml
 
       - name: Build with Gradle
         run: |

@@ -8,6 +8,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -49,6 +52,9 @@ public class MealDiary extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToMany(mappedBy = "mealDiary", cascade = CascadeType.ALL)
+    private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
 
 
 }

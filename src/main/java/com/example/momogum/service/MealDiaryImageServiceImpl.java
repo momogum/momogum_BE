@@ -31,7 +31,6 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
 
 
     private final AmazonS3 amazonS3;
-
     private final EntityManager entityManager;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -41,6 +40,11 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
 
 
 
+    /**
+     * 이미지를 업로드하는 메서드입니다
+     *
+     * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
+     * */
     @Override
     public List<String> uploadImages(List<MultipartFile> files, String dirName, Long mealDiaryId) {
 
@@ -63,6 +67,12 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * 이미지를 삭제하는 메서드입니다
+     *
+     * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
+     * */
     @Override
     @Transactional
     public void deleteImage(Long mealDiaryId) throws FileNotFoundException {
@@ -95,6 +105,12 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
     }
 
 
+    /**
+     * 단일 이미지를 조회하는 메서드입니다
+     * 필요하실까봐 만들어놓았습니다!
+     *
+     * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
+     * */
     @Override
     public String findImageByFileName(String fileName) {
 
@@ -105,6 +121,11 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
     }
 
 
+    /**
+     * 매핑되어있는 정보를 통해 이미지를 찾는 메서드입니다
+     *
+     * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
+     * */
     @Override
     public List<String> findImagesByMealId(Long mealDiaryId) {
 
@@ -115,6 +136,11 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 이미지를 업로드하는 메서드입니다
+     *
+     * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
+     * */
     private MealDiaryImage uploadImage(String dirName, MultipartFile file, MealDiary mealDiary) {
 
         String fileName = dirName + "/" + UUID.randomUUID() + "-" + file.getOriginalFilename();

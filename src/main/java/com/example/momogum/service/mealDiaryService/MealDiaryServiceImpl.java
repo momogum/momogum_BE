@@ -51,33 +51,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
         List<String> mealDiaryImages = mealDiaryImageService.findImagesByMealId(mealDiaryId);
         MealDiary mealDiary = findMealDiary(mealDiaryId);
+        List<String> list = getKeywords(mealDiary);
 
-        List<MealDiaryKeyword> mealDiaryKeywords = mealDiary.getMealDiaryKeywords();
-
-        List<Keyword> keywords = mealDiaryKeywords.stream()
-                .map(MealDiaryKeyword::getKeyword)
-                .toList();
-
-        List<String> list = keywords.stream()
-                .map(Keyword::getKeyword)
-                .toList();
-
-        return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
-                .userProfileImageLink(mealDiary.getUser().getProfileImage())
-                .nickname(mealDiary.getUser().getNickname())
-                .mealDiaryCreatedAt(mealDiary.getCreatedAt())
-                .mealDiaryImageLinks(mealDiaryImages)
-                .mealDiaryLikeCount(mealDiary.getLikesCount())
-                .mealDiaryCommentCount(mealDiary.getCommentCount())
-
-                // 추후 수정 FIXME
-                .isMealDairyBookmark(true)
-                .location(mealDiary.getLocation())
-                .keywords(list)
-                .review(mealDiary.getDescription())
-                .isRevisit(mealDiary.getIsRevisit())
-                .build();
-
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages);
     }
 
 
@@ -89,7 +65,19 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
 
+    // 밥일기 매핑 키워드 조회 메서드
+    private static List<String> getKeywords(MealDiary mealDiary) {
+        List<MealDiaryKeyword> mealDiaryKeywords = mealDiary.getMealDiaryKeywords();
 
+        List<Keyword> keywords = mealDiaryKeywords.stream()
+                .map(MealDiaryKeyword::getKeyword)
+                .toList();
+
+        List<String> list = keywords.stream()
+                .map(Keyword::getKeyword)
+                .toList();
+        return list;
+    }
 
 
     // 키워드 추출 메서드
@@ -123,6 +111,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
                 .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    // 밥일기 검색 메서드
     private MealDiary findMealDiary(Long mealDairyId) {
         return mealDiaryRepository.findById(mealDairyId)
                 .orElseThrow(()->new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND));

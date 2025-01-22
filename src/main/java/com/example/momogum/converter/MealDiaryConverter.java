@@ -1,8 +1,11 @@
 package com.example.momogum.converter;
 
+import com.example.momogum.domain.Keyword;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.MealDairiesDTO;
+
+import java.util.List;
 
 public class MealDiaryConverter {
 
@@ -27,6 +30,27 @@ public class MealDiaryConverter {
 
         return MealDairiesDTO.CreateStoryResponseDTO.builder()
                 .mealDiaryId(newMealDiary.getId())
+                .build();
+    }
+
+    public static MealDairiesDTO.GetMealDiaryResponseDTO toGetMealDiaryResponseDTO(MealDiary mealDiary,
+                                                                                   List<String> list,
+                                                                                   List<String> mealDiaryImages){
+
+        return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
+                .userProfileImageLink(mealDiary.getUser().getProfileImage())
+                .nickname(mealDiary.getUser().getNickname())
+                .mealDiaryCreatedAt(mealDiary.getCreatedAt())
+                .mealDiaryImageLinks(mealDiaryImages)
+                .mealDiaryLikeCount(mealDiary.getLikesCount())
+                .mealDiaryCommentCount(mealDiary.getCommentCount())
+
+                // 추후 수정 FIXME
+                .isMealDairyBookmark(true)
+                .location(mealDiary.getLocation())
+                .keywords(list)
+                .review(mealDiary.getDescription())
+                .isRevisit(mealDiary.getIsRevisit())
                 .build();
     }
 }

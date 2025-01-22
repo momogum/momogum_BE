@@ -1,4 +1,4 @@
-package com.example.momogum.service;
+package com.example.momogum.service.mealDiaryService;
 
 import org.springframework.web.multipart.MultipartFile;
 

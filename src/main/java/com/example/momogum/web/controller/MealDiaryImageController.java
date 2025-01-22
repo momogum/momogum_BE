@@ -1,10 +1,9 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.MealDiaryImageService;
+import com.example.momogum.service.mealDiaryService.MealDiaryImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

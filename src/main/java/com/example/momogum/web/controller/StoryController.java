@@ -1,7 +1,7 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.web.dto.MealDairyDTO;
+import com.example.momogum.web.dto.MealDairiesDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,17 +33,17 @@ public class StoryController {
      * */
     @Operation(summary = "팔로우한 회원들의 밥일기 조회 API")
     @GetMapping("/memberId/{memberId}")
-    public ApiResponse<List<MealDairyDTO.GetStoryFollowResponseDTO>> getFollowStories(
+    public ApiResponse<List<MealDairiesDTO.GetStoryFollowResponseDTO>> getFollowStories(
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
 
-        MealDairyDTO.GetStoryFollowResponseDTO tempResult = MealDairyDTO.GetStoryFollowResponseDTO.builder()
+        MealDairiesDTO.GetStoryFollowResponseDTO tempResult = MealDairiesDTO.GetStoryFollowResponseDTO.builder()
                 .memberImagePath("temp")
                 .isRead(Boolean.FALSE)
                 .nickname("temp")
                 .build();
 
-        List<MealDairyDTO.GetStoryFollowResponseDTO> resultList = List.of(tempResult);
+        List<MealDairiesDTO.GetStoryFollowResponseDTO> resultList = List.of(tempResult);
         return ApiResponse.onSuccess(resultList);
     }
 
@@ -53,9 +53,9 @@ public class StoryController {
      * */
     @Operation(summary = "개별 스토리 조회 API")
     @GetMapping("/storyId/{storyId}")
-    public ApiResponse<MealDairyDTO.GetStoryResponseDTO> getOne(@PathVariable Long storyId) {
+    public ApiResponse<MealDairiesDTO.GetStoryResponseDTO> getOne(@PathVariable Long storyId) {
 
-        return ApiResponse.onSuccess(MealDairyDTO.GetStoryResponseDTO.builder()
+        return ApiResponse.onSuccess(MealDairiesDTO.GetStoryResponseDTO.builder()
                 .score(1)
                 .foodCategory("temp")
                 .keyword("temp")

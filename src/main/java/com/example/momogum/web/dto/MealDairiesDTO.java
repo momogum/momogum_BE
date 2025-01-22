@@ -1,5 +1,7 @@
 package com.example.momogum.web.dto;
 
+import com.example.momogum.domain.common.enums.FoodCategory;
+import com.example.momogum.domain.common.enums.IsRevisit;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class MealDairyDTO {
+public class MealDairiesDTO {
 
     @Getter
     public static class CreateStoryRequestDTO {
@@ -23,32 +25,24 @@ public class MealDairyDTO {
         // 카테고리 정해지는대로 String -> FoodCategory(Enum.class)로 수정하기 FIXME
         @Schema(description = "식사 카테고리 입니다 <br>," +
                 "정해진 카테고리에서 선택할 수 있도록 구현하였습니다")
-        String foodCategory;
+        FoodCategory foodCategory;
 
         // 키워드 정해지는대로 String -> Keyword(Enum.class)로 수정하기 FIXME
+        // 문장으로 받으면 쉼표를 기준으로 파싱하기
         @Schema(description = "키워드 입니다 <br>," +
                 "정해진 키워드에서 선택할 수 있도록 구현하였습니다")
         String keyword;
-
-        @Schema(description = "메뉴 이름 입니다")
-        String menu;
 
         @Schema(description = "식사한 위치 입니다")
         String location;
 
         @Schema(description = "식사한 후기 입니다")
-        String review;
+        String description;
 
         // String -> Revisit(Enum.class)로 수정하기 FIXME
         @Schema(description = "재방문 의사 입니다 <br>," +
                 "기획안에 적혀있는 다섯가지의 선택지 내에서 정보를 선택 받습니다")
-        String revisit;
-
-        @Max(5)
-        @Min(0)
-        @Schema(description = "평점 입니다 <br>," +
-                "0.1점 간격으로, 최대 5점까지 입력 받습니다")
-        Integer score;
+        IsRevisit revisit;
 
     }
 
@@ -58,8 +52,8 @@ public class MealDairyDTO {
     @AllArgsConstructor
     public static class CreateStoryResponseDTO {
 
-        @Schema(description = "스토리 식별ID 입니다")
-        Long storyId;
+        @Schema(description = "밥일기 식별ID 입니다")
+        Long mealDiaryId;
 
     }
 

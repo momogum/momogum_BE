@@ -45,10 +45,11 @@ public class MealDiary extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "mealDiary")
+    @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
+    private List<MealDiaryKeyword> mealDiaryKeywords = new ArrayList<>();
 
 
 }

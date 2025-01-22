@@ -72,5 +72,13 @@ public class MealDiary extends BaseEntity {
         this.userEntity = null;
     }
 
+    public void decreaseLikeCount() {
+        this.likesCount--;
+    }
+
+    public void increaseLikeCount() {
+        this.likesCount++;
+    }
+
 
 }

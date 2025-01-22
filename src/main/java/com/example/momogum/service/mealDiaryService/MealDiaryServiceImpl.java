@@ -11,7 +11,7 @@ import com.example.momogum.repository.mealDiaryRepo.KeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.web.dto.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

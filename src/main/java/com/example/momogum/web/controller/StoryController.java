@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/meal-stories")
-@Tag(name = "밥일기 관련 API")
+@Tag(name = "밥일기 스토리 관련 API")
 public class StoryController {
 
 

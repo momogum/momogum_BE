@@ -1,17 +1,11 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.mealDiaryService.MealDiaryImageService;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
 import com.example.momogum.web.dto.MealDairiesDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

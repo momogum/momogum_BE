@@ -29,7 +29,7 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
-public class MealDiaryImageServiceImpl implements MealDiaryImageService {
+public class MealDiaryImageUtilImpl implements MealDiaryImageUtil {
 
 
     private final AmazonS3 amazonS3;

@@ -1,11 +1,8 @@
-package com.example.momogum.web.dto;
+package com.example.momogum.web.dto.mealDiary;
 
-import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,10 +1,9 @@
 package com.example.momogum.converter;
 
-import com.example.momogum.domain.Keyword;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.web.dto.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 
 import java.util.List;
 

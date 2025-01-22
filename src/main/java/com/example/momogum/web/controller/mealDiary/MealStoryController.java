@@ -1,7 +1,7 @@
 package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.web.dto.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

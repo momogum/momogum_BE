@@ -3,6 +3,7 @@ package com.example.momogum.service.mealDiaryService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
+import com.example.momogum.converter.MealDiaryLikeConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryLikes;
 import com.example.momogum.domain.UserEntity;
@@ -35,10 +36,8 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
             findMealDiary.decreaseLikeCount(); // 좋아요 수 감소
             mealDiaryLikesRepository.delete(mealDiaryLikes); // 좋아요 삭제
         } else {
-            MealDiaryLikes newMealDiaryLikes = MealDiaryLikes.builder()
-                    .userEntity(findUser)
-                    .mealDiary(findMealDiary)
-                    .build();
+
+            MealDiaryLikes newMealDiaryLikes = MealDiaryLikeConverter.toMealDiaryLikes(findUser,findMealDiary);
 
             findMealDiary.increaseLikeCount();
             mealDiaryLikesRepository.save(newMealDiaryLikes);

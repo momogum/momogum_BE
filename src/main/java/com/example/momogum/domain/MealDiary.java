@@ -3,10 +3,12 @@ package com.example.momogum.domain;
 import com.example.momogum.domain.common.BaseEntity;
 import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
+import com.example.momogum.domain.common.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,10 @@ public class MealDiary extends BaseEntity {
 
     private Integer commentCount;
 
+    private Status status;
+
+    private LocalDateTime inactiveDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -49,8 +55,21 @@ public class MealDiary extends BaseEntity {
     @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private List<MealDiaryKeyword> mealDiaryKeywords = new ArrayList<>();
 
+    @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
+    private List<MealDiaryBookmark> mealDiaryBookmarks = new ArrayList<>();
+
+    @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
+    private List<MealDiaryComments> mealDiaryComments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
+    private List<MealDiaryLikes> mealDiaryLikes = new ArrayList<>();
+
     public void removeMealDiaryImage(MealDiaryImage mealDiaryImage) {
         mealDiaryImages.remove(mealDiaryImage);
+    }
+
+    public void removeUserEntity() {
+        this.user = null;
     }
 
 

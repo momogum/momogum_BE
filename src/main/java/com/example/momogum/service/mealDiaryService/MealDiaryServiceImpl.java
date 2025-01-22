@@ -11,12 +11,15 @@ import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.MealDairiesDTO;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final MealDiaryKeywordRepository mealDiaryKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final MealDiaryImageService mealDiaryImageService;
+    private final EntityManager em;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -56,6 +60,17 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages);
     }
 
+    @Override
+    public void delete(Long userId, Long mealDiaryId) throws FileNotFoundException {
+
+        MealDiary findMealDiary = findMealDiary(mealDiaryId);
+        authenticateUser(userId,findMealDiary);
+
+        MealDiary mealDiary = findMealDiary(mealDiaryId);
+
+        mealDiaryImageService.deleteImage(mealDiaryId);
+        mealDiaryRepository.delete(mealDiary);
+    }
 
 
 
@@ -63,6 +78,15 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
 
+    @Transactional
+    protected void authenticateUser(Long userId, MealDiary mealDiary) {
+
+        UserEntity user = findUser(userId);
+
+        if (!user.getId().equals(mealDiary.getUser().getId())) {
+            throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
+        }
+    }
 
 
     // 밥일기 매핑 키워드 조회 메서드

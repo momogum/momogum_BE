@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @RestController
@@ -87,10 +88,12 @@ public class MealDiaryController {
      * */
     @Operation(summary = "스토리 삭제 API",
             description = "삭제 요청 후 3일 이후에 삭제됩니다")
-    @PatchMapping("/mealDiaryId/{mealDiaryId}")
-    public ApiResponse<String> deleteStory(
-            @Parameter(name = "mealDiaryId", description = "삭제 할 밥일기 ID를 입력해주세요")
-            @PathVariable Long mealDiaryId){
+    @DeleteMapping("/mealDiaryId/{mealDiaryId}/userId/{userId}")
+    public ApiResponse<String> delete(
+            @PathVariable Long userId,
+            @PathVariable Long mealDiaryId) throws FileNotFoundException {
+
+        mealDiaryService.delete(userId, mealDiaryId);
 
         return ApiResponse.onSuccess("밥일기 삭제되었습니다");
     }

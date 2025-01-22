@@ -8,8 +8,6 @@ import java.util.List;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "user")
 @Getter
@@ -33,8 +31,18 @@ public class UserEntity extends BaseEntity {
     private String nickname;
 
     // 프로필 이미지 저장 경로
-    @URL
-    private String profileImage;
+    //@URL
+    //private String profileImage;
+
+    // S3 유저 프로필 이미지
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserProfileImage profileImage;
+
+    // 프로필 이미지와 연관관계 명확화
+    public void setProfileImage(UserProfileImage profileImage) {
+        this.profileImage = profileImage;
+        profileImage.setUser(this);
+    }
 
     // 한줄소개
     @Lob

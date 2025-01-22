@@ -81,8 +81,9 @@ public class UserProfileController {
 }
 
   /**
-   *
+   * 유저 프로필 이미지 수정 API
    */
+
 
 
 

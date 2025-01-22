@@ -16,6 +16,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
+    MEMBER_AUTHENTICATE_FAILED(HttpStatus.BAD_REQUEST,"MEMBER4002","회원인증에 실패하였습니다"),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER4001","회원을 찾을 수 없습니다"),
 
     MEALDIARY_KEYWORD_MAX(HttpStatus.BAD_REQUEST,"MEALDIARY4002","밥일기의 키워드는 최대 다섯개만 입력 할 수 있습니다"),

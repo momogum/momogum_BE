@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.MealDiaryConverter;
@@ -68,11 +69,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         byUserEntity.stream()
                 .forEach(mealDiary -> {
                     MealDiaryImage image = mealDiary.getMealDiaryImages().stream().findFirst()
-                            .orElseThrow(()->new IllegalArgumentException("이미지를 찾을 수 없습니다"));
+                            .orElseThrow(()->new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND));
 
-                    result.add(MealDairiesDTO.GetAllMealDiaryResponseDTO.builder()
-                            .mealDiaryImageLink(image.getImageLink())
-                            .build());
+                    result.add(MealDiaryConverter.toGetAllMealDiaryResponseDTO(image));
                 });
 
         return result;

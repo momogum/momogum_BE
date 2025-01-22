@@ -2,6 +2,7 @@ package com.example.momogum.converter;
 
 import com.example.momogum.domain.Keyword;
 import com.example.momogum.domain.MealDiary;
+import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.MealDairiesDTO;
 
@@ -51,6 +52,12 @@ public class MealDiaryConverter {
                 .keywords(list)
                 .review(mealDiary.getDescription())
                 .isRevisit(mealDiary.getIsRevisit())
+                .build();
+    }
+
+    public static MealDairiesDTO.GetAllMealDiaryResponseDTO toGetAllMealDiaryResponseDTO(MealDiaryImage mealDiary){
+        return MealDairiesDTO.GetAllMealDiaryResponseDTO.builder()
+                .mealDiaryImageLink(mealDiary.getImageLink())
                 .build();
     }
 }

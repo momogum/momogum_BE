@@ -1,5 +1,6 @@
 package com.example.momogum.web.dto;
 
+import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MealDairiesDTO {
@@ -63,9 +65,9 @@ public class MealDairiesDTO {
 
 
     @Getter
-    public static class GetStoryRequestDTO {
+    public static class GetMealDiaryRequestDTO {
 
-        @Schema(description = "스토리 식별ID 입니다")
+        @Schema(description = "밥일기 식별ID 입니다")
         Long storyId;
 
     }
@@ -75,33 +77,42 @@ public class MealDairiesDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetStoryResponseDTO {
+    public static class GetMealDiaryResponseDTO {
 
-        @Max(5)
-        @Min(0)
-        @Schema(description = "평점 입니다 <br>," +
-                "0.1점 간격으로, 최대 5점까지 입력 받습니다")
-        Integer score;
 
-        // 카테고리 정해지는대로 String -> FoodCategory(Enum.class)로 수정하기 FIXME
-        @Schema(description = "식사 카테고리 입니다 <br>," +
-                "정해진 카테고리에서 선택할 수 있도록 구현하였습니다")
-        String foodCategory;
+        // 회원정보
 
-        // 키워드 정해지는대로 String -> Keyword(Enum.class)로 수정하기 FIXME
-        @Schema(description = "키워드 입니다 <br>," +
-                "정해진 키워드에서 선택할 수 있도록 구현하였습니다")
-        String keyword;
+        String userProfileImageLink;
+
+        String nickname;
+
+
+        // 밥일기 정보
+
+        LocalDateTime mealDiaryCreatedAt;
+
+        List<String> mealDiaryImageLinks;
+
+        Integer mealDiaryLikeCount;
+
+        Integer mealDiaryCommentCount;
+
+        @Schema(description = "회원이 해당 밥일기를 북마크 해두었는지 표시하는 필드입니다")
+        boolean isMealDairyBookmark;
 
         @Schema(description = "식사한 위치 입니다")
         String location;
 
+        // 키워드 정해지는대로 String -> Keyword(Enum.class)로 수정하기 FIXME
+        @Schema(description = "키워드 입니다 <br>," +
+                "정해진 키워드에서 선택할 수 있도록 구현하였습니다")
+        List<String> keywords;
+
         @Schema(description = "식사한 후기 입니다")
         String review;
 
-        @Schema(description = "스토리 이미지 입니다 <br>," +
-                "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
-        String imagePath;
+        @Schema(description = "재방문 여부 입니다")
+        IsRevisit isRevisit;
 
     }
 

@@ -19,8 +19,6 @@ public class MealDiaryConverter {
                 .user(byId)
                 // 밥일기 이미지 -> 추후 save로직에서 한 번에 이미지까지 받도록 수정 FIXME
                 .mealDiaryImages(null)
-                // 밥일기를 우선 저장하고 그 후 키워드 매핑
-                .keyWord(null)
                 .build();
 
     }

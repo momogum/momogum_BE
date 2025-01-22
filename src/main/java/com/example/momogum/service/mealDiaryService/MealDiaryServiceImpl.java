@@ -5,10 +5,7 @@ import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.MealDiaryConverter;
 import com.example.momogum.converter.MealDiaryKeywordConverter;
-import com.example.momogum.domain.Keyword;
-import com.example.momogum.domain.MealDiary;
-import com.example.momogum.domain.MealDiaryKeyword;
-import com.example.momogum.domain.UserEntity;
+import com.example.momogum.domain.*;
 import com.example.momogum.repository.mealDiaryRepo.KeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
@@ -46,6 +43,40 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
         return MealDiaryConverter.toCreateStoryResponseDTO(newMealDiary);
+    }
+
+
+    @Override
+    public MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId){
+
+        List<String> mealDiaryImages = mealDiaryImageService.findImagesByMealId(mealDiaryId);
+        MealDiary mealDiary = findMealDiary(mealDiaryId);
+
+        List<MealDiaryKeyword> mealDiaryKeywords = mealDiary.getMealDiaryKeywords();
+
+        List<Keyword> keywords = mealDiaryKeywords.stream()
+                .map(MealDiaryKeyword::getKeyword)
+                .toList();
+
+        List<String> list = keywords.stream()
+                .map(Keyword::getKeyword)
+                .toList();
+
+        return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
+                .userProfileImageLink(mealDiary.getUser().getProfileImage())
+                .nickname(mealDiary.getUser().getNickname())
+                .mealDiaryCreatedAt(mealDiary.getCreatedAt())
+                .mealDiaryImageLinks(mealDiaryImages)
+                .mealDiaryLikeCount(mealDiary.getLikesCount())
+                .mealDiaryCommentCount(mealDiary.getCommentCount())
+
+                // 추후 수정 FIXME
+                .isMealDairyBookmark(true)
+                .location(mealDiary.getLocation())
+                .keywords(list)
+                .review(mealDiary.getDescription())
+                .isRevisit(mealDiary.getIsRevisit())
+                .build();
 
     }
 
@@ -90,5 +121,10 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private UserEntity findUser(Long userId) {
         return userEntityRepository.findById(userId)
                 .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    private MealDiary findMealDiary(Long mealDairyId) {
+        return mealDiaryRepository.findById(mealDairyId)
+                .orElseThrow(()->new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND));
     }
 }

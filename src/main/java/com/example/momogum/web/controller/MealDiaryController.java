@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
@@ -39,6 +40,17 @@ public class MealDiaryController {
 
         return ApiResponse.onSuccess(result);
     }
+
+    @Operation(summary = "밥일기 조회 API")
+    @GetMapping("")
+    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId){
+        MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId);
+
+        return ApiResponse.onSuccess(getMealDiaryResponseDTO);
+    }
+
+
+
 
     /**
      * 자신의 보관 게시글 전부 조회

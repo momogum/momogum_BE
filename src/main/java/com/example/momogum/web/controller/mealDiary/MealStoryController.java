@@ -1,4 +1,4 @@
-package com.example.momogum.web.controller;
+package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.web.dto.MealDairiesDTO;
@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/meal-stories")
 @Tag(name = "밥일기 스토리 관련 API")
-public class StoryController {
+public class MealStoryController {
 
 
     /**

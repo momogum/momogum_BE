@@ -42,7 +42,7 @@ public class MealDiaryController {
         return ApiResponse.onSuccess(result);
     }
 
-    @Operation(summary = "밥일기 조회 API")
+    @Operation(summary = "단일 밥일기 조회 API")
     @GetMapping("")
     public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId){
         MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId);
@@ -51,43 +51,18 @@ public class MealDiaryController {
     }
 
 
-
-
-    /**
-     * 자신의 보관 게시글 전부 조회
-     *
-     *  1. 회원정보를 받아서
-     *  2. 그걸 가지고 회원에 매핑된 스토리 전부 조회
-     *
-     * */
-    @Operation(summary = "회원 보관 밥일기 API")
+    @Operation(summary = "회원 보관 밥일기 API", description = "회원이 작성한 모든 밥일기를 조회합니다")
     @GetMapping("/memberId/{memberId}/all")
-    public ApiResponse<List<MealDairiesDTO.GetStoryMemberStoryResponseDTO>> getMemberMealDiaries(
-            @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
+    public ApiResponse<List<MealDairiesDTO.GetAllMealDiaryResponseDTO>> getMemberMealDiaries(
             @PathVariable Long memberId) {
 
-        String imagePath = "temp";
-        List<String> imagePaths = List.of(imagePath);
+        List<MealDairiesDTO.GetAllMealDiaryResponseDTO> result = mealDiaryService.getAll(memberId);
+        return ApiResponse.onSuccess(result);
 
-        MealDairiesDTO.GetStoryMemberStoryResponseDTO tempResult = MealDairiesDTO.GetStoryMemberStoryResponseDTO
-                .builder()
-                .imagePaths(imagePaths)
-                .build();
-
-        List<MealDairiesDTO.GetStoryMemberStoryResponseDTO> resultList = List.of(tempResult);
-        return ApiResponse.onSuccess(resultList);
     }
 
 
-    /**
-     * 밥일기 삭제
-     *
-     * 이건 바로 삭제로 할지 며칠간 보관하고 복구가 가능하도록 구현할지
-     *
-     * 일단 바로 삭제로 생각하고 구현
-     * */
-    @Operation(summary = "스토리 삭제 API",
-            description = "삭제 요청 후 3일 이후에 삭제됩니다")
+    @Operation(summary = "밥일기 삭제 API")
     @DeleteMapping("/mealDiaryId/{mealDiaryId}/userId/{userId}")
     public ApiResponse<String> delete(
             @PathVariable Long userId,

@@ -150,4 +150,15 @@ public class MealDairiesDTO {
         List<String> imagePaths;
 
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetAllMealDiaryResponseDTO {
+
+        String mealDiaryImageLink;
+
+
+    }
 }

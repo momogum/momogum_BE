@@ -1,4 +1,4 @@
-package com.example.momogum.web.controller;
+package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;

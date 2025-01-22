@@ -30,11 +30,13 @@ public class ViewMealPlanController {
 
     @Operation(summary = "메인 페이지 음식 카테고리 조회",
             description = "메인 페이지에서 각 카테고리를 눌렀을 때 사용되는 API입니다.<br>" +
-                    " 각 카테고리 별로 RequestParam에 넣어서 주시면 해당 값을 반환합니다.")
-    @GetMapping("/revisit")
+                    " 각 카테고리 별로 RequestParam에 넣어서 주시면 해당 값을 반환합니다.<br>" +
+                    "KOREA(한식), CHINA(중식), JAPAN(일식), ASIAN(아시안), FASTFOOD(패스트푸드), CAFE(카페)<br>" +
+                    "해당 태그 맞춰서 넣어 주세요")
+    @GetMapping("/{foodCategory}")
     public ApiResponse<ViewMealDiaryDTO.ViewMealDiaryResponseListDTO> getMealDiaryByFoodCategory(
             @RequestParam Long userId,
-            @RequestParam String foodCategory) {
+            @PathVariable String foodCategory) {
 
         ViewMealDiaryDTO.ViewMealDiaryResponseListDTO response = viewMealDiaryService.getMealDiaryByFoodCategory(userId, foodCategory);
 

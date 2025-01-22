@@ -69,11 +69,6 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
     }
 
 
-    /**
-     * 이미지를 삭제하는 메서드입니다
-     *
-     * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
-     * */
     @Override
     @Transactional
     public void deleteImage(Long mealDiaryId) throws FileNotFoundException {
@@ -82,6 +77,7 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
         List<String> findImagesByMealDiary = findImagesByMealId(mealDiaryId);
 
         MealDiary mealDiary = findMealDiary(mealDiaryId);
+
         List<MealDiaryImage> byMealDiary = mealDiaryImageRepository.findByMealDiary(mealDiary);
 
         if (findImagesByMealDiary == null || findImagesByMealDiary.isEmpty()) {
@@ -96,6 +92,20 @@ public class MealDiaryImageServiceImpl implements MealDiaryImageService {
             try {
                 // S3에서 이미지 삭제
                 amazonS3.deleteObject(bucket, mealDiaryImage.getFileName());
+
+
+                /**
+                 *
+                 * JPA의 영속성 컨텍스트안에 삭제해야하는 엔티티와 연관된 엔티티가 존재함
+                 * 그렇기 때문에 삭제 쿼리가 발생하지 않는 오류 발견
+                 *
+                 * -> 엔티티 간의 연관관계를 끊어줌
+                 *
+                 * */
+                mealDiaryImage.getMealDiary().removeMealDiaryImage(mealDiaryImage);
+                mealDiaryImage.removeMealDiary();
+
+
 
                 // 데이터베이스에서 이미지 레코드 삭제
                 mealDiaryImageRepository.delete(mealDiaryImage);

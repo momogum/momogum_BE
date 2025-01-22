@@ -1,5 +1,8 @@
 package com.example.momogum.service.mealDiaryService;
 
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.MealDiaryConverter;
 import com.example.momogum.converter.MealDiaryKeywordConverter;
 import com.example.momogum.domain.Keyword;
@@ -14,6 +17,9 @@ import com.example.momogum.web.dto.MealDairiesDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +30,21 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final UserEntityRepository userEntityRepository;
     private final MealDiaryKeywordRepository mealDiaryKeywordRepository;
     private final KeywordRepository keywordRepository;
+    private final MealDiaryImageService mealDiaryImageService;
 
     @Override
-    public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request) {
+    public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
 
-        UserEntity byId = findUser(request);
-        MealDiary newMealDiary = MealDiaryConverter.toMealDiary(request,byId);
+        UserEntity byId = findUser(request.getMemberId());
+        MealDiary mealDiary = MealDiaryConverter.toMealDiary(request,byId);
 
-        mealDiaryRepository.save(newMealDiary);
+        MealDiary newMealDiary = mealDiaryRepository.save(mealDiary);
 
+        String dirName = "meal_diary_images";
+        mealDiaryImageService.uploadImages(files,dirName,newMealDiary.getId());
         extractedKeyword(request, newMealDiary);
+
+
         return MealDiaryConverter.toCreateStoryResponseDTO(newMealDiary);
 
     }
@@ -56,7 +67,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         String[] keywords = request.getKeyword().split(","); // 쉼표로 분리
 
         if (keywords.length > 5) {
-            throw new IllegalArgumentException("키워드는 최대 5개까지만 입력 가능합니다");
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_KEYWORD_MAX);
         }
         for (String keywordName : keywords) {
             String trimmedKeyword = keywordName.trim();
@@ -76,9 +87,8 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     // 회원 검색 메서드
-    private UserEntity findUser(MealDairiesDTO.CreateStoryRequestDTO request) {
-        UserEntity byId = userEntityRepository.findById(request.getMemberId())
-                .orElseThrow(()->new IllegalArgumentException("회원을 찾을 수 없습니다"));
-        return byId;
+    private UserEntity findUser(Long userId) {
+        return userEntityRepository.findById(userId)
+                .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }

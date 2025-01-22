@@ -1,13 +1,19 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.service.mealDiaryService.MealDiaryImageService;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
 import com.example.momogum.web.dto.MealDairiesDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Description;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,13 +25,17 @@ public class MealDiaryController {
 
     private final MealDiaryService mealDiaryService;
 
-    @Operation(summary = "밥일기 생성 API")
-    @PostMapping(path = "")
+    @Operation(
+            summary = "밥일기 생성 API",
+            description = "사진 넣으실때 반드시 **키 이름을 value** 에 맞춰주세요. <br>" +
+                    "또한 사진이 아닌 정보를 입력할때는 반드시 **Content-Type: application/json** 으로 설정해주셔야 정상적으로 작동합니다"
+    )
+    @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MealDairiesDTO.CreateStoryResponseDTO> create(
-            @Parameter(description = "기술명세서 하단의 스키마를 확인해주세요")
-            @RequestBody MealDairiesDTO.CreateStoryRequestDTO createRequestDTO) {
+            @RequestPart(value = "files") List<MultipartFile> files,
+            @RequestPart(value = "request") MealDairiesDTO.CreateStoryRequestDTO request) {
 
-        MealDairiesDTO.CreateStoryResponseDTO result = mealDiaryService.save(createRequestDTO);
+        MealDairiesDTO.CreateStoryResponseDTO result = mealDiaryService.save(request, files);
 
         return ApiResponse.onSuccess(result);
     }

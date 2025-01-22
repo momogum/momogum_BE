@@ -19,7 +19,7 @@ public class MealDiaryConverter {
                 .isReport(false)
                 .likesCount(0)
                 .commentCount(0)
-                .user(byId)
+                .userEntity(byId)
                 // 밥일기 이미지 -> 추후 save로직에서 한 번에 이미지까지 받도록 수정 FIXME
                 .mealDiaryImages(null)
                 .build();
@@ -38,8 +38,8 @@ public class MealDiaryConverter {
                                                                                    List<String> mealDiaryImages){
 
         return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
-                .userProfileImageLink(mealDiary.getUser().getProfileImage())
-                .nickname(mealDiary.getUser().getNickname())
+                .userProfileImageLink(mealDiary.getUserEntity().getProfileImage())
+                .nickname(mealDiary.getUserEntity().getNickname())
                 .mealDiaryCreatedAt(mealDiary.getCreatedAt())
                 .mealDiaryImageLinks(mealDiaryImages)
                 .mealDiaryLikeCount(mealDiary.getLikesCount())

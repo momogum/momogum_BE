@@ -11,15 +11,14 @@ import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.MealDairiesDTO;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,6 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final MealDiaryKeywordRepository mealDiaryKeywordRepository;
     private final KeywordRepository keywordRepository;
     private final MealDiaryImageService mealDiaryImageService;
-    private final EntityManager em;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -49,7 +47,6 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         return MealDiaryConverter.toCreateStoryResponseDTO(newMealDiary);
     }
 
-
     @Override
     public MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId){
 
@@ -58,6 +55,27 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         List<String> list = getKeywords(mealDiary);
 
         return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages);
+    }
+
+    @Override
+    public List<MealDairiesDTO.GetAllMealDiaryResponseDTO> getAll(Long userId){
+
+        UserEntity user = findUser(userId);
+        List<MealDairiesDTO.GetAllMealDiaryResponseDTO> result = new ArrayList<>();
+
+        List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(user);
+
+        byUserEntity.stream()
+                .forEach(mealDiary -> {
+                    MealDiaryImage image = mealDiary.getMealDiaryImages().stream().findFirst()
+                            .orElseThrow(()->new IllegalArgumentException("이미지를 찾을 수 없습니다"));
+
+                    result.add(MealDairiesDTO.GetAllMealDiaryResponseDTO.builder()
+                            .mealDiaryImageLink(image.getImageLink())
+                            .build());
+                });
+
+        return result;
     }
 
     @Override
@@ -83,7 +101,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
         UserEntity user = findUser(userId);
 
-        if (!user.getId().equals(mealDiary.getUser().getId())) {
+        if (!user.getId().equals(mealDiary.getUserEntity().getId())) {
             throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
         }
     }

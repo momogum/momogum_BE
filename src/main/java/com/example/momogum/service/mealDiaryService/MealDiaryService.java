@@ -11,5 +11,7 @@ public interface MealDiaryService {
 
     MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId);
 
+    List<MealDairiesDTO.GetAllMealDiaryResponseDTO> getAll(Long userId);
+
     void delete(Long userId, Long mealDiaryId) throws FileNotFoundException;
 }

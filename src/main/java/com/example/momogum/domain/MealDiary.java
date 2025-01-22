@@ -47,7 +47,7 @@ public class MealDiary extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private UserEntity userEntity;
 
     @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
@@ -69,7 +69,7 @@ public class MealDiary extends BaseEntity {
     }
 
     public void removeUserEntity() {
-        this.user = null;
+        this.userEntity = null;
     }
 
 

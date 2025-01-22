@@ -16,8 +16,8 @@ public class S3UrlProvider {
 
         // 실제 구현이 아닌, S3와 통신 후 URL 리스트를 반환하는 메서드라고 가정.
         return List.of(
-                "https://example-bucket.s3.amazonaws.com/" + category + "/밥 한끼 같이 먹어요.jpg",
-                "https://example-bucket.s3.amazonaws.com/" + category + "/배고프면 먼저 밥부터.jpg"
+                "https://example-bucket.s3.amazonaws.com/" + category + "/image1.jpg",
+                "https://example-bucket.s3.amazonaws.com/" + category + "/image2.jpg"
         );
     }
 }

@@ -19,7 +19,7 @@ public class AppointmentCardsController {
     /**
      * 기본 카드 반환하는 메서드
      */
-    @GetMapping("card/basic")
+    @GetMapping("/card/basic")
     public List<AppointmentCardResponseDTO> getBasicCards() {
         return cardService.getBasicCards();
     }
@@ -27,7 +27,7 @@ public class AppointmentCardsController {
     /**
      * 기본 카드 반환하는 메서드
      */
-    @GetMapping("card/basic")
+    @GetMapping("/card/fun")
     public List<AppointmentCardResponseDTO> getFunCards() {
         return cardService.getFunCards();
     }

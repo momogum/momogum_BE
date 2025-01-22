@@ -7,13 +7,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
 import static com.example.momogum.web.dto.appointment.AppointMentDTO.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,7 +39,7 @@ class AppointmentCardsControllerTest {
         // API 호출 및 검증
         mockMvc.perform(get("/Appointment/card/basic"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().json("""
+                .andExpect( MockMvcResultMatchers.content().json("""
                     [
                         {"type":"basic", "imageUrl":"https://example-bucket.s3.amazonaws.com/basic/image1.jpg"},
                         {"type":"basic", "imageUrl":"https://example-bucket.s3.amazonaws.com/basic/image2.jpg"}
@@ -62,7 +61,7 @@ class AppointmentCardsControllerTest {
         // API 호출 및 검증
         mockMvc.perform(get("/Appointment/card/fun"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().json("""
+                .andExpect(MockMvcResultMatchers.content().json("""
                     [
                         {"type":"fun", "imageUrl":"https://example-bucket.s3.amazonaws.com/fun/image1.jpg"},
                         {"type":"fun", "imageUrl":"https://example-bucket.s3.amazonaws.com/fun/image2.jpg"}

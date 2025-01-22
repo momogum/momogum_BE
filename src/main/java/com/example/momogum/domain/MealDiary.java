@@ -51,5 +51,9 @@ public class MealDiary extends BaseEntity {
     @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private List<MealDiaryKeyword> mealDiaryKeywords = new ArrayList<>();
 
+    public void removeMealDiaryImage(MealDiaryImage mealDiaryImage) {
+        mealDiaryImages.remove(mealDiaryImage);
+    }
+
 
 }

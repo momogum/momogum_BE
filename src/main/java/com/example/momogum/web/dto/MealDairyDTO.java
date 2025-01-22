@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class StoryDTO {
+public class MealDairyDTO {
 
     @Getter
     public static class CreateStoryRequestDTO {

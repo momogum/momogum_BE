@@ -12,4 +12,5 @@ public class MomogumApplication {
         SpringApplication.run(MomogumApplication.class, args);
     }
 
+
 }

@@ -1,24 +1,16 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
-import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.service.UserProfileService;
 import com.example.momogum.web.dto.FollowDTO;
-import com.example.momogum.web.dto.FollowDTO.FollowStatsDTO;
-import com.example.momogum.web.dto.UserDTO;
-import com.example.momogum.web.dto.user.UserEditDTO;
+import com.example.momogum.web.dto.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,9 +41,9 @@ public class UserProfileController {
 
   @Operation(summary = "유저 정보 조회 API", description = " 유저의 기본 정보를 반환")
   @GetMapping("/{userId}")
-  public ApiResponse<UserDTO.Response> getUserProfile(@PathVariable Long userId) {
+  public ApiResponse<UserDTO.UserResponseDTO> getUserProfile(@PathVariable Long userId) {
 
-    UserDTO.Response userProfile = userProfileService.getUserProfile(userId);
+    UserDTO.UserResponseDTO userProfile = userProfileService.getUserProfile(userId);
     return ApiResponse.onSuccess(userProfile);
   }
 
@@ -73,15 +65,15 @@ public class UserProfileController {
    */
 
   /**
-   * 유저 프로필 수정 API
+   * 유저 프로필 기본 정보 수정 API
    */
 
   @Operation(summary = "유저 프로필 수정 API", description = "유저 프로필을 수정하고 수정된 정보를 반환합니다.")
   @PutMapping("/{userId}/profile")
-  public ApiResponse<UserEditDTO.Response> updateUserProfile(
-      @PathVariable Long userId, @RequestBody @Valid UserEditDTO.Request request) {
+  public ApiResponse<UserDTO.UserEditDTO> updateUserProfile(
+      @PathVariable Long userId, @RequestBody @Valid UserDTO.UserEditDTO request) {
 
-    UserEditDTO.Response updatedProfile = userProfileService.updateUserProfile(userId, request);
+    UserDTO.UserEditDTO updatedProfile = userProfileService.updateUserProfile(userId, request);
 
     return ApiResponse.onSuccess(updatedProfile);
   }

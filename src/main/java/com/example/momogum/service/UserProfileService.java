@@ -7,12 +7,7 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.followRepo.FollowRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.FollowDTO;
-import com.example.momogum.web.dto.FollowDTO.FollowStatsDTO;
-import com.example.momogum.web.dto.UserDTO;
-import com.example.momogum.web.dto.user.UserEditDTO;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import com.example.momogum.web.dto.user.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +23,11 @@ public class UserProfileService {
    * 유저 정보 ID로 조회
    **/
 
-  public UserDTO.Response getUserProfile(Long userId) {
+  public UserDTO.UserResponseDTO getUserProfile(Long userId) {
     UserEntity user = userEntityRepository.findById(userId)
         .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
 
-    return UserDTO.Response.builder()
+    return UserDTO.UserResponseDTO.builder()
         .id(user.getId())
         .nickname(user.getNickname())
         .name(user.getName())
@@ -73,24 +68,31 @@ public class UserProfileService {
    * 3. 이름, 닉네임, 한줄 소개 수정
    */
 
-  public UserEditDTO.Response updateUserProfile(Long userId, UserEditDTO.Request request) {
+  public UserDTO.UserEditDTO updateUserProfile(Long userId, UserDTO.UserEditDTO request) {
     // 유저 데이터 조회
     UserEntity user = userEntityRepository.findById(userId)
         .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
 
-    user.setNickname(request.getNickname());
-    user.setName(request.getName());
-    user.setAbout(request.getAbout());
-    user.setProfileImage(request.getProfileImage());
+    // 변경사항 존재할 경우 업데이트
+    if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
+      user.setNickname(request.getNickname());
+    }
+    if (request.getName() != null && !request.getName().equals(user.getName())) {
+      user.setName(request.getName());
+    }
+    if (request.getAbout() != null) {
+      if (!request.getAbout().equals(user.getAbout())) {
+        user.setAbout(request.getAbout());
+      }
+    } else {
+      // 한 줄 소개의 경우 값이 없으면 기본값(빈 문자열)으로 설정
+      user.setAbout("");
+    }
 
-    // 수정된 데이터 저장
-    userEntityRepository.save(user);
-
-    return UserEditDTO.Response.builder()
+    return UserDTO.UserEditDTO.builder()
         .nickname(user.getNickname())
         .name(user.getName())
-        .about(user.getAbout())
-        .profileImage(user.getProfileImage())
+        .about(user.getAbout() != null ? user.getAbout() : "")
         .build();
   }
 

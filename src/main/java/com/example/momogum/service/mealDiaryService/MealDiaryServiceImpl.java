@@ -30,7 +30,8 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final UserEntityRepository userEntityRepository;
     private final MealDiaryKeywordRepository mealDiaryKeywordRepository;
     private final KeywordRepository keywordRepository;
-    private final MealDiaryImageService mealDiaryImageService;
+
+    private final MealDiaryImageUtil mealDiaryImageService;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {

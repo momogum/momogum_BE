@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public interface MealDiaryImageService {
+public interface MealDiaryImageUtil {
 
     List<String> uploadImages(List<MultipartFile> files, String dirName, Long mealDiaryId);
 

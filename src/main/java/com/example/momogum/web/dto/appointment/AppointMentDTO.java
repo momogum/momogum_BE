@@ -1,7 +1,7 @@
 package com.example.momogum.web.dto.appointment;
 
 
-import com.example.momogum.domain.common.enums.appoinment.BasicCards;
+import com.example.momogum.domain.common.appointment.AppointmentCard;
 import com.example.momogum.web.dto.user.UserDTO.UserResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -41,7 +41,7 @@ public class AppointMentDTO {
         Long id;
 
         @Schema(description = "약속 제안입니다. ex) 커피 한 잔 할까요?")
-        BasicCards basicCards;
+        AppointmentCard basicCards;
 
         @Schema(description = "약속 제목입니다.")
         String title;

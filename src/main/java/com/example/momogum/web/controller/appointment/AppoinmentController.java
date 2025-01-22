@@ -1,8 +1,6 @@
 package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.domain.common.enums.appoinment.BasicCards;
-import com.example.momogum.web.dto.appointment.AppointMentDTO;
 import com.example.momogum.web.dto.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

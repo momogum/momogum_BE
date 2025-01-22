@@ -24,8 +24,6 @@ public class MealDiary extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FoodCategory foodCategory;
 
-    private String keyWord;
-
     private String location;
 
     @Lob

@@ -53,15 +53,9 @@ public class StoryController {
      * */
     @Operation(summary = "개별 스토리 조회 API")
     @GetMapping("/storyId/{storyId}")
-    public ApiResponse<MealDairiesDTO.GetStoryResponseDTO> getOne(@PathVariable Long storyId) {
+    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> getOne(@PathVariable Long storyId) {
 
-        return ApiResponse.onSuccess(MealDairiesDTO.GetStoryResponseDTO.builder()
-                .score(1)
-                .foodCategory("temp")
-                .keyword("temp")
-                .location("temp")
-                .review("temp")
-                .imagePath("temp")
+        return ApiResponse.onSuccess(MealDairiesDTO.GetMealDiaryResponseDTO.builder()
                 .build());
     }
 

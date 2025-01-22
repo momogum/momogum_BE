@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MealDiaryService {
     MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request, List<MultipartFile> files);
+
+    MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId);
 }

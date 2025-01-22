@@ -3,10 +3,12 @@ package com.example.momogum.domain;
 import com.example.momogum.domain.common.BaseEntity;
 import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
-import com.example.momogum.domain.common.enums.KeyWord;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,19 +24,12 @@ public class MealDiary extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FoodCategory foodCategory;
 
-    @Enumerated(EnumType.STRING)
-    private KeyWord keyWord;
+    private String keyWord;
 
     private String location;
 
     @Lob
     private String description;
-
-    @URL
-    private String imageUrl;
-
-    @URL
-    private String photoUrl;
 
     @Enumerated(EnumType.STRING)
     private IsRevisit isRevisit;
@@ -49,6 +44,11 @@ public class MealDiary extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToMany(mappedBy = "mealDiary")
+    private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
+
+
 
 
 }

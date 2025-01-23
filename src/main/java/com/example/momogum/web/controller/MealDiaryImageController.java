@@ -1,10 +1,9 @@
 package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.MealDiaryImageService;
+import com.example.momogum.service.mealDiaryService.MealDiaryImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,19 +22,6 @@ public class MealDiaryImageController {
 
 
     private final MealDiaryImageService mealDiaryImageService;
-
-
-    //이미지 파일들 s3에 저장 후 테이블 추가
-    @Operation(summary = "이미지 저장 API", description = "저장해야하는 이미지 파일과 밥일기ID를 넣어주세요")
-    @PostMapping(value = "/mealDiaryId/{mealDairyId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ApiResponse<List<String>> addImages(@RequestPart List<MultipartFile> files,
-                                               @PathVariable Long mealDairyId) {
-
-        String dirName = "meal_diary_images";
-        List<String> result = mealDiaryImageService.uploadImages(files, dirName, mealDairyId);
-
-        return ApiResponse.onSuccess(result);
-    }
 
     // 이미지 삭제
     @Operation(summary = "이미지 삭제 API", description = "삭제해야하는 밥일기ID를 넣어주세요")

@@ -24,7 +24,7 @@ public class MealDiaryController {
     @Operation(
             summary = "밥일기 생성 API",
             description = "사진 넣으실때 반드시 **키 이름을 value** 에 맞춰주세요. <br>" +
-                    "또한 사진이 아닌 정보를 입력할때는 반드시 **Content-Type: application/json** 으로 설정해주셔야 정상적으로 작동합니다"
+                    "또한 사진이 아닌 request 정보를 입력할때는 반드시 **Content-Type: application/json** 으로 설정해주셔야 정상적으로 작동합니다"
     )
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MealDairiesDTO.CreateStoryResponseDTO> create(

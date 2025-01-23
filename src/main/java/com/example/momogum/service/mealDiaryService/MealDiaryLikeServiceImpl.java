@@ -10,9 +10,13 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryLikesRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.web.dto.mealDiary.MealDiaryLikeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +47,32 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
             mealDiaryLikesRepository.save(newMealDiaryLikes);
         }
     }
+
+    @Override
+    public List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO> get(Long mealDiaryId){
+
+        List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO> result = new ArrayList<>();
+        MealDiary findMealDiary = findMealDiary(mealDiaryId);
+
+        List<MealDiaryLikes> byMealDiary = mealDiaryLikesRepository.findByMealDiary(findMealDiary);
+
+        for (MealDiaryLikes mealDiaryLikes : byMealDiary) {
+
+            UserEntity userEntity = mealDiaryLikes.getUserEntity();
+
+            result.add(
+                    MealDiaryLikeDTO.MealDiaryLikeResponseDTO.builder()
+                            .userProfileImage(userEntity.getProfileImage())
+                            .nickname(userEntity.getNickname())
+                            .name(userEntity.getName())
+                            .build());
+        }
+
+        return result;
+
+    }
+
+
 
 
     // 회원 검색 메서드

@@ -1,5 +1,6 @@
-package com.example.momogum.domain;
+package com.example.momogum.domain.common.appointment;
 
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,5 +41,5 @@ public class AppointmentManager extends BaseEntity {
     // 약속 생성자 Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private UserEntity userEntity;
 }

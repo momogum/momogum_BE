@@ -3,13 +3,13 @@ package com.example.momogum.web.controller.mealDiary;
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.mealDiaryService.MealDiaryLikeService;
 import com.example.momogum.service.mealDiaryService.MealDiaryLikeServiceImpl;
+import com.example.momogum.web.dto.mealDiary.MealDiaryLikeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/meal-diaries/likes")
@@ -34,4 +34,13 @@ public class MealDiaryLikeController {
     }
 
     // 좋아요하는 회원 조회 API
+    @Operation(summary = "좋아요 회원 조회 API")
+    @GetMapping("")
+    public ApiResponse<List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO>> get(
+            @RequestParam Long mealDiaryId
+    ){
+
+        List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO> result = mealDiaryLikeService.get(mealDiaryId);
+        return ApiResponse.onSuccess(result);
+    }
 }

@@ -4,6 +4,7 @@ import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryCommentConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryKeywordConverter;
 import com.example.momogum.domain.*;
@@ -73,11 +74,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         List<MealDiaryComments> byMealDiaryId = mealDiaryCommentsRepository.findByMealDiaryId(mealDiaryId);
 
         List<MealDiaryCommentReadDTO.MealDiaryReadResponseDTO> comments = byMealDiaryId.stream()
-                .map(comment -> MealDiaryCommentReadDTO.MealDiaryReadResponseDTO.builder()
-                        .userProfileImagePath(comment.getUser().getProfileImage())
-                        .nickname(comment.getUser().getNickname())
-                        .content(comment.getContent())
-                        .build())
+                .map(MealDiaryCommentConverter::toMealDiaryCommentReadDTO)
                 .toList();
 
         return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments);

@@ -45,12 +45,9 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
     public MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request){
 
         UserEntity findUser = findUser(request.getUserId());
-
-        MealDiaryComments byId = mealDiaryCommentsRepository.findById(request.getMealDiaryCommentId())
-                .orElseThrow(()->new MealDiaryCommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+        MealDiaryComments byId = findComment(request.getMealDiaryCommentId());
 
         commentValid(findUser, byId);
-
         byId.updateContent(request.getComment());
 
         MealDiaryComments updateComment = mealDiaryCommentsRepository.save(byId);
@@ -64,6 +61,10 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
 
 
+    private MealDiaryComments findComment(Long mealDiaryCommentId) {
+        return mealDiaryCommentsRepository.findById(mealDiaryCommentId)
+                .orElseThrow(() -> new MealDiaryCommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+    }
 
 
     private static void commentValid(UserEntity findUser, MealDiaryComments byId) {

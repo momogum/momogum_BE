@@ -10,8 +10,12 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -36,6 +40,18 @@ public class MealDiaryBookmarkServiceImpl implements MealDiaryBookmarkService {
             MealDiaryBookmark newMealDiaryBookmark = MealDiaryBookmarkConverter.toMealDiaryBookmark(findUser,findMealDiary);
             mealDiaryBookmarkRepository.save(newMealDiaryBookmark);
         }
+    }
+
+    @Override
+    public List<MealDairiesDTO.GetAllMealDiaryResponseDTO> get(Long userId){
+
+        UserEntity user = findUser(userId);
+        List<MealDiaryBookmark> byUserEntity = mealDiaryBookmarkRepository.findByUserEntity(user);
+
+        return byUserEntity.stream()
+                .map(MealDiaryBookmark::getMealDiary)
+                .map(MealDiaryBookmarkConverter::toAllMealDiaryResponseDTO)
+                .collect(Collectors.toList());
     }
 
 

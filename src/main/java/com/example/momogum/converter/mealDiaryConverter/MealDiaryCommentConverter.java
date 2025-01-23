@@ -3,7 +3,6 @@ package com.example.momogum.converter.mealDiaryConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryComments;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDTO;
 
 public class MealDiaryCommentConverter {
 

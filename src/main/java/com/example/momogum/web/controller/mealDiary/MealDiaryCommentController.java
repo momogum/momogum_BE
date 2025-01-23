@@ -2,14 +2,12 @@ package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.mealDiaryService.MealDiaryCommentService;
-import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentCreateDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/meal-diaries/comments")
@@ -22,15 +20,24 @@ public class MealDiaryCommentController {
     // 댓글 생성
     @Operation(summary = "밥일기 댓글 생성 API")
     @PostMapping("")
-    public ApiResponse<MealDiaryCommentDTO.MealDiaryCommentResponseDTO> create(
-            @RequestBody MealDiaryCommentDTO.MealDiaryCommentRequestDTO request){
+    public ApiResponse<MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO> create(
+            @RequestBody MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request){
 
-        MealDiaryCommentDTO.MealDiaryCommentResponseDTO result = mealDiaryCommentService.create(request);
+        MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO result = mealDiaryCommentService.create(request);
 
         return ApiResponse.onSuccess(result);
     }
 
     // 댓글 수정
+    @Operation(summary = "밥일기 댓글 수정 API")
+    @PatchMapping("/mealDiaryCommentId/{mealDiaryCommentId}")
+    public ApiResponse<MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO> update(
+            @RequestBody MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request){
+
+        MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO result = mealDiaryCommentService.update(request);
+
+        return ApiResponse.onSuccess(result);
+    }
 
     // 댓글 삭제
 

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class MealDiaryCommentDTO {
+public class MealDiaryCommentCreateDTO {
 
     @Getter
     @Builder

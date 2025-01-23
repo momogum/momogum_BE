@@ -3,7 +3,7 @@ package com.example.momogum.service.mealDiaryService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
-import com.example.momogum.converter.MealDiaryBookmarkConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryBookmarkConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryBookmark;
 import com.example.momogum.domain.UserEntity;

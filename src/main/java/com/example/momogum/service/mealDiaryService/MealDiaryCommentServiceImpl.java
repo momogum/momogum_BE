@@ -3,6 +3,7 @@ package com.example.momogum.service.mealDiaryService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryCommentConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryComments;
 import com.example.momogum.domain.UserEntity;
@@ -29,12 +30,7 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
         UserEntity user = findUser(request.getUserId());
-
-        MealDiaryComments newComment = MealDiaryComments.builder()
-                .content(request.getComment())
-                .mealDiary(mealDiary)
-                .user(user)
-                .build();
+        MealDiaryComments newComment = MealDiaryCommentConverter.toMealDiaryComments(request.getComment(), mealDiary,user);
 
         MealDiaryComments saveComment = mealDiaryCommentsRepository.save(newComment);
 

@@ -38,8 +38,9 @@ public class MealDiaryController {
 
     @Operation(summary = "단일 밥일기 조회 API")
     @GetMapping("")
-    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId){
-        MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId);
+    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId,
+                                                                   @RequestParam Long userId){
+        MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId,userId);
 
         return ApiResponse.onSuccess(getMealDiaryResponseDTO);
     }

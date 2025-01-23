@@ -35,7 +35,8 @@ public class MealDiaryConverter {
 
     public static MealDairiesDTO.GetMealDiaryResponseDTO toGetMealDiaryResponseDTO(MealDiary mealDiary,
                                                                                    List<String> list,
-                                                                                   List<String> mealDiaryImages){
+                                                                                   List<String> mealDiaryImages,
+                                                                                   boolean isLike){
 
         return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
                 .userProfileImageLink(mealDiary.getUserEntity().getProfileImage())
@@ -51,6 +52,7 @@ public class MealDiaryConverter {
                 .keywords(list)
                 .review(mealDiary.getDescription())
                 .isRevisit(mealDiary.getIsRevisit())
+                .isLike(isLike)
                 .build();
     }
 

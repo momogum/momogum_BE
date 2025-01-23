@@ -7,11 +7,13 @@ import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.MealDiaryConverter;
 import com.example.momogum.converter.MealDiaryKeywordConverter;
 import com.example.momogum.domain.*;
+import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
 import com.example.momogum.repository.mealDiaryRepo.KeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
+import com.example.momogum.repository.mealDiaryRepo.MealDiaryLikesRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.web.dto.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +32,11 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final UserEntityRepository userEntityRepository;
     private final MealDiaryKeywordRepository mealDiaryKeywordRepository;
     private final KeywordRepository keywordRepository;
-    private final MealDiaryImageService mealDiaryImageService;
+
+    private final MealDiaryImageUtil mealDiaryImageUtil;
+
+    private final MealDiaryLikesRepository mealDiaryLikesRepository;
+    private final MealDiaryBookmarkRepository mealDiaryBookmarkRepository;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -41,7 +47,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         MealDiary newMealDiary = mealDiaryRepository.save(mealDiary);
 
         String dirName = "meal_diary_images";
-        mealDiaryImageService.uploadImages(files,dirName,newMealDiary.getId());
+        mealDiaryImageUtil.uploadImages(files,dirName,newMealDiary.getId());
         extractedKeyword(request, newMealDiary);
 
 
@@ -49,13 +55,18 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     }
 
     @Override
-    public MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId){
+    public MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId, Long userId){
 
-        List<String> mealDiaryImages = mealDiaryImageService.findImagesByMealId(mealDiaryId);
+        List<String> mealDiaryImages = mealDiaryImageUtil.findImagesByMealId(mealDiaryId);
         MealDiary mealDiary = findMealDiary(mealDiaryId);
         List<String> list = getKeywords(mealDiary);
 
-        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages);
+        UserEntity user = findUser(userId);
+
+        boolean diaryLikeStatus = mealDiaryLikesRepository.existsByUserEntityAndMealDiary(user, mealDiary);
+        boolean diaryBookmarkStatus = mealDiaryBookmarkRepository.existsByUserEntityAndMealDiary(user, mealDiary);
+
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus);
     }
 
     @Override
@@ -78,7 +89,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         MealDiary mealDiary = findMealDiary(mealDiaryId);
         valid(userId,mealDiary);
 
-        mealDiaryImageService.deleteImage(mealDiaryId);
+        mealDiaryImageUtil.deleteImage(mealDiaryId);
         mealDiaryRepository.delete(mealDiary);
     }
 

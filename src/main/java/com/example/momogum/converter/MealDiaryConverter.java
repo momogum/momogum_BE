@@ -1,10 +1,9 @@
 package com.example.momogum.converter;
 
-import com.example.momogum.domain.Keyword;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.web.dto.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 
 import java.util.List;
 
@@ -36,7 +35,9 @@ public class MealDiaryConverter {
 
     public static MealDairiesDTO.GetMealDiaryResponseDTO toGetMealDiaryResponseDTO(MealDiary mealDiary,
                                                                                    List<String> list,
-                                                                                   List<String> mealDiaryImages){
+                                                                                   List<String> mealDiaryImages,
+                                                                                   boolean isLike,
+                                                                                   boolean isBookmarked){
 
         return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
                 .userProfileImageLink(mealDiary.getUserEntity().getProfileImage())
@@ -45,13 +46,12 @@ public class MealDiaryConverter {
                 .mealDiaryImageLinks(mealDiaryImages)
                 .mealDiaryLikeCount(mealDiary.getLikesCount())
                 .mealDiaryCommentCount(mealDiary.getCommentCount())
-
-                // 추후 수정 FIXME
-                .isMealDairyBookmark(true)
+                .isMealDairyBookmark(isBookmarked)
                 .location(mealDiary.getLocation())
                 .keywords(list)
                 .review(mealDiary.getDescription())
                 .isRevisit(mealDiary.getIsRevisit())
+                .isLike(isLike)
                 .build();
     }
 

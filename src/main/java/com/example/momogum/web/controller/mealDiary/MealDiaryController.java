@@ -1,17 +1,11 @@
-package com.example.momogum.web.controller;
+package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.mealDiaryService.MealDiaryImageService;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
-import com.example.momogum.web.dto.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Description;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +24,7 @@ public class MealDiaryController {
     @Operation(
             summary = "밥일기 생성 API",
             description = "사진 넣으실때 반드시 **키 이름을 value** 에 맞춰주세요. <br>" +
-                    "또한 사진이 아닌 정보를 입력할때는 반드시 **Content-Type: application/json** 으로 설정해주셔야 정상적으로 작동합니다"
+                    "또한 사진이 아닌 request 정보를 입력할때는 반드시 **Content-Type: application/json** 으로 설정해주셔야 정상적으로 작동합니다"
     )
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MealDairiesDTO.CreateStoryResponseDTO> create(
@@ -44,8 +38,9 @@ public class MealDiaryController {
 
     @Operation(summary = "단일 밥일기 조회 API")
     @GetMapping("")
-    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId){
-        MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId);
+    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId,
+                                                                   @RequestParam Long userId){
+        MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId,userId);
 
         return ApiResponse.onSuccess(getMealDiaryResponseDTO);
     }

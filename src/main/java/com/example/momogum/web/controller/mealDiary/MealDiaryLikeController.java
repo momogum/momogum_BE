@@ -34,7 +34,7 @@ public class MealDiaryLikeController {
     }
 
     // 좋아요하는 회원 조회 API
-    @Operation(summary = "좋아요 회원 조회 API")
+    @Operation(summary = "좋아요 회원 조회 API", description = "좋아요를 등록한 회원을 조회합니다")
     @GetMapping("")
     public ApiResponse<List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO>> get(
             @RequestParam Long mealDiaryId

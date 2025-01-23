@@ -12,6 +12,7 @@ import com.example.momogum.repository.mealDiaryCommentsRepo.MealDiaryCommentsRep
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentCreateDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDeleteDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
         UserEntity findUser = findUser(request.getUserId());
         MealDiaryComments byId = findComment(request.getMealDiaryCommentId());
 
-        commentValid(findUser, byId);
+        userValid(findUser, byId);
         byId.updateContent(request.getComment());
 
         MealDiaryComments updateComment = mealDiaryCommentsRepository.save(byId);
@@ -55,6 +56,18 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
         return MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO.builder()
                 .mealDiaryCommentId(updateComment.getId())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void delete(MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request){
+
+        MealDiaryComments comment = findComment(request.getMealDiaryCommentId());
+        UserEntity user = findUser(request.getUserId());
+
+        userValid(user, comment);
+
+        mealDiaryCommentsRepository.delete(comment);
     }
 
 
@@ -67,7 +80,8 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
     }
 
 
-    private static void commentValid(UserEntity findUser, MealDiaryComments byId) {
+    @Transactional
+    protected void userValid(UserEntity findUser, MealDiaryComments byId) {
         if (!findUser.getId().equals(byId.getUser().getId())){
             throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
         }

@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,31 +59,24 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     }
 
     @Override
-    public List<MealDairiesDTO.GetAllMealDiaryResponseDTO> getAll(Long userId){
-
+    public List<MealDairiesDTO.GetAllMealDiaryResponseDTO> getAll(Long userId) {
         UserEntity user = findUser(userId);
-        List<MealDairiesDTO.GetAllMealDiaryResponseDTO> result = new ArrayList<>();
 
-        List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(user);
-
-        byUserEntity.stream()
-                .forEach(mealDiary -> {
+        return mealDiaryRepository.findByUserEntity(user).stream()
+                .map(mealDiary -> {
                     MealDiaryImage image = mealDiary.getMealDiaryImages().stream().findFirst()
-                            .orElseThrow(()->new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND));
-
-                    result.add(MealDiaryConverter.toGetAllMealDiaryResponseDTO(image));
-                });
-
-        return result;
+                            .orElseThrow(() -> new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND));
+                    return MealDiaryConverter.toGetAllMealDiaryResponseDTO(image);
+                })
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public void delete(Long userId, Long mealDiaryId) throws FileNotFoundException {
 
-        MealDiary findMealDiary = findMealDiary(mealDiaryId);
-        authenticateUser(userId,findMealDiary);
-
         MealDiary mealDiary = findMealDiary(mealDiaryId);
+        valid(userId,mealDiary);
 
         mealDiaryImageService.deleteImage(mealDiaryId);
         mealDiaryRepository.delete(mealDiary);
@@ -96,7 +89,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     @Transactional
-    protected void authenticateUser(Long userId, MealDiary mealDiary) {
+    protected void valid(Long userId, MealDiary mealDiary) {
 
         UserEntity user = findUser(userId);
 
@@ -110,14 +103,13 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private static List<String> getKeywords(MealDiary mealDiary) {
         List<MealDiaryKeyword> mealDiaryKeywords = mealDiary.getMealDiaryKeywords();
 
-        List<Keyword> keywords = mealDiaryKeywords.stream()
+        List<Keyword> keywordsEntities = mealDiaryKeywords.stream()
                 .map(MealDiaryKeyword::getKeyword)
                 .toList();
 
-        List<String> list = keywords.stream()
+        return keywordsEntities.stream()
                 .map(Keyword::getKeyword)
                 .toList();
-        return list;
     }
 
 

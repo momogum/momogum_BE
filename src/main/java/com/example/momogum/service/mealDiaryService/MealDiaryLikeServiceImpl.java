@@ -3,7 +3,7 @@ package com.example.momogum.service.mealDiaryService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
-import com.example.momogum.converter.MealDiaryLikeConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryLikeConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryLikes;
 import com.example.momogum.domain.UserEntity;
@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,4 +1,4 @@
-package com.example.momogum.converter;
+package com.example.momogum.converter.mealDiaryConverter;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
@@ -6,10 +6,7 @@ import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryBookmark;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.web.dto.MealDiaryDTO;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
-
-import java.util.Optional;
 
 public class MealDiaryBookmarkConverter {
 

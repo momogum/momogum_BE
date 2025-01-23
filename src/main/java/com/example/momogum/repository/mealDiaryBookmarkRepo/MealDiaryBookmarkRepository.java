@@ -11,4 +11,6 @@ public interface MealDiaryBookmarkRepository extends JpaRepository<MealDiaryBook
     Optional<MealDiaryBookmark> findByUserEntityAndMealDiary(UserEntity findUser, MealDiary findMealDiary);
 
     List<MealDiaryBookmark> findByUserEntity(UserEntity findUser);
+
+    boolean existsByUserEntityAndMealDiary(UserEntity userEntity, MealDiary mealDiary);
 }

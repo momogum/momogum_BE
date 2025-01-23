@@ -36,7 +36,8 @@ public class MealDiaryConverter {
     public static MealDairiesDTO.GetMealDiaryResponseDTO toGetMealDiaryResponseDTO(MealDiary mealDiary,
                                                                                    List<String> list,
                                                                                    List<String> mealDiaryImages,
-                                                                                   boolean isLike){
+                                                                                   boolean isLike,
+                                                                                   boolean isBookmarked){
 
         return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
                 .userProfileImageLink(mealDiary.getUserEntity().getProfileImage())
@@ -45,9 +46,7 @@ public class MealDiaryConverter {
                 .mealDiaryImageLinks(mealDiaryImages)
                 .mealDiaryLikeCount(mealDiary.getLikesCount())
                 .mealDiaryCommentCount(mealDiary.getCommentCount())
-
-                // 추후 수정 FIXME
-                .isMealDairyBookmark(true)
+                .isMealDairyBookmark(isBookmarked)
                 .location(mealDiary.getLocation())
                 .keywords(list)
                 .review(mealDiary.getDescription())

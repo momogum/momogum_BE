@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MealDiaryLikesRepository extends JpaRepository<MealDiaryLikes,Long> {
+
+    boolean existsByUserEntityAndMealDiary(UserEntity userEntity, MealDiary mealDiary);
+
     Optional<MealDiaryLikes> findByUserEntityAndMealDiary(UserEntity findUser, MealDiary findMealDiary);
 
     List<MealDiaryLikes> findByMealDiary(MealDiary mealDiary);

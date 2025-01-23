@@ -111,6 +111,9 @@ public class MealDairiesDTO {
         @Schema(description = "재방문 여부 입니다")
         IsRevisit isRevisit;
 
+        @Schema(description = "사용자가 게시글에 좋아요를 누른 상태여부를 반환하는 필드입니다")
+        boolean isLike;
+
     }
 
 

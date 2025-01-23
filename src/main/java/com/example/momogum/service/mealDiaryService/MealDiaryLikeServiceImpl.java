@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +41,6 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
             findMealDiary.decreaseLikeCount(); // 좋아요 수 감소
             mealDiaryLikesRepository.delete(mealDiaryLikes); // 좋아요 삭제
         } else {
-
             MealDiaryLikes newMealDiaryLikes = MealDiaryLikeConverter.toMealDiaryLikes(findUser,findMealDiary);
 
             findMealDiary.increaseLikeCount();
@@ -51,25 +51,13 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
     @Override
     public List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO> get(Long mealDiaryId){
 
-        List<MealDiaryLikeDTO.MealDiaryLikeResponseDTO> result = new ArrayList<>();
         MealDiary findMealDiary = findMealDiary(mealDiaryId);
-
         List<MealDiaryLikes> byMealDiary = mealDiaryLikesRepository.findByMealDiary(findMealDiary);
 
-        for (MealDiaryLikes mealDiaryLikes : byMealDiary) {
-
-            UserEntity userEntity = mealDiaryLikes.getUserEntity();
-
-            result.add(
-                    MealDiaryLikeDTO.MealDiaryLikeResponseDTO.builder()
-                            .userProfileImage(userEntity.getProfileImage())
-                            .nickname(userEntity.getNickname())
-                            .name(userEntity.getName())
-                            .build());
-        }
-
-        return result;
-
+        return byMealDiary.stream()
+                .map(MealDiaryLikes::getUserEntity)
+                .map(MealDiaryLikeConverter::toMealDiaryLikeResponseDTO)
+                .collect(Collectors.toList());
     }
 
 

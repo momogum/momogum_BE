@@ -3,6 +3,7 @@ package com.example.momogum.converter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryLikes;
 import com.example.momogum.domain.UserEntity;
+import com.example.momogum.web.dto.mealDiary.MealDiaryLikeDTO;
 
 public class MealDiaryLikeConverter {
 
@@ -11,6 +12,14 @@ public class MealDiaryLikeConverter {
         return MealDiaryLikes.builder()
                 .userEntity(userEntity)
                 .mealDiary(mealDiary)
+                .build();
+    }
+
+    public static MealDiaryLikeDTO.MealDiaryLikeResponseDTO toMealDiaryLikeResponseDTO(UserEntity userEntity){
+        return MealDiaryLikeDTO.MealDiaryLikeResponseDTO.builder()
+                .userProfileImage(userEntity.getProfileImage())
+                .nickname(userEntity.getNickname())
+                .name(userEntity.getName())
                 .build();
     }
 }

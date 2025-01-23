@@ -7,6 +7,7 @@ import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.MealDiaryConverter;
 import com.example.momogum.converter.MealDiaryKeywordConverter;
 import com.example.momogum.domain.*;
+import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
 import com.example.momogum.repository.mealDiaryRepo.KeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryLikesRepository;
@@ -33,7 +34,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final KeywordRepository keywordRepository;
 
     private final MealDiaryImageUtil mealDiaryImageUtil;
+
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
+    private final MealDiaryBookmarkRepository mealDiaryBookmarkRepository;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -61,8 +64,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         UserEntity user = findUser(userId);
 
         boolean diaryLikeStatus = mealDiaryLikesRepository.existsByUserEntityAndMealDiary(user, mealDiary);
+        boolean diaryBookmarkStatus = mealDiaryBookmarkRepository.existsByUserEntityAndMealDiary(user, mealDiary);
 
-        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus);
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus);
     }
 
     @Override

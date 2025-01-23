@@ -22,7 +22,7 @@ public class MealDiaryLikeController {
 
     // 좋아요 토글형식으로 API 구현
     @Operation(summary = "밥일기 좋아요 토글 API")
-    @GetMapping("/userId/{userId}/mealDiaryId/{mealDiaryId}")
+    @PostMapping("/userId/{userId}/mealDiaryId/{mealDiaryId}")
     public ApiResponse<String> toggle(
             @PathVariable Long userId,
             @PathVariable Long mealDiaryId

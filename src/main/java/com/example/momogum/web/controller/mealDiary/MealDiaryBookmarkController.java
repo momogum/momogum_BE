@@ -17,7 +17,7 @@ public class MealDiaryBookmarkController {
 
     // 북마크 토글
     @Operation(summary = "밥일기 북마크 토글 API")
-    @GetMapping("/userId/{userId}/mealDiaryId/{mealDiaryId}")
+    @PostMapping("/userId/{userId}/mealDiaryId/{mealDiaryId}")
     public ApiResponse<String> toggle(@PathVariable Long userId,
                                       @PathVariable Long mealDiaryId) {
 
@@ -27,4 +27,5 @@ public class MealDiaryBookmarkController {
     }
 
     // 북마크한 게시글 조회하는 API
+
 }

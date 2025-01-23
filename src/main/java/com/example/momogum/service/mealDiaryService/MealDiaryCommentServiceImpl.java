@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.MealDiaryCommentHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryCommentConverter;
@@ -10,7 +11,8 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.mealDiaryCommentsRepo.MealDiaryCommentsRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentCreateDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,7 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
 
     @Override
-    public MealDiaryCommentDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentDTO.MealDiaryCommentRequestDTO request){
+    public MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request){
 
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
         UserEntity user = findUser(request.getUserId());
@@ -34,12 +36,41 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
         MealDiaryComments saveComment = mealDiaryCommentsRepository.save(newComment);
 
-        return MealDiaryCommentDTO.MealDiaryCommentResponseDTO.builder()
+        return MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO.builder()
                 .mealDiaryCommentId(saveComment.getId())
                 .build();
     }
 
+    @Override
+    public MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request){
 
+        UserEntity findUser = findUser(request.getUserId());
+
+        MealDiaryComments byId = mealDiaryCommentsRepository.findById(request.getMealDiaryCommentId())
+                .orElseThrow(()->new MealDiaryCommentHandler(ErrorStatus.COMMENT_NOT_FOUND));
+
+        commentValid(findUser, byId);
+
+        byId.updateContent(request.getComment());
+
+        MealDiaryComments updateComment = mealDiaryCommentsRepository.save(byId);
+
+        return MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO.builder()
+                .mealDiaryCommentId(updateComment.getId())
+                .build();
+    }
+
+
+
+
+
+
+
+    private static void commentValid(UserEntity findUser, MealDiaryComments byId) {
+        if (!findUser.getId().equals(byId.getUser().getId())){
+            throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
+        }
+    }
 
     // 회원 검색 메서드
     private UserEntity findUser(Long userId) {

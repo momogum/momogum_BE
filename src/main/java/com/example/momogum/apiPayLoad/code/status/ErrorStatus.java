@@ -19,6 +19,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_AUTHENTICATE_FAILED(HttpStatus.BAD_REQUEST,"MEMBER4002","회원인증에 실패하였습니다"),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER4001","회원을 찾을 수 없습니다"),
 
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"COMMENT4001","댓글을 찾을 수 없습니다"),
+
     MEALDIARY_KEYWORD_MAX(HttpStatus.BAD_REQUEST,"MEALDIARY4002","밥일기의 키워드는 최대 다섯개만 입력 할 수 있습니다"),
     MEALDIARY_NOT_FOUND(HttpStatus.NOT_FOUND,"MEALDIARY4001","밥일기를 찾을 수 없습니다"),
 

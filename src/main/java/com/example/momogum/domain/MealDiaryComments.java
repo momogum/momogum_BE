@@ -25,4 +25,8 @@ public class MealDiaryComments extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    public void updateContent(String newContent){
+        this.content = newContent;
+    }
 }

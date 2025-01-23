@@ -40,10 +40,14 @@ class AppointmentCardsControllerTest {
         mockMvc.perform(get("/Appointment/card/basic"))
                 .andExpect(status().isOk())
                 .andExpect( MockMvcResultMatchers.content().json("""
-                    [
-                        {"type":"basic", "imageUrl":"https://example-bucket.s3.amazonaws.com/basic/image1.jpg"},
-                        {"type":"basic", "imageUrl":"https://example-bucket.s3.amazonaws.com/basic/image2.jpg"}
-                    ]
+                    {
+                        "success": true,
+                        "message": "요청이 성공적으로 처리되었습니다.",
+                        "data": [
+                            {"type":"basic", "imageUrl":"https://example-bucket.s3.amazonaws.com/basic/image1.jpg"},
+                            {"type":"basic", "imageUrl":"https://example-bucket.s3.amazonaws.com/basic/image2.jpg"}
+                        ]
+                    }
                 """));
     }
 
@@ -62,10 +66,14 @@ class AppointmentCardsControllerTest {
         mockMvc.perform(get("/Appointment/card/fun"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json("""
-                    [
-                        {"type":"fun", "imageUrl":"https://example-bucket.s3.amazonaws.com/fun/image1.jpg"},
-                        {"type":"fun", "imageUrl":"https://example-bucket.s3.amazonaws.com/fun/image2.jpg"}
-                    ]
+                    {
+                        "success": true,
+                        "message": "요청이 성공적으로 처리되었습니다.",
+                        "data": [
+                            {"type":"fun", "imageUrl":"https://example-bucket.s3.amazonaws.com/fun/image1.jpg"},
+                            {"type":"fun", "imageUrl":"https://example-bucket.s3.amazonaws.com/fun/image2.jpg"}
+                        ]
+                    }
                 """));
     }
 

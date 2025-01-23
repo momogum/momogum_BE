@@ -1,5 +1,6 @@
 package com.example.momogum.web.controller.appointment;
 
+import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.appointment.AppointmentCardService;
 import com.example.momogum.web.dto.appointment.AppointMentDTO.AppointmentCardResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +21,18 @@ public class AppointmentCardsController {
      * 기본 카드 반환하는 메서드
      */
     @GetMapping("/card/basic")
-    public List<AppointmentCardResponseDTO> getBasicCards() {
-        return cardService.getBasicCards();
+    public ApiResponse<List<AppointmentCardResponseDTO>> getBasicCards() {
+        List<AppointmentCardResponseDTO> basicCards = cardService.getBasicCards();
+        return ApiResponse.onSuccess(basicCards);
     }
 
     /**
      * 기본 카드 반환하는 메서드
      */
     @GetMapping("/card/fun")
-    public List<AppointmentCardResponseDTO> getFunCards() {
-        return cardService.getFunCards();
+    public ApiResponse<List<AppointmentCardResponseDTO>> getFunCards() {
+        List<AppointmentCardResponseDTO> funCards = cardService.getFunCards();
+        return ApiResponse.onSuccess(funCards);
     }
 
 }

@@ -17,7 +17,6 @@ public class MealDiaryConverter {
                 .location(request.getLocation())
                 .description(request.getDescription())
                 .isRevisit(request.getRevisit())
-                .isReport(false)
                 .likesCount(0)
                 .commentCount(0)
                 .userEntity(byId)

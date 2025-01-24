@@ -67,4 +67,13 @@ public class MealDiaryController {
 
         return ApiResponse.onSuccess("밥일기 삭제되었습니다");
     }
+
+    @Operation(summary = "신고하기 API")
+    @PostMapping("/report")
+    public ApiResponse<Long> report(@RequestParam Long mealDairyId,
+                                    @RequestParam Long userId){
+
+
+
+    }
 }

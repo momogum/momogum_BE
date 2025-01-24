@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class AppointMentDTO {
@@ -37,7 +38,7 @@ public class AppointMentDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateAppointmentNameDTO {
+    public static class AppointmentNameDTO {
 
         @Schema(description = "식사 모임 이름")
         @NotBlank(message = "필수 작성 항목입니다.")
@@ -49,7 +50,7 @@ public class AppointMentDTO {
 
         @Schema(description = "식사 일정")
         @NotBlank(message = "필수 작성 항목입니다.")
-        LocalDate date;
+        LocalDateTime date;
 
         @Schema(description = "식사 모임 위치")
         @NotBlank(message = "필수 작성 항목입니다.")

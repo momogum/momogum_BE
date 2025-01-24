@@ -32,7 +32,7 @@ public class AppointmentInvitation extends BaseEntity {
     // 초대된 약속 Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apm_id")
-    private CreateAppointmentName apm;
+    private AppointmentName apm;
 
     // 초기값 pending 설정을 위해 추가
     @PrePersist

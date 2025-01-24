@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class CreateAppointmentName extends BaseEntity {
+public class AppointmentName extends BaseEntity {
 
     // Column 길이는 따로 지정 해두지 않았습니다.
     // 기술 정의서에서 디테일하게 잡히는 부분이 생기면 추가 해주시면 감사하겠습니다.

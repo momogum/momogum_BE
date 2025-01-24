@@ -25,5 +25,5 @@ public class AppointmentCard extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "apm_id")
-    private CreateAppointmentName createAppointmentName;
+    private AppointmentName appointmentName;
 }

@@ -1,4 +1,4 @@
-package com.example.momogum.converter;
+package com.example.momogum.converter.mealDiaryConverter;
 
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryLikes;

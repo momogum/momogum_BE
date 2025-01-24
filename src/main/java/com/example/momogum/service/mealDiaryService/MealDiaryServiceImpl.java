@@ -4,16 +4,19 @@ import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
-import com.example.momogum.converter.MealDiaryConverter;
-import com.example.momogum.converter.MealDiaryKeywordConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryCommentConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryKeywordConverter;
 import com.example.momogum.domain.*;
 import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
+import com.example.momogum.repository.mealDiaryCommentsRepo.MealDiaryCommentsRepository;
 import com.example.momogum.repository.mealDiaryRepo.KeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryLikesRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentReadDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,8 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
     private final MealDiaryBookmarkRepository mealDiaryBookmarkRepository;
+
+    private final MealDiaryCommentsRepository mealDiaryCommentsRepository;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -66,7 +71,13 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         boolean diaryLikeStatus = mealDiaryLikesRepository.existsByUserEntityAndMealDiary(user, mealDiary);
         boolean diaryBookmarkStatus = mealDiaryBookmarkRepository.existsByUserEntityAndMealDiary(user, mealDiary);
 
-        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus);
+        List<MealDiaryComments> byMealDiaryId = mealDiaryCommentsRepository.findByMealDiaryId(mealDiaryId);
+
+        List<MealDiaryCommentReadDTO.MealDiaryReadResponseDTO> comments = byMealDiaryId.stream()
+                .map(MealDiaryCommentConverter::toMealDiaryCommentReadDTO)
+                .toList();
+
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments);
     }
 
     @Override

@@ -1,9 +1,10 @@
-package com.example.momogum.converter;
+package com.example.momogum.converter.mealDiaryConverter;
 
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentReadDTO;
 
 import java.util.List;
 
@@ -37,7 +38,11 @@ public class MealDiaryConverter {
                                                                                    List<String> list,
                                                                                    List<String> mealDiaryImages,
                                                                                    boolean isLike,
-                                                                                   boolean isBookmarked){
+                                                                                   boolean isBookmarked,
+                                                                                   List<MealDiaryCommentReadDTO.MealDiaryReadResponseDTO> comments){
+
+
+        // 댓글까지 조회 할 수 있도록 DTO에 추가
 
         return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
                 .userProfileImageLink(mealDiary.getUserEntity().getProfileImage())
@@ -52,6 +57,7 @@ public class MealDiaryConverter {
                 .review(mealDiary.getDescription())
                 .isRevisit(mealDiary.getIsRevisit())
                 .isLike(isLike)
+                .comments(comments)
                 .build();
     }
 

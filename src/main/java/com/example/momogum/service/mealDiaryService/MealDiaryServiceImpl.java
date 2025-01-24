@@ -7,6 +7,7 @@ import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryCommentConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryKeywordConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryReportConverter;
 import com.example.momogum.domain.*;
 import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
 import com.example.momogum.repository.mealDiaryCommentsRepo.MealDiaryCommentsRepository;
@@ -109,22 +110,17 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
 
         boolean isReport = mealDiaryReportRepository.existsByUserEntityAndMealDiary(user, mealDiary);
+
         if(isReport){
             throw new MealDiaryHandler(ErrorStatus.MEALDIARY_REPORTED);
         }
 
-        MealDiaryReport newReport = MealDiaryReport.builder()
-                .userEntity(user)
-                .mealDiary(mealDiary)
-                .reportReason(request.getReportReason())
-                .build();
+        MealDiaryReport newReport = MealDiaryReportConverter.toMealDiaryReport(user,mealDiary,request.getReportReason());
 
         mealDiaryReportRepository.save(newReport);
         mealDiary.setReport();
 
-        return MealDiaryReportDTO.MealDiaryReportResponseDTO.builder()
-                .mealDiaryId(mealDiary.getId())
-                .build();
+        return MealDiaryReportConverter.mealDiaryReportResponseDTO(mealDiary);
     }
 
 

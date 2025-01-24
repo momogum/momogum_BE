@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.URL;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor

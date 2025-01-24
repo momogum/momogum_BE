@@ -1,5 +1,4 @@
 package com.example.momogum.service.appointment;
-
 import com.example.momogum.converter.appointment.AppointmentNameConverter;
 import com.example.momogum.domain.appointment.AppointmentName;
 import com.example.momogum.repository.appoinmentRepo.AppointmentNameRepository;
@@ -8,16 +7,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
-
 import static com.example.momogum.web.dto.appointment.AppointMentDTO.*;
 import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class AppointmentNameServiceTest {
 
     @Mock
@@ -42,6 +40,7 @@ class AppointmentNameServiceTest {
                 .build();
 
         AppointmentName appointmentName = AppointmentName.builder()
+                .id(1L)
                 .name("더술 출발")
                 .menu("더술 닭 한마리")
                 .date(LocalDateTime.of(2025, 1, 24, 18, 0))

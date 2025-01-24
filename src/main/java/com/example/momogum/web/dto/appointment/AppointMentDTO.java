@@ -5,6 +5,7 @@ import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.web.dto.user.UserDTO.UserResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,7 +50,7 @@ public class AppointMentDTO {
         String menu;
 
         @Schema(description = "식사 일정")
-        @NotBlank(message = "필수 작성 항목입니다.")
+        @NotNull(message = "필수 작성 항목입니다.")
         LocalDateTime date;
 
         @Schema(description = "식사 모임 위치")

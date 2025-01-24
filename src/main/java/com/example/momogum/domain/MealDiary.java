@@ -34,6 +34,8 @@ public class MealDiary extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsRevisit isRevisit;
 
+    private boolean isReport;
+
     private Integer likesCount;
 
     private Integer commentCount;
@@ -71,6 +73,10 @@ public class MealDiary extends BaseEntity {
 
     public void increaseLikeCount() {
         this.likesCount++;
+    }
+
+    public void setReport(){
+        this.isReport = true;
     }
 
 

@@ -3,6 +3,7 @@ package com.example.momogum.web.controller.mealDiary;
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -70,10 +71,10 @@ public class MealDiaryController {
 
     @Operation(summary = "신고하기 API")
     @PostMapping("/report")
-    public ApiResponse<Long> report(@RequestParam Long mealDairyId,
-                                    @RequestParam Long userId){
+    public ApiResponse<MealDiaryReportDTO.MealDiaryReportResponseDTO> report(@RequestBody MealDiaryReportDTO.MealDiaryReportRequestDTO request){
 
+        MealDiaryReportDTO.MealDiaryReportResponseDTO result = mealDiaryService.report(request);
 
-
+        return ApiResponse.onSuccess(result);
     }
 }

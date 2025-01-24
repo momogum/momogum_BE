@@ -104,6 +104,16 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         mealDiaryRepository.delete(mealDiary);
     }
 
+    @Override
+    public Long report(Long mealDiaryId, Long userId){
+
+        UserEntity user = findUser(userId);
+        MealDiary mealDiary = findMealDiary(mealDiaryId);
+
+
+
+    }
+
 
 
 

@@ -1,4 +1,4 @@
-package com.example.momogum.web.controller.viewMealPlan;
+package com.example.momogum.web.controller.viewMealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.viewMealDiaryService.ViewMealDiaryService;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/mainpage")
 @Tag(name = "메인 페이지 조회 로직")
-public class ViewMealPlanController {
+public class ViewMealDiaryController {
 
     private final ViewMealDiaryService viewMealDiaryService;
 

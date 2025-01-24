@@ -33,7 +33,7 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
     public ViewMealDiaryDTO.ViewMealDiaryResponseListDTO getMealDiaryIsRevisitedByLikesCount(Long userId) {
 
         // "또 올래요" 표시된 밥일기 ID 리스트 가져오기 (좋아요 개수 순)
-        List<Long> isRevisitMealDiaryIds = mealDiaryRepository.findAllByIsRevisit(IsRevisit.REVISIT, userId);
+        List<Long> isRevisitMealDiaryIds = mealDiaryRepository.findAllByIsRevisit(IsRevisit.GOOD, userId);
 
         // 공통 로직 호출
         List<ViewMealDiaryDTO.ViewMealDiaryResponse> responseList =
@@ -89,9 +89,9 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
                         .foodImageURLs(post.getMealDiaryImages().stream()
                                 .map(MealDiaryImage::getImageLink)
                                 .toList())
-                        .userImageURL(post.getUser().getProfileImage())
+                        .userImageURL(post.getUserEntity().getProfileImage())
                         .foodCategory(post.getFoodCategory())
-                        .keyWord(post.getKeyWord())
+//                        .keyWord(post.getMealDiaryKeywords().getKeyWord)
                         .isRevisit(post.getIsRevisit())
                         .build())
                 .toList();

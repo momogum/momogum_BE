@@ -57,7 +57,6 @@ public class MealDiaryController {
 
     }
 
-
     @Operation(summary = "밥일기 삭제 API")
     @DeleteMapping("/mealDiaryId/{mealDiaryId}/userId/{userId}")
     public ApiResponse<String> delete(

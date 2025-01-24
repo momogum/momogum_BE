@@ -32,7 +32,7 @@ public class ViewMealDiaryDTO {
         private FoodCategory foodCategory;
 
         @Schema(description = "음식 이름")
-        private String keyWord;
+        private List<String> keyWord;
 
         @Schema(description = "재방문 의사 표시 (REVISIT 이 재방문)")
         private IsRevisit isRevisit;

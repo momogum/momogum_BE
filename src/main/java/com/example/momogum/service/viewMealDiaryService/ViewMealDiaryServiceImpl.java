@@ -2,7 +2,7 @@ package com.example.momogum.service.viewMealDiaryService;
 
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
-import com.example.momogum.domain.UserEntity;
+
 import com.example.momogum.domain.common.enums.IsRevisit;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.redisRepository.RedisRepository;
@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+
 import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -91,7 +92,9 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
                                 .toList())
                         .userImageURL(post.getUserEntity().getProfileImage())
                         .foodCategory(post.getFoodCategory())
-//                        .keyWord(post.getMealDiaryKeywords().getKeyWord)
+                        .keyWord(post.getMealDiaryKeywords().stream()
+                                .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())
+                                .toList())
                         .isRevisit(post.getIsRevisit())
                         .build())
                 .toList();

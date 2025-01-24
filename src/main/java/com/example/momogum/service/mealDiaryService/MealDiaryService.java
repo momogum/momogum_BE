@@ -17,4 +17,6 @@ public interface MealDiaryService {
     void delete(Long userId, Long mealDiaryId) throws FileNotFoundException;
 
     MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request);
+
+    List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport();
 }

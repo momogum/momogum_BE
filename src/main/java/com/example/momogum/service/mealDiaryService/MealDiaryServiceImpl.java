@@ -123,6 +123,23 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         return MealDiaryReportConverter.mealDiaryReportResponseDTO(mealDiary);
     }
 
+    @Override
+    public List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport(){
+
+        List<MealDiaryReport> allReport = mealDiaryReportRepository.findAll();
+
+        List<Long> mealDiaryIds = allReport.stream()
+                .map(report -> report.getMealDiary().getId()) // MealDiary의 id를 추출
+                .toList(); // 리스트로 변환
+
+        return allReport.stream()
+                .filter(report -> report.getMealDiary() != null) // mealDiary가 null이 아닌 경우만 처리
+                .map(report -> MealDiaryReportDTO.MealDiaryReportResponseDTO.builder()
+                        .mealDiaryId(report.getMealDiary().getId())
+                        .build()) // DTO로 변환
+                .toList(); // 리스트로 변환
+    }
+
 
 
 

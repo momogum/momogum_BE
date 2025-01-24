@@ -76,4 +76,15 @@ public class MealDiaryController {
 
         return ApiResponse.onSuccess(result);
     }
+
+    // 로직만 구현해놓고 기획안 나오는대로 리턴 값 FIXME
+    @Operation(summary = "신고 게시글 조회 API", description = "기획에는 없지만 필요한 기능이라 생각되어 추가했습니다")
+    @GetMapping("/report")
+    public ApiResponse<List<MealDiaryReportDTO.MealDiaryReportResponseDTO>> getReport(){
+
+        List<MealDiaryReportDTO.MealDiaryReportResponseDTO> result = mealDiaryService.getReport();
+
+        return ApiResponse.onSuccess(result);
+
+    }
 }

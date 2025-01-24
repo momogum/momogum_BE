@@ -1,4 +1,4 @@
-package com.example.momogum.domain.common.appointment;
+package com.example.momogum.domain.appointment;
 
 import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.*;
@@ -25,5 +25,5 @@ public class AppointmentCard extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "apm_id")
-    private AppointmentManager appointmentManager;
+    private CreateAppointmentName createAppointmentName;
 }

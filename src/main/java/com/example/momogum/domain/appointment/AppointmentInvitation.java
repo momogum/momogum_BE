@@ -1,4 +1,4 @@
-package com.example.momogum.domain.common.appointment;
+package com.example.momogum.domain.appointment;
 
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.BaseEntity;
@@ -32,7 +32,7 @@ public class AppointmentInvitation extends BaseEntity {
     // 초대된 약속 Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apm_id")
-    private AppointmentManager apm;
+    private CreateAppointmentName apm;
 
     // 초기값 pending 설정을 위해 추가
     @PrePersist

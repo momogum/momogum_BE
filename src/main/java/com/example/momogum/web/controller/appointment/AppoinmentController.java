@@ -1,9 +1,13 @@
 package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.web.dto.user.UserDTO;
+import com.example.momogum.domain.appointment.AppointmentCard;
+import com.example.momogum.service.appointment.CreateAppointmentNameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -15,7 +19,11 @@ import static com.example.momogum.web.dto.user.UserDTO.*;
 @RestController
 @RequestMapping("/Appointment")
 @Tag(name = "약속잡기 관련 API")
+@RequiredArgsConstructor
 public class AppoinmentController {
+
+    private final CreateAppointmentNameService createAppointmentNameService;
+
 
     /**
      * 1. 추가된 사람들 프로필 조회 API
@@ -59,7 +67,24 @@ public class AppoinmentController {
     }
 
     /**
-     * 3. 모임 정보 저장
+     * 3. 약속 식사 모임 이름 정하기
+     */
+    @Operation(summary = "모임 이름 정하기 API",
+            description = "CreateAppointmentNameDTO을 통해 값을 한 번에 입력받습니다.")
+    @PostMapping("/name")
+    public ApiResponse<CreateAppointmentResponseDTO> createAppointmentName(@RequestBody @Valid CreateAppointmentNameDTO request) {
+        Long appointmentNameId = createAppointmentNameService.creatAppointmentName(request);
+        // 성공 응답 반환
+        return ApiResponse.onSuccess(
+                CreateAppointmentResponseDTO.builder()
+                        .appointmentId(appointmentNameId) // 필드명 수정
+                        .build()
+        );
+    }
+
+
+    /**
+     * 4. 모임 정보 저장
      */
     @Operation(summary = "모임 정보 저장 API",
             description = "모임의 세부 정보를 JSON 형식으로 저장합니다.")
@@ -68,12 +93,12 @@ public class AppoinmentController {
         // API 구현 시 수정 예정 FIXME
         return ApiResponse.onSuccess(
                 CreateAppointmentResponseDTO.builder()
-                        .mealPlanId(1L)
+                        .appointmentId(1L)
                         .build());
     }
 
     /**
-     * 4. 모임 정보 조회
+     * 5. 모임 정보 조회
      */
     @Operation(summary = "모임 정보 확인",
             description = "특정 모임의 세부 정보를 반환합니다.")
@@ -84,6 +109,7 @@ public class AppoinmentController {
         return ApiResponse.onSuccess(
                 AppointmentResponseDTO.builder()
                         .id(appointmentId)
+                        .cards(AppointmentCard.builder().build()) //FIXME
                         .title("커피 한 잔 잡쉈어?")
                         .menu("브런치")
                         .date(LocalDate.of(2025, 1, 10))
@@ -91,7 +117,7 @@ public class AppoinmentController {
                         .notes("10시까지 오세요.")
                         .createdAt("2025-01-10T12:00:00")
                         .users(List.of(
-                                UserDTO.UserResponseDTO.builder()
+                                UserResponseDTO.builder()
                                         .id(1L)
                                         .name("머머금")
                                         .nickname("머머")
@@ -102,7 +128,7 @@ public class AppoinmentController {
     }
 
     /**
-     * 5. 모임 삭제
+     * 6. 모임 삭제
      */
     @Operation(summary = "모임 삭제 API",
             description = "특정 모임을 삭제합니다.")

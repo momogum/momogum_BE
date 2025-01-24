@@ -1,9 +1,10 @@
 package com.example.momogum.web.dto.appointment;
 
 
-import com.example.momogum.domain.common.appointment.AppointmentCard;
+import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.web.dto.user.UserDTO.UserResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ public class AppointMentDTO {
 
 
     /**
-     * 약속 생성 DTO
+     * 약속 생성 후 ID 반환 하는 DTO
      */
     @Getter
     @Builder
@@ -25,8 +26,41 @@ public class AppointMentDTO {
     public static class CreateAppointmentResponseDTO {
 
         @Schema(description = "약속잡기 식별 ID 입니다.")
-        Long mealPlanId;
+        Long appointmentId;
     }
+
+    /**
+     *  약속 식사 모임 이름 정하기 DTO
+     *  엔티티 : CreateAppointmentName
+     */
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateAppointmentNameDTO {
+
+        @Schema(description = "식사 모임 이름")
+        @NotBlank(message = "필수 작성 항목입니다.")
+        String name;
+
+        @Schema(description = "식사 메뉴")
+        @NotBlank(message = "필수 작성 항목입니다.")
+        String menu;
+
+        @Schema(description = "식사 일정")
+        @NotBlank(message = "필수 작성 항목입니다.")
+        LocalDate date;
+
+        @Schema(description = "식사 모임 위치")
+        @NotBlank(message = "필수 작성 항목입니다.")
+        String location;
+
+        @Schema(description = "특별한 소식")
+        @NotBlank(message = "필수 작성 항목입니다.")
+        String notes;
+
+    }
+
 
     /**
      * 약속 잡기 DTO
@@ -41,7 +75,7 @@ public class AppointMentDTO {
         Long id;
 
         @Schema(description = "약속 제안입니다. ex) 커피 한 잔 할까요?")
-        AppointmentCard basicCards;
+        AppointmentCard cards;
 
         @Schema(description = "약속 제목입니다.")
         String title;

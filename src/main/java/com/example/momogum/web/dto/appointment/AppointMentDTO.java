@@ -58,7 +58,6 @@ public class AppointMentDTO {
         String location;
 
         @Schema(description = "특별한 소식")
-        @NotBlank(message = "필수 작성 항목입니다.")
         String notes;
 
     }

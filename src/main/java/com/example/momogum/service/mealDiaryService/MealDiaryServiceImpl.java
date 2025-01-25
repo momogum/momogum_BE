@@ -109,11 +109,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         UserEntity user = findUser(request.getUserID());
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
 
-        boolean isReport = mealDiaryReportRepository.existsByUserEntityAndMealDiary(user, mealDiary);
-
-        if(isReport){
-            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_REPORTED);
-        }
+        validMealDiaryExist(user, mealDiary);
 
         MealDiaryReport newReport = MealDiaryReportConverter.toMealDiaryReport(user,mealDiary,request.getReportReason());
 
@@ -128,16 +124,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
         List<MealDiaryReport> allReport = mealDiaryReportRepository.findAll();
 
-        List<Long> mealDiaryIds = allReport.stream()
-                .map(report -> report.getMealDiary().getId()) // MealDiary의 id를 추출
-                .toList(); // 리스트로 변환
-
-        return allReport.stream()
-                .filter(report -> report.getMealDiary() != null) // mealDiary가 null이 아닌 경우만 처리
-                .map(report -> MealDiaryReportDTO.MealDiaryReportResponseDTO.builder()
-                        .mealDiaryId(report.getMealDiary().getId())
-                        .build()) // DTO로 변환
-                .toList(); // 리스트로 변환
+        return MealDiaryReportConverter.toMealDiaryReportResponseDTOList(allReport);
     }
 
 
@@ -153,6 +140,14 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
         if (!user.getId().equals(mealDiary.getUserEntity().getId())) {
             throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
+        }
+    }
+
+    private void validMealDiaryExist(UserEntity user, MealDiary mealDiary) {
+        boolean isReport = mealDiaryReportRepository.existsByUserEntityAndMealDiary(user, mealDiary);
+
+        if(isReport){
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_REPORTED);
         }
     }
 

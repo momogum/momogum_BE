@@ -31,4 +31,8 @@ public class MealDiaryImage {
             this.mealDiary = mealDiary;
         }
     }
+
+    public void removeMealDiary() {
+        this.mealDiary = null;
+    }
 }

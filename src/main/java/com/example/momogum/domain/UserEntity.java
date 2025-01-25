@@ -36,12 +36,16 @@ public class UserEntity extends BaseEntity {
 
     // S3 유저 프로필 이미지
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private UserProfileImage profileImage;
+    private ProfileImage profileImage;
 
-    // 프로필 이미지와 연관관계 명확화
-    public void setProfileImage(UserProfileImage profileImage) {
+    // 프로필 이미지와 연관관계 설정
+    public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
-        profileImage.setUser(this);
+
+        // 순환 호출 방지: 프로필 이미지와 유저가 이미 연결된 경우 처리하지 않음
+        if (profileImage != null && profileImage.getUser() != this) {
+            profileImage.setUser(this);
+        }
     }
 
     // 한줄소개

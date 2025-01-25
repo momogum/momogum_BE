@@ -2,7 +2,9 @@ package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.UserProfileService;
+import com.example.momogum.service.ProfileImageService;
 import com.example.momogum.web.dto.FollowDTO;
+import com.example.momogum.web.dto.user.ProfileImageDTO;
 import com.example.momogum.web.dto.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/UserProfile")
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserProfileController {
 
   private final UserProfileService userProfileService;
+  private final ProfileImageService profileImageService;
   /**
    * 유저 프로필 기능
    *
@@ -78,13 +83,23 @@ public class UserProfileController {
     return ApiResponse.onSuccess(updatedProfile);
   }
 
-}
 
   /**
    * 유저 프로필 이미지 수정 API
    */
 
+  @Operation(summary= "유저 프로필 수정 API", description =  "유저 프로필 이미지를 수정하고 수정된 정보를 반환합니다.")
+  @PutMapping("/{userId}/profileImage")
+  public ApiResponse<ProfileImageDTO.ProfileImageResponseDTO> updateUserProfileImage(
+      @PathVariable Long userId, @RequestPart(required = false) MultipartFile file) {
 
+    // 프로필 이미지 업로드 호출
+    ProfileImageDTO.ProfileImageResponseDTO updatedImage = profileImageService.uploadProfileImage(
+        file, userId);
+
+    return ApiResponse.onSuccess(updatedImage);
+  }
+}
 
 
 //  /**

@@ -19,7 +19,7 @@ public class UserEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     // 전화번호
     private String phoneNumber;

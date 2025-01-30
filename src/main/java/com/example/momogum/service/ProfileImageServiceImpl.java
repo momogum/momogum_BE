@@ -30,8 +30,6 @@ public class ProfileImageServiceImpl implements ProfileImageService {
   private final UserEntityRepository userRepository;
   private final ProfileImageRepository profileImageRepository;
 
-
-  @Value("${cloud.aws.s3.bucket}")
   private String bucket;
 
   private static final String DEFAULT_IMAGE_URL = "https://example.com/default-profile.jpg";
@@ -123,7 +121,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
       // S3에서 이미지 삭제
       amazonS3.deleteObject(bucket, profileImage.getFileName());
     } catch (Exception e) {
-      throw new ImageHandler(ErrorStatus.IMAGE_REMOVE_ERROR, e);
+      throw new ImageHandler(ErrorStatus.IMAGE_REMOVE_ERROR);
     }
 
     // 데이터베이스에서 이미지 레코드 삭제

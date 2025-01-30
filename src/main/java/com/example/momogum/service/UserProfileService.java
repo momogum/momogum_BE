@@ -31,7 +31,9 @@ public class UserProfileService {
         .id(user.getId())
         .nickname(user.getNickname())
         .name(user.getName())
-        .profileImage(user.getProfileImage())
+        .profileImage(user.getProfileImage() != null
+            ? user.getProfileImage().getImageLink()
+            : "default-profile.jpg")
         .about(user.getAbout())
         .build();
   }

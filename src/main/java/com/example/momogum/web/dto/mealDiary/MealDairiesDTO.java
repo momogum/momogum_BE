@@ -1,0 +1,167 @@
+package com.example.momogum.web.dto.mealDiary;
+
+import com.example.momogum.domain.common.enums.FoodCategory;
+import com.example.momogum.domain.common.enums.IsRevisit;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public class MealDairiesDTO {
+
+    @Getter
+    public static class CreateStoryRequestDTO {
+
+        // 시큐리티 구현되는대로 수정하기 FIXME
+        @Schema(description = "회원의 식별자를 입력 받습니다 <br>," +
+                "추후에 JWT Token으로 변경될 수 있습니다")
+        Long memberId;
+
+        // 카테고리 정해지는대로 String -> FoodCategory(Enum.class)로 수정하기 FIXME
+        @Schema(description = "식사 카테고리 입니다 <br>," +
+                "정해진 카테고리에서 선택할 수 있도록 구현하였습니다")
+        FoodCategory foodCategory;
+
+        // 키워드 정해지는대로 String -> Keyword(Enum.class)로 수정하기 FIXME
+        // 문장으로 받으면 쉼표를 기준으로 파싱하기
+        @Schema(description = "키워드 입니다 <br>," +
+                "정해진 키워드에서 선택할 수 있도록 구현하였습니다")
+        String keyword;
+
+        @Schema(description = "식사한 위치 입니다")
+        String location;
+
+        @Schema(description = "식사한 후기 입니다")
+        String description;
+
+        // String -> Revisit(Enum.class)로 수정하기 FIXME
+        @Schema(description = "재방문 의사 입니다 <br>," +
+                "기획안에 적혀있는 다섯가지의 선택지 내에서 정보를 선택 받습니다")
+        IsRevisit revisit;
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateStoryResponseDTO {
+
+        @Schema(description = "밥일기 식별ID 입니다")
+        Long mealDiaryId;
+
+    }
+
+
+
+
+
+
+    @Getter
+    public static class GetMealDiaryRequestDTO {
+
+        @Schema(description = "밥일기 식별ID 입니다")
+        Long storyId;
+
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetMealDiaryResponseDTO {
+
+
+        // 회원정보
+
+        String userProfileImageLink;
+
+        String nickname;
+
+
+        // 밥일기 정보
+
+        LocalDateTime mealDiaryCreatedAt;
+
+        List<String> mealDiaryImageLinks;
+
+        Integer mealDiaryLikeCount;
+
+        Integer mealDiaryCommentCount;
+
+        @Schema(description = "회원이 해당 밥일기를 북마크 해두었는지 표시하는 필드입니다")
+        boolean isMealDairyBookmark;
+
+        @Schema(description = "식사한 위치 입니다")
+        String location;
+
+        // 키워드 정해지는대로 String -> Keyword(Enum.class)로 수정하기 FIXME
+        @Schema(description = "키워드 입니다 <br>," +
+                "정해진 키워드에서 선택할 수 있도록 구현하였습니다")
+        List<String> keywords;
+
+        @Schema(description = "식사한 후기 입니다")
+        String review;
+
+        @Schema(description = "재방문 여부 입니다")
+        IsRevisit isRevisit;
+
+        @Schema(description = "사용자가 게시글에 좋아요를 누른 상태여부를 반환하는 필드입니다")
+        boolean isLike;
+
+        @Schema(description = "게시글 댓글입니다")
+        List<MealDiaryCommentReadDTO.MealDiaryReadResponseDTO> comments;
+
+    }
+
+
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetStoryFollowResponseDTO {
+
+        @Schema(description = "스토리를 올린 회원의 프로필 이미지 입니다 <br>," +
+                "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
+        String memberImagePath;
+
+        @Schema(description = "스토리를 올린 회원의 Nickname 입니다")
+        String nickname;
+
+        @Schema(description = "스토리가 조회 된 적이 있는지를 표시하는 필드입니다")
+        Boolean isRead;
+
+    }
+
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetStoryMemberStoryResponseDTO {
+
+        @Schema(description = "스토리 이미지 입니다 <br>," +
+                "추후 구현 방식에 따라 응답이 달라질 수 있습니다")
+        List<String> imagePaths;
+
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class GetAllMealDiaryResponseDTO {
+
+        String mealDiaryImageLink;
+
+
+    }
+}

@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -14,4 +15,8 @@ public interface MealDiaryService {
     List<MealDairiesDTO.GetAllMealDiaryResponseDTO> getAll(Long userId);
 
     void delete(Long userId, Long mealDiaryId) throws FileNotFoundException;
+
+    MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request);
+
+    List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport();
 }

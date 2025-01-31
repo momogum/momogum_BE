@@ -34,8 +34,7 @@ public class MealDiary extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private IsRevisit isRevisit;
 
-    @Column(columnDefinition = "")
-    private Boolean isReport;
+    private boolean isReport;
 
     private Integer likesCount;
 
@@ -68,16 +67,16 @@ public class MealDiary extends BaseEntity {
         mealDiaryImages.remove(mealDiaryImage);
     }
 
-    public void removeUserEntity() {
-        this.userEntity = null;
-    }
-
     public void decreaseLikeCount() {
         this.likesCount--;
     }
 
     public void increaseLikeCount() {
         this.likesCount++;
+    }
+
+    public void setReport(){
+        this.isReport = true;
     }
 
 

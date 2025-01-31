@@ -7,16 +7,15 @@ import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryCommentConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryKeywordConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryReportConverter;
 import com.example.momogum.domain.*;
 import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
 import com.example.momogum.repository.mealDiaryCommentsRepo.MealDiaryCommentsRepository;
-import com.example.momogum.repository.mealDiaryRepo.KeywordRepository;
-import com.example.momogum.repository.mealDiaryRepo.MealDiaryKeywordRepository;
-import com.example.momogum.repository.mealDiaryRepo.MealDiaryLikesRepository;
-import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
+import com.example.momogum.repository.mealDiaryRepo.*;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentReadDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +36,11 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final KeywordRepository keywordRepository;
 
     private final MealDiaryImageUtil mealDiaryImageUtil;
+    private final MealDiaryCommentsRepository mealDiaryCommentsRepository;
 
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
     private final MealDiaryBookmarkRepository mealDiaryBookmarkRepository;
-
-    private final MealDiaryCommentsRepository mealDiaryCommentsRepository;
+    private final MealDiaryReportRepository mealDiaryReportRepository;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -104,6 +103,30 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         mealDiaryRepository.delete(mealDiary);
     }
 
+    @Override
+    public MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request){
+
+        UserEntity user = findUser(request.getUserID());
+        MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
+
+        validMealDiaryExist(user, mealDiary);
+
+        MealDiaryReport newReport = MealDiaryReportConverter.toMealDiaryReport(user,mealDiary,request.getReportReason());
+
+        mealDiaryReportRepository.save(newReport);
+        mealDiary.setReport();
+
+        return MealDiaryReportConverter.mealDiaryReportResponseDTO(mealDiary);
+    }
+
+    @Override
+    public List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport(){
+
+        List<MealDiaryReport> allReport = mealDiaryReportRepository.findAll();
+
+        return MealDiaryReportConverter.toMealDiaryReportResponseDTOList(allReport);
+    }
+
 
 
 
@@ -117,6 +140,14 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
         if (!user.getId().equals(mealDiary.getUserEntity().getId())) {
             throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
+        }
+    }
+
+    private void validMealDiaryExist(UserEntity user, MealDiary mealDiary) {
+        boolean isReport = mealDiaryReportRepository.existsByUserEntityAndMealDiary(user, mealDiary);
+
+        if(isReport){
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_REPORTED);
         }
     }
 

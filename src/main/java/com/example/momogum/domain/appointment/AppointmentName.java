@@ -1,4 +1,4 @@
-package com.example.momogum.domain.common.appointment;
+package com.example.momogum.domain.appointment;
 
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.BaseEntity;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class AppointmentManager extends BaseEntity {
+public class AppointmentName extends BaseEntity {
 
     // Column 길이는 따로 지정 해두지 않았습니다.
     // 기술 정의서에서 디테일하게 잡히는 부분이 생기면 추가 해주시면 감사하겠습니다.
@@ -23,7 +23,7 @@ public class AppointmentManager extends BaseEntity {
     private Long id;
 
     // 약속 이름
-    private String title;
+    private String name;
 
     // 식사 메뉴 (예: 돈까스, 파스타 etc)
     private String menu;

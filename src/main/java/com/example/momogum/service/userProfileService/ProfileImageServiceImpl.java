@@ -1,4 +1,4 @@
-package com.example.momogum.service;
+package com.example.momogum.service.userProfileService;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
@@ -17,7 +17,6 @@ import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -52,10 +52,4 @@ public class ProfileImage {
   @Column
   private String imageName;
 
-  @Column(nullable = false, updatable = false)
-  private LocalDateTime createdAt = LocalDateTime.now();
-
-  @Column
-  private LocalDateTime updatedAt;
-
 }

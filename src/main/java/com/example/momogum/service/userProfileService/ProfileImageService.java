@@ -1,4 +1,4 @@
-package com.example.momogum.service;
+package com.example.momogum.service.userProfileService;
 
 
 import com.example.momogum.web.dto.user.ProfileImageDTO;

@@ -1,8 +1,8 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.UserProfileService;
-import com.example.momogum.service.ProfileImageService;
+import com.example.momogum.service.userProfileService.UserProfileServiceImpl;
+import com.example.momogum.service.userProfileService.ProfileImageService;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.user.ProfileImageDTO;
 import com.example.momogum.web.dto.user.UserDTO;
@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/UserProfile")
+@RequestMapping("/userProfiles")
 @RequiredArgsConstructor
 @Tag(name = "UserProfile API",description = "유저프로필 API")
 public class UserProfileController {
 
-  private final UserProfileService userProfileService;
+  private final UserProfileServiceImpl userProfileServiceImpl;
   private final ProfileImageService profileImageService;
 
   /**
@@ -46,10 +46,10 @@ public class UserProfileController {
    */
 
   @Operation(summary = "유저 정보 조회 API", description = " 유저의 기본 정보를 반환")
-  @GetMapping("/{userId}")
+  @GetMapping("/userId/{userId}")
   public ApiResponse<UserDTO.UserResponseDTO> getUserProfile(@PathVariable Long userId) {
 
-    UserDTO.UserResponseDTO userProfile = userProfileService.getUserProfile(userId);
+    UserDTO.UserResponseDTO userProfile = userProfileServiceImpl.getUserProfile(userId);
     return ApiResponse.onSuccess(userProfile);
   }
 
@@ -61,7 +61,7 @@ public class UserProfileController {
   @GetMapping("/{userId}/follows")
   public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
 
-    FollowDTO.FollowStatsDTO followStats = userProfileService.getFollowStats(userId);
+    FollowDTO.FollowStatsDTO followStats = userProfileServiceImpl.getFollowStats(userId);
 
     return ApiResponse.onSuccess(followStats);
   }
@@ -81,7 +81,7 @@ public class UserProfileController {
   public ApiResponse<UserDTO.UserEditDTO> updateUserProfile(
       @PathVariable Long userId, @RequestBody @Valid UserDTO.UserEditDTO request) {
 
-    UserDTO.UserEditDTO updatedProfile = userProfileService.updateUserProfile(userId, request);
+    UserDTO.UserEditDTO updatedProfile = userProfileServiceImpl.updateUserProfile(userId, request);
 
     return ApiResponse.onSuccess(updatedProfile);
   }

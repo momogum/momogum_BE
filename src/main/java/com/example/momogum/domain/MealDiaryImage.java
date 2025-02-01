@@ -25,6 +25,10 @@ public class MealDiaryImage {
     @JoinColumn(name = "meal_diary_id")
     private MealDiary mealDiary;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meal_diary_story_id")
+    private MealDiaryStory mealDiaryStory;
+
 
     public void setMealDiary(MealDiary mealDiary) {
         if (this.mealDiary != null){

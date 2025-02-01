@@ -45,7 +45,7 @@ public class MealDiary extends BaseEntity {
     private LocalDateTime inactiveDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "users_id")
     private UserEntity userEntity;
 
     @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
@@ -62,6 +62,9 @@ public class MealDiary extends BaseEntity {
 
     @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private List<MealDiaryLikes> mealDiaryLikes = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private MealDiaryStory mealDiaryStory;
 
     public void removeMealDiaryImage(MealDiaryImage mealDiaryImage) {
         mealDiaryImages.remove(mealDiaryImage);

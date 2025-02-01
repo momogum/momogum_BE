@@ -9,5 +9,5 @@ public interface SearchService {
 
     List<SearchDTO.AccountSearchResponseDTO> getAccountSearch(String request);
 
-    List<SearchDTO.PostSearchResponseDTO> getPostSearch(String request);
+    List<SearchDTO.PostSearchResponseDTO> getPostSearch(String request, int page, int size);
 }

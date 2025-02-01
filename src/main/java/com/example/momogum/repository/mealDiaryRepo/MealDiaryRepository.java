@@ -4,9 +4,11 @@ import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
@@ -33,10 +35,12 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
             "WHEN LOWER(k.keyword) = LOWER(:fullKeyword) THEN 1 " +
             "WHEN LOWER(k.keyword) = LOWER(:noSpaceKeyword) THEN 2 " +
             "ELSE 3 END")
-    List<MealDiary> searchByKeyword(
+    Slice<MealDiary> searchByKeyword(
             @Param("fullKeyword") String fullKeyword,
             @Param("noSpaceKeyword") String noSpaceKeyword,
-            @Param("partialKeyword") String partialKeyword
+            @Param("partialKeyword") String partialKeyword,
+            Pageable pageable
     );
+
 
 }

@@ -4,9 +4,7 @@ package com.example.momogum.service.userProfileService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.repository.followRepo.FollowRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.user.UserDTO;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,9 @@ import org.springframework.stereotype.Service;
 public class UserProfileServiceImpl implements UserProfileService {
 
   private final UserEntityRepository userEntityRepository;
-  private final FollowRepository followRepository;
+  //private final FollowRepository followRepository;
+
+  // 유저 닉네암, 실명, 프로필 이미지 조회
 
   @Override
   @Transactional(readOnly = true)
@@ -37,6 +37,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         .build();
   }
 
+  // 팔로워 숫자 확인
+  /*
   @Override
   @Transactional(readOnly = true)
   public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
@@ -50,7 +52,9 @@ public class UserProfileServiceImpl implements UserProfileService {
         .followers(followerCount)
         .followings(followingCount)
         .build();
-  }
+  }*/
+
+  // 유저 프로필 업데이트
 
   @Override
   @Transactional

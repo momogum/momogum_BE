@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
-import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table(name = "user")
@@ -24,10 +23,10 @@ public class UserEntity extends BaseEntity {
     // 전화번호
     private String phoneNumber;
 
-    // 회원 이름
+    // 회원 이름 (실명)
     private String name;
 
-    // 인 앱에서 사용되는 별명
+    // 인 앱에서 사용되는 별명 (유저아이디)
     private String nickname;
 
     // 프로필 이미지 저장 경로
@@ -60,11 +59,28 @@ public class UserEntity extends BaseEntity {
     private LoginType provider;
 
     //유저와 팔로워,팔로우 관계 설정하기 위해서 추가하였습니다.
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FollowEntity> followings = new ArrayList<>(); // 내가 팔로우한 사람들
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Following> followings = new ArrayList<>(); // 내가 팔로우한 사람들
 
-    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FollowEntity> followers = new ArrayList<>(); // 나를 팔로우한 사람들
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follower> followers = new ArrayList<>(); // 나를 팔로우한 사람들
 
+    @Column(nullable = false)
+    private int followingCount = 0;
+    @Column(nullable = false)
+    private int followerCount = 0;
 
+    public void addFollowingCount(){
+        this.followingCount++;
+    }
+    public void minusFollowingCount(){
+        this.followingCount = Math.max(0, this.followingCount - 1);
+    }
+
+    public void addFollowerCount(){
+        this.followerCount++;
+    }
+    public void minusFollowerCount(){
+        this.followerCount = Math.max(0, this.followerCount - 1);
+    }
 }

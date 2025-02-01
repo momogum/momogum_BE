@@ -1,6 +1,7 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.service.userProfileService.FollowService;
 import com.example.momogum.service.userProfileService.UserProfileServiceImpl;
 import com.example.momogum.service.userProfileService.ProfileImageService;
 import com.example.momogum.web.dto.FollowDTO;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,7 @@ public class UserProfileController {
 
   private final UserProfileServiceImpl userProfileServiceImpl;
   private final ProfileImageService profileImageService;
+  private final FollowService followService;
 
   /**
    * 유저 프로필 기능
@@ -53,22 +56,38 @@ public class UserProfileController {
     return ApiResponse.onSuccess(userProfile);
   }
 
-
   /**
-   * 팔로워/ 팔로잉 수 조회
+   * 팔로잉, 팔로워 수 카운트
    */
-  @Operation(summary = "팔로워/팔로잉 수 카운트 API", description = "팔로워/팔로잉 수 카운트 반환")
-  @GetMapping("/{userId}/follows")
+
+  @Operation(summary = "팔로워/팔로잉 수 조회 API", description = "특정 유저의 팔로워 및 팔로잉 수를 조회합니다.")
+  @GetMapping("/{userId}/followCount")
   public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
-
-    FollowDTO.FollowStatsDTO followStats = userProfileServiceImpl.getFollowStats(userId);
-
-    return ApiResponse.onSuccess(followStats);
+    return ApiResponse.onSuccess(followService.getFollowStats(userId));
   }
 
   /**
-   * 팔로워/ 팔로잉 멤버 조회
+   * 팔로잉 목록 조회
    */
+
+  @Operation(summary = "팔로잉 목록 조회 API", description = "유저의 팔로잉(내가 팔로우하는 사람들) 조회")
+  @GetMapping("/{userId}/following")
+  public ApiResponse<List<FollowDTO.FollowingResponseDTO>> getAllFollowing(@PathVariable Long userId) {
+
+    return ApiResponse.onSuccess(followService.getFollowings(userId));
+  }
+
+
+  /**
+   * 팔로워 목록 조회
+   */
+
+  @Operation(summary = "팔로워 목록 조회 API", description = "유저의 팔로워(나를 팔로우하는 사람들) 조회")
+  @GetMapping("/{userId}/followers")
+  public ApiResponse<List<FollowDTO.FollowerResponseDTO>> getAllFollowers(@PathVariable Long userId) {
+
+    return ApiResponse.onSuccess(followService.getFollowers(userId));
+  }
 
 
 

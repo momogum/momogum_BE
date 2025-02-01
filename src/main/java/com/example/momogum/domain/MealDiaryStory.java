@@ -27,6 +27,6 @@ public class MealDiaryStory {
     @OneToMany(mappedBy = "mealDiaryStory",cascade = CascadeType.ALL)
     private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
 
-    @OneToOne(mappedBy = "mealDiaryStory",cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     private MealDiary mealDiary;
 }

@@ -1,10 +1,13 @@
 package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.service.mealDiaryService.MealDiaryStoryService;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +18,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/meal-stories")
 @Tag(name = "밥일기 스토리 API")
+@RequiredArgsConstructor
 public class MealStoryController {
 
+    private final MealDiaryStoryService mealDiaryStoryService;
 
     /**
      * 스토리 조회 (내가 확인한게 스토리 조회가 맞는지 모르겠음)
@@ -53,10 +58,11 @@ public class MealStoryController {
      * */
     @Operation(summary = "개별 스토리 조회 API")
     @GetMapping("/storyId/{storyId}")
-    public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> getOne(@PathVariable Long storyId) {
+    public ApiResponse<MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO> getOne(@PathVariable Long storyId) {
 
-        return ApiResponse.onSuccess(MealDairiesDTO.GetMealDiaryResponseDTO.builder()
-                .build());
+        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO result = mealDiaryStoryService.get(storyId);
+
+        return ApiResponse.onSuccess(result);
     }
 
 }

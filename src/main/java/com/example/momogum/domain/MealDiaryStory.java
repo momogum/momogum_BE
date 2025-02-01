@@ -1,5 +1,6 @@
 package com.example.momogum.domain;
 
+import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class MealDiaryStory {
+public class MealDiaryStory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

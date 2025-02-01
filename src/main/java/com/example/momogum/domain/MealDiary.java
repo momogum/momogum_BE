@@ -63,7 +63,7 @@ public class MealDiary extends BaseEntity {
     @OneToMany(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private List<MealDiaryLikes> mealDiaryLikes = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "mealDiary",cascade = CascadeType.ALL)
     private MealDiaryStory mealDiaryStory;
 
     public void removeMealDiaryImage(MealDiaryImage mealDiaryImage) {

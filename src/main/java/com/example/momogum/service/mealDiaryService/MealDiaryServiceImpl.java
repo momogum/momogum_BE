@@ -58,7 +58,6 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         MealDiaryStory newMealDiaryStory = MealDiaryStory.builder()
                 .name(byId.getName())
                 .mealDiary(mealDiary)
-                .mealDiaryImages(newMealDiary.getMealDiaryImages())
                 .build();
 
         mealDiaryStoryRepository.save(newMealDiaryStory);

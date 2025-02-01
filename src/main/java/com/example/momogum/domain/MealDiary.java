@@ -28,7 +28,6 @@ public class MealDiary extends BaseEntity {
 
     private String location;
 
-    @Lob
     private String description;
 
     @Enumerated(EnumType.STRING)

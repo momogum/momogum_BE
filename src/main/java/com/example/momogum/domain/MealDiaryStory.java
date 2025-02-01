@@ -25,9 +25,6 @@ public class MealDiaryStory extends BaseEntity {
      * */
     private String name;
 
-    @OneToMany(mappedBy = "mealDiaryStory",cascade = CascadeType.ALL)
-    private List<MealDiaryImage> mealDiaryImages = new ArrayList<>();
-
     @OneToOne(fetch = FetchType.LAZY)
     private MealDiary mealDiary;
 }

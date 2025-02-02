@@ -30,7 +30,11 @@ public enum ErrorStatus implements BaseErrorCode {
     IMAGE_CONVERT_ERROR(HttpStatus.SERVICE_UNAVAILABLE,"IMAGE5001","이미지 변환 중 오류가 발생하였습니다"),
     IMAGE_REMOVE_ERROR(HttpStatus.SERVICE_UNAVAILABLE,"IMAGE5002","이미지 삭제 중 오류가 발생하였습니다"),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_GATEWAY,"IMAGE5004","이미지 등록 중 오류가 발생하였습니다"),
-    IMAGE_DOWNLOAD_ERROR(HttpStatus.SERVICE_UNAVAILABLE,"IMAGE5003","이미지 다운로드 중 오류가 발생하였습니다");
+    IMAGE_DOWNLOAD_ERROR(HttpStatus.SERVICE_UNAVAILABLE,"IMAGE5003","이미지 다운로드 중 오류가 발생하였습니다"),
+
+    //search에 사용
+    KEYWWORD_BLANK(HttpStatus.BAD_REQUEST,"SEARCH4001","검색어는 필수입니다."),
+    ;
 
 
     private final HttpStatus httpStatus;

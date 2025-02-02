@@ -40,14 +40,18 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
 
-        // Key와 Value의 직렬화 설정
+
+        setSerializers(redisTemplate);
+
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
+
+    private void setSerializers(RedisTemplate<String, Object> redisTemplate) {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-        redisTemplate.afterPropertiesSet();
-        return redisTemplate;
     }
 
     @Bean

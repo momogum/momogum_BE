@@ -13,7 +13,7 @@ public class SearchConverter {
         return SearchDTO.PostSearchResponseDTO.builder()
                 .mealDiaryId(mealDiary.getId())
                 .foodImageURL(mealDiary.getMealDiaryImages().stream().findFirst().map(MealDiaryImage::getImageLink).orElse(null))
-                .userImageURL(mealDiary.getUserEntity().getProfileImage())
+                .userImageURL(mealDiary.getUserEntity().getProfileImage().getImageLink())
                 .foodName(mealDiary.getMealDiaryKeywords().stream().findFirst().map(MealDiaryKeyword::getKeyword).map(Keyword::getKeyword).orElse("n/a"))
                 .isRevisit(mealDiary.getIsRevisit())
                 .build();
@@ -25,7 +25,7 @@ public class SearchConverter {
                 .userId(user.getId())
                 .userName(user.getName())
                 .userNickName(user.getNickname())
-                .userImageURL(user.getProfileImage())
+                .userImageURL(user.getProfileImage().getImageLink())
                 .build();
     }
 

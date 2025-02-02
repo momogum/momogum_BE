@@ -36,10 +36,10 @@ spring:
         default_batch_fetch_size: 1000
   oauth2:
     kakao:
-      client-id: "832eb815f100be4eb52994b0be137716" # 카카오 REST API 키
-      redirect-uri: "http://localhost:8080/auth/callback/kakao" # 리디렉션 URI
-      token-uri: "https://kauth.kakao.com/oauth/token" # 토큰 발급 URI
-      user-info-uri: "https://kapi.kakao.com/v2/user/me" # 사용자 정보 요청 URI
+      client-id: ${KAKAO_CLIENT_ID} # 카카오 REST API 키
+      redirect-uri: ${KAKAO_REDIRECT_URI} # 리디렉션 URI
+      token-uri: ${KAKAO_TOKEN_URI} # 토큰 발급 URI
+      user-info-uri: ${KAKAO_USER_INFO_URI} # 사용자 정보 요청 URI
 
 
 

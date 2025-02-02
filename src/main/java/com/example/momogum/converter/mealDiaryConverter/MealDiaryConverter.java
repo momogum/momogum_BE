@@ -45,7 +45,9 @@ public class MealDiaryConverter {
         // 댓글까지 조회 할 수 있도록 DTO에 추가
 
         return MealDairiesDTO.GetMealDiaryResponseDTO.builder()
-                .userProfileImageLink(mealDiary.getUserEntity().getProfileImage())
+                .userProfileImageLink(mealDiary.getUserEntity().getProfileImage() != null
+                    ? mealDiary.getUserEntity().getProfileImage().getImageLink()
+                    : "default-profile.jpg")
                 .nickname(mealDiary.getUserEntity().getNickname())
                 .mealDiaryCreatedAt(mealDiary.getCreatedAt())
                 .mealDiaryImageLinks(mealDiaryImages)

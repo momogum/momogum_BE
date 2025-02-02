@@ -3,6 +3,7 @@ package com.example.momogum.service.userProfileService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.converter.userConverter.UserProfileConverter;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.user.UserDTO;
@@ -18,7 +19,7 @@ public class UserProfileServiceImpl implements UserProfileService {
   private final UserEntityRepository userEntityRepository;
   //private final FollowRepository followRepository;
 
-  // 유저 닉네암, 실명, 프로필 이미지 조회
+  // 유저 닉네임, 실명, 프로필 이미지 조회
 
   @Override
   @Transactional(readOnly = true)
@@ -36,23 +37,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         .about(user.getAbout())
         .build();
   }
-
-  // 팔로워 숫자 확인
-  /*
-  @Override
-  @Transactional(readOnly = true)
-  public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
-
-    long followerCount = followRepository.countByFollowing(user);
-    long followingCount = followRepository.countByFollower(user);
-
-    return FollowDTO.FollowStatsDTO.builder()
-        .followers(followerCount)
-        .followings(followingCount)
-        .build();
-  }*/
 
   // 유저 프로필 업데이트
 
@@ -81,5 +65,16 @@ public class UserProfileServiceImpl implements UserProfileService {
         .name(user.getName())
         .about(user.getAbout() != null ? user.getAbout() : "")
         .build();
+  }
+
+  // 상대방 유저 프로필 조회
+
+  @Override
+  @Transactional
+  public UserDTO.FullProfileDTO getFullProfile(Long userId) {
+    UserEntity user = userEntityRepository.findById(userId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    return UserProfileConverter.toFullProfileDTO(user);  //
   }
 }

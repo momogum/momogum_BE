@@ -55,4 +55,51 @@ public class UserDTO {
 
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+        public static class FullProfileDTO {
+        @Schema(description = "유저 네임")
+        private String nickname;
+        @Schema(description = "유저 실명")
+        private String name;
+        @Schema(description = "프로필 이미지")
+        private String profileImageUrl;
+        @Schema(description = "한줄 소개")
+        private String about;
+        @Schema(description = "팔로워 수")
+        private int followerCount;
+        @Schema(description = "팔로잉 수")
+        private int followingCount;
+        // 밥일기 피드입니다
+        // private List<ViewMealDiaryDTO> viewMealDiary;
+    }
+
+    /**
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class ViewMealDiaryDTO {
+
+    @Schema(description = "밥일기 Id")
+    private Long mealDiaryId;
+
+    @Schema(description = "음식 사진 URL 입니다.")
+    private List<String> foodImageURLs;
+
+
+    @Schema(description = "음식 카테고리 (한식(KOREA),중식(CHINA),일식(JAPAN),아시안(ASIAN),패스트푸드(FASTFOOD),카페(CAFE)")
+    private FoodCategory foodCategory;
+
+    @Schema(description = "음식 이름")
+    private List<String> keyWord;
+
+    @Schema(description = "재방문 의사 표시 (REVISIT 이 재방문)")
+    private IsRevisit isRevisit;
+
+    }
+    */
+
 }

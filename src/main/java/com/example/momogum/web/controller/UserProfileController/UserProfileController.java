@@ -121,6 +121,17 @@ public class UserProfileController {
 
     return ApiResponse.onSuccess(updatedImage);
   }
+
+  /**
+   * 나의 팔로잉 or 팔로워 프로필 조회
+   */
+
+  @Operation(summary = "상대 프로필 조회 API", description = "상대 프로필의 전체를 조회합니다.")
+  @GetMapping("{userId}/fullProfile")
+  public  ApiResponse<UserDTO.FullProfileDTO> getFullProfile(@PathVariable Long userId) {
+    return ApiResponse.onSuccess(userProfileServiceImpl.getFullProfile(userId));
+  }
+
 }
 
 

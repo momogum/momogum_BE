@@ -11,7 +11,7 @@ public class FollowConverter {
   public static FollowDTO.FollowingResponseDTO toFollowingResponseDTO(UserEntity userEntity) {
     return FollowDTO.FollowingResponseDTO.builder()
         .name(userEntity.getName())
-        .username(userEntity.getNickname())
+        .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
         .build();
   }
@@ -22,7 +22,7 @@ public class FollowConverter {
   public static FollowDTO.FollowerResponseDTO toFollowerResponseDTO(UserEntity userEntity) {
     return FollowDTO.FollowerResponseDTO.builder()
         .name(userEntity.getName())
-        .username(userEntity.getNickname())
+        .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
         .build();
   }

@@ -123,7 +123,7 @@ public class UserProfileController {
   }
 
   /**
-   * 나의 팔로잉 or 팔로워 프로필 조회
+   * 상대 프로필 조회 API
    */
 
   @Operation(summary = "상대 프로필 조회 API", description = "상대 프로필의 전체를 조회합니다.")

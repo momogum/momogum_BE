@@ -64,11 +64,13 @@ public class FollowServiceImpl implements FollowService {
 
   @Override
   public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
-    UserEntity user = findUserById(userId);
+
+    int followerCount = followerRepository.countByUserId(userId);
+    int followingCount = followingRepository.countByUserId(userId);
 
     return  FollowDTO.FollowStatsDTO.builder()
-        .followerCount(user.getFollowerCount())
-        .followingCount(user.getFollowingCount())
+        .followerCount(followerCount)
+        .followingCount(followingCount)
         .build();
   }
 

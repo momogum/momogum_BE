@@ -9,7 +9,7 @@ import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.domain.ProfileImage;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.repository.ProfileImageRepo.ProfileImageRepository;
+import com.example.momogum.repository.profileImageRepo.ProfileImageRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.user.ProfileImageDTO;
 import jakarta.persistence.EntityManager;

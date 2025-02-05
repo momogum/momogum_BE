@@ -30,6 +30,9 @@ public class UserDTO {
 
         @Schema(description = "유저 프로필 이미지 URL입니다.")
         String profileImage;
+
+        @Schema(description = "신규 사용자 여부입니다.")
+        boolean isNewUser;
     }
 
     @Getter

@@ -34,6 +34,12 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  oauth2:
+    kakao:
+      client-id: ${KAKAO_CLIENT_ID} # 카카오 REST API 키
+      redirect-uri: ${KAKAO_REDIRECT_URI} # 리디렉션 URI
+      token-uri: ${KAKAO_TOKEN_URI} # 토큰 발급 URI
+      user-info-uri: ${KAKAO_USER_INFO_URI} # 사용자 정보 요청 URI
 
 
 
@@ -49,3 +55,12 @@ cloud:
       auto: false
     stack:
       auto: false
+
+  logging:
+    level:
+      root: INFO
+      org.springframework.security.oauth2.client: DEBUG
+      org.springframework.web: DEBUG
+
+jwt:
+  secret: ${JWT_SECRETKEY}

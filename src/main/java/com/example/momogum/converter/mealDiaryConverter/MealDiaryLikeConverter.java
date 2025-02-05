@@ -17,7 +17,7 @@ public class MealDiaryLikeConverter {
 
     public static MealDiaryLikeDTO.MealDiaryLikeResponseDTO toMealDiaryLikeResponseDTO(UserEntity userEntity){
         return MealDiaryLikeDTO.MealDiaryLikeResponseDTO.builder()
-                .userProfileImage(userEntity.getProfileImage())
+            .userProfileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : "default-profile.jpg")
                 .nickname(userEntity.getNickname())
                 .name(userEntity.getName())
                 .build();

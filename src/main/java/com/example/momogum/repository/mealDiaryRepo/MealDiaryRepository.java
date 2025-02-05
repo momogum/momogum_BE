@@ -4,9 +4,11 @@ import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
@@ -21,5 +23,24 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
 
 
     List<MealDiary> findByIdIn(List<Long> ids);
+
+
+    @Query("SELECT DISTINCT md FROM MealDiary md " +
+            "JOIN md.mealDiaryKeywords mk " +
+            "JOIN mk.keyword k " +
+            "WHERE LOWER(k.keyword) = LOWER(:fullKeyword) " +
+            "   OR LOWER(k.keyword) = LOWER(:noSpaceKeyword) " +
+            "   OR LOWER(k.keyword) LIKE LOWER(:partialKeyword) " +
+            "ORDER BY CASE " +
+            "WHEN LOWER(k.keyword) = LOWER(:fullKeyword) THEN 1 " +
+            "WHEN LOWER(k.keyword) = LOWER(:noSpaceKeyword) THEN 2 " +
+            "ELSE 3 END")
+    Slice<MealDiary> searchByKeyword(
+            @Param("fullKeyword") String fullKeyword,
+            @Param("noSpaceKeyword") String noSpaceKeyword,
+            @Param("partialKeyword") String partialKeyword,
+            Pageable pageable
+    );
+
 
 }

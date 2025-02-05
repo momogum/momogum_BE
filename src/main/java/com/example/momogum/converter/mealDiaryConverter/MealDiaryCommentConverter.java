@@ -22,7 +22,7 @@ public class MealDiaryCommentConverter {
     public static MealDiaryCommentReadDTO.MealDiaryReadResponseDTO toMealDiaryCommentReadDTO(MealDiaryComments comment){
 
         return MealDiaryCommentReadDTO.MealDiaryReadResponseDTO.builder()
-                .userProfileImagePath(comment.getUser().getProfileImage())
+                .userProfileImagePath(comment.getUser().getProfileImage() != null ? comment.getUser().getProfileImage().getImageLink() : "default-profile.jpg")
                 .nickname(comment.getUser().getNickname())
                 .content(comment.getContent())
                 .build();

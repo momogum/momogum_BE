@@ -90,7 +90,9 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
                         .foodImageURLs(post.getMealDiaryImages().stream()
                                 .map(MealDiaryImage::getImageLink)
                                 .toList())
-                        .userImageURL(post.getUserEntity().getProfileImage())
+                        .userImageURL(post.getUserEntity().getProfileImage() != null
+                            ? post.getUserEntity().getProfileImage().getImageLink()
+                            : "default-profile.jpg")
                         .foodCategory(post.getFoodCategory())
                         .keyWord(post.getMealDiaryKeywords().stream()
                                 .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())

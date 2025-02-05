@@ -1,7 +1,7 @@
-package com.example.momogum.service.appointment;
+package com.example.momogum.service.appointmentService;
 
 import com.example.momogum.domain.utils.S3UrlProvider;
-import com.example.momogum.web.dto.appointment.AppointMentDTO.AppointmentCardResponseDTO;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

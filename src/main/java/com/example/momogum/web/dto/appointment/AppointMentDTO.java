@@ -31,37 +31,6 @@ public class AppointMentDTO {
         Long appointmentId;
     }
 
-    /**
-     *  약속 식사 모임 이름 정하기 DTO
-     *  엔티티 : CreateAppointmentName
-     */
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AppointmentNameDTO {
-
-        @Schema(description = "식사 모임 이름")
-        @NotBlank(message = "필수 작성 항목입니다.")
-        String name;
-
-        @Schema(description = "식사 메뉴")
-        @NotBlank(message = "필수 작성 항목입니다.")
-        String menu;
-
-        @Schema(description = "식사 일정")
-        @NotNull(message = "필수 작성 항목입니다.")
-        LocalDateTime date;
-
-        @Schema(description = "식사 모임 위치")
-        @NotBlank(message = "필수 작성 항목입니다.")
-        String location;
-
-        @Schema(description = "특별한 소식")
-        String notes;
-
-    }
-
 
     /**
      * 약속 잡기 DTO
@@ -99,17 +68,5 @@ public class AppointMentDTO {
         @Schema(description = "참여자 목록입니다.")
         List<UserResponseDTO> users;
 
-    }
-
-    /**
-     * S3 -> 카드 조회 DTO
-     */
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AppointmentCardResponseDTO {
-        private String type;       // 카드 카테고리 (예: 기본, 재미)
-        private String imageUrl;   // S3 이미지 URL
     }
 }

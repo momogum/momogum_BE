@@ -1,13 +1,13 @@
-package com.example.momogum.service.appointment;
+package com.example.momogum.service.appointmentService;
 
 
-import com.example.momogum.converter.appointment.AppointmentNameConverter;
+import com.example.momogum.converter.appointmentConverter.AppointmentNameConverter;
 import com.example.momogum.domain.appointment.AppointmentName;
 import com.example.momogum.repository.appoinmentRepo.AppointmentNameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.example.momogum.web.dto.appointment.AppointMentDTO.*;
+import static com.example.momogum.web.dto.appointment.AppointmentNameDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class AppointmentNameService {
      * @param request CreateMealPlanNameDTO
      * @return appointmentId
      */
-    public Long creatAppointmentName(AppointmentNameDTO request) {
+    public Long creatAppointmentName(AppointmentNameResponseDTO request) {
 
         AppointmentName appointmentName = converter.convert(request);
 

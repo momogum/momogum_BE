@@ -34,7 +34,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //search에 사용
     KEYWWORD_BLANK(HttpStatus.BAD_REQUEST,"SEARCH4001","검색어는 필수입니다."),
-    ;
+
+
+    APPOINTMENT_NOT_EXIST(HttpStatus.NOT_FOUND,"APPOINTMENT4001","약속을 찾을 수 없습니다");
 
 
     private final HttpStatus httpStatus;

@@ -97,6 +97,20 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(e, body, headers, reason.getHttpStatus(), webRequest);
     }
 
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<Object> handleDuplicateUserException(DuplicateUserException e) {
+        log.warn("Duplicate user exception: {}", e.getMessage());
+
+        ApiResponse<Object> response = ApiResponse.onFailure(
+                e.getErrorStatus().getCode(),
+                e.getErrorStatus().getMessage(),
+                e.getMessage()
+        );
+
+        return ResponseEntity.status(e.getErrorStatus().getHttpStatus()).body(response);
+    }
+
+
     private ResponseEntity<Object> handleExceptionInternalFalse(
             Exception e, ErrorStatus errorStatus, HttpHeaders headers, HttpStatus status, WebRequest request, String errorPoint) {
         ApiResponse<Object> body = ApiResponse.onFailure(errorStatus.getCode(), errorStatus.getMessage(), errorPoint);

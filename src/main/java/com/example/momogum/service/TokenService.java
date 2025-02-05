@@ -1,5 +1,6 @@
 package com.example.momogum.service;
 
+import com.example.momogum.apiPayLoad.exception.DuplicateUserException;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
@@ -52,7 +53,7 @@ public class TokenService {
     public UserEntity processNewUserLogin(String providerId, String nameInput, String nicknameInput, String profileImage) {
         // providerId 중복 여부 확인
         if (userEntityRepository.findByProviderAndProviderId(LoginType.KAKAO, providerId).isPresent()) {
-            throw new RuntimeException("이미 등록된 providerId입니다: " + providerId);
+            throw new DuplicateUserException("이미 등록된 providerId입니다: " + providerId);
         }
 
         // 신규 사용자 생성

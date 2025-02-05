@@ -1,6 +1,7 @@
 package com.example.momogum.service;
 
 import com.example.momogum.apiPayLoad.exception.DuplicateUserException;
+import com.example.momogum.domain.ProfileImage;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
@@ -50,7 +51,7 @@ public class TokenService {
 
     // 신규 유저 로그인 처리
     @Transactional
-    public UserEntity processNewUserLogin(String providerId, String nameInput, String nicknameInput, String profileImage) {
+    public UserEntity processNewUserLogin(String providerId, String nameInput, String nicknameInput, String profileImageUrl) {
         // providerId 중복 여부 확인
         if (userEntityRepository.findByProviderAndProviderId(LoginType.KAKAO, providerId).isPresent()) {
             throw new DuplicateUserException("이미 등록된 providerId입니다: " + providerId);
@@ -59,13 +60,28 @@ public class TokenService {
         // 신규 사용자 생성
         UserEntity newUser = UserEntity.builder()
                 .provider(LoginType.KAKAO)
-                .providerId(providerId) // 카카오의 providerId
+                .providerId(providerId)
                 .name(nameInput)
                 .nickname(nicknameInput)
-                .profileImage(profileImage)
                 .build();
+
+        // 프로필 이미지가 존재하면 ProfileImage 엔티티 생성 및 연관 관계 설정
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            ProfileImage profileImage = ProfileImage.builder()
+                    .imageLink(profileImageUrl)  // S3 이미지 링크
+                    .fileName("example-file-name")  // 실제 파일 이름
+                    .imageName("example-original-name")  // 원본 파일 이름
+                    .build();
+
+            // 양방향 연관 관계 설정
+            profileImage.setUser(newUser);
+            newUser.setProfileImage(profileImage);
+        }
+
         return userEntityRepository.save(newUser);
     }
+
+
 
 
 

@@ -203,16 +203,21 @@ public class AuthController {
         UserEntity user = tokenService.findUserById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
+        // 프로필 이미지 URL 가져오기
+        String profileImageUrl = user.getProfileImage() != null ? user.getProfileImage().getImageLink() : null;
+
         // 응답 생성 및 반환
         return ApiResponse.onSuccess(
                 UserDTO.UserResponseDTO.builder()
                         .id(user.getId())
                         .name(user.getName())
                         .nickname(user.getNickname())
-                        .profileImage(user.getProfileImage())
+                        .profileImage(profileImageUrl)  // 프로필 이미지 URL 반환
                         .isNewUser(false) // 회원 조회는 항상 기존 사용자임
                         .build()
         );
     }
+
+
 
 }

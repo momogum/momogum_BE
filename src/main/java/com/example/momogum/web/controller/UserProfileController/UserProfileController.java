@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,7 +90,18 @@ public class UserProfileController {
     return ApiResponse.onSuccess(followService.getFollowers(userId));
   }
 
-
+//  /**
+//  * 팔로잉, 팔로워 토글 (언팔로우, 팔로우)
+//  */
+//
+//  @Operation(summary = "팔로우 토글 API",
+//             description = "팔로우 등록 API<br>"+"팔로우 대상 PathVariable에 담아서 전달<br>"+"1번 클릭 팔로우 등록, 2번 클릭 : 언팔로우")
+//
+//  @PostMapping("/{userId}/follow/{targetUserId}")
+//  public ApiResponse<String> follow(@PathVariable Long userId, @PathVariable Long targetUserId) {
+//
+//
+//  }
 
   /**
    * 유저 프로필 기본 정보 수정 API

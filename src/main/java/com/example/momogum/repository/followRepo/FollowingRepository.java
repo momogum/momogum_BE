@@ -8,8 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface FollowingRepository extends JpaRepository<Following,Long> {
-  //long countByFollower(UserEntity follower);
-  //long countByFollowing(UserEntity following);
+
+  // 맞팔 여부 확인
+  boolean existsByUserAndFollowing(UserEntity user, UserEntity following);
 
   List<Following> findByUserId (Long userId);
 

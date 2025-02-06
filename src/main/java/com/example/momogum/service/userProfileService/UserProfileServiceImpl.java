@@ -6,6 +6,7 @@ import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.userConverter.UserProfileConverter;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.validation.validator.UserProfileValidator;
 import com.example.momogum.web.dto.user.UserDTO;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class UserProfileServiceImpl implements UserProfileService {
 
   private final UserEntityRepository userEntityRepository;
+  private final UserProfileValidator userProfileValidator;
   //private final FollowRepository followRepository;
 
   // 유저 닉네임, 실명, 프로필 이미지 조회
@@ -46,19 +48,19 @@ public class UserProfileServiceImpl implements UserProfileService {
     UserEntity user = userEntityRepository.findById(userId)
         .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
 
+    // 닉네임 검증 및 중복 검사
     if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
+      userProfileValidator.validateNickname(request.getNickname());
       user.setNickname(request.getNickname());
     }
+    // 유저 이름 검증
     if (request.getName() != null && !request.getName().equals(user.getName())) {
+      userProfileValidator.validateName(request.getName());
       user.setName(request.getName());
     }
-    if (request.getAbout() != null) {
-      if (!request.getAbout().equals(user.getAbout())) {
-        user.setAbout(request.getAbout());
-      }
-    } else {
-      user.setAbout("");
-    }
+    // 한줄 소개 검증 (빈 문자열 반환 가능)
+    user.setAbout(userProfileValidator.validateAbout(request.getAbout()));
+
 
     return UserDTO.UserEditDTO.builder()
         .nickname(user.getNickname())

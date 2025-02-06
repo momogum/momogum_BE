@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 public interface FollowService {
 
-  // 토글 관련 API는 프론트 측과 상의해보고 마저 작성하도록 하겠습니다.
-  // void toggleFollowUser(String userId, Long targetId);
+  // 팔로잉, 언팔로우 API
+  // boolean toggleFollowUser(Long userId, Long targetUserId);
 
   List<FollowDTO.FollowingResponseDTO> getFollowings(Long userId);
 

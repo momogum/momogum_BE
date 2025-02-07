@@ -2,6 +2,7 @@ package com.example.momogum.service.appointmentService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
@@ -67,7 +68,7 @@ public class AppointmentInviteService {
 
         for(String username : request.getNicknames()) {
             UserEntity user = userEntityRepository.findByNickname(username)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+                    .orElseThrow(() -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
             boolean isInvited = appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user);
             if (isInvited) {

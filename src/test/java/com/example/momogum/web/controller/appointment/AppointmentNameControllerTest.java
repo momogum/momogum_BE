@@ -1,7 +1,7 @@
 package com.example.momogum.web.controller.appointment;
 
-import com.example.momogum.service.appointment.AppointmentNameService;
-import com.example.momogum.web.dto.appointment.AppointMentDTO;
+import com.example.momogum.service.appointmentService.AppointmentNameService;
+import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -41,7 +41,7 @@ class AppointmentNameControllerTest {
     void Success_NameTest() throws Exception {
 
         //given
-        AppointMentDTO.AppointmentNameDTO appointmentNameDTO = AppointMentDTO.AppointmentNameDTO.builder()
+        AppointmentNameResponseDTO appointmentNameDTO = AppointmentNameResponseDTO.builder()
                 .name("더술 출발")
                 .menu("더술 닭 한마리")
                 .date(LocalDateTime.of(2025, 1, 24, 18, 0))
@@ -77,7 +77,7 @@ class AppointmentNameControllerTest {
     @Test
     void Fail_NameTest() throws Exception {
         //given
-        AppointMentDTO.AppointmentNameDTO appointmentNameDTO = AppointMentDTO.AppointmentNameDTO.builder()
+        AppointmentNameResponseDTO appointmentNameDTO = AppointmentNameResponseDTO.builder()
                 .name("")
                 .menu("더술 닭 한마리")
                 .date(LocalDateTime.of(2025, 1, 24, 18, 0))

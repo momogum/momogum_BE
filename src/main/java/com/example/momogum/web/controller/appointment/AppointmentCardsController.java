@@ -1,9 +1,9 @@
 package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
-import com.example.momogum.service.appointment.AppointmentCardService;
-import com.example.momogum.web.dto.appointment.AppointMentDTO.AppointmentCardResponseDTO;
+import com.example.momogum.service.appointmentService.AppointmentCardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.example.momogum.web.dto.appointment.AppointmentCardDTO.*;
+
 @RestController
-@RequestMapping("/Appointment")
+@RequestMapping("/appointment")
 @RequiredArgsConstructor
+@Tag(name = "약속잡기 카드 선택 및 반환 API")
 public class AppointmentCardsController {
 
     private final AppointmentCardService cardService;

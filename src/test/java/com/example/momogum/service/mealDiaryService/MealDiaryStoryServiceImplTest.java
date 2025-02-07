@@ -42,8 +42,6 @@ class MealDiaryStoryServiceImplTest {
     @Mock
     UserEntityRepository userEntityRepository;
 
-    @Mock
-    FollowRepository followRepository;
 
     UserEntity testMember;
 
@@ -57,11 +55,10 @@ class MealDiaryStoryServiceImplTest {
     @BeforeEach
     void setUp() {
         testMember = UserEntity.builder()
-                .Id(1L)
+                .id(1L)
                 .phoneNumber("test")
                 .name("test")
                 .nickname("test")
-                .profileImage("test")
                 .about("test")
                 .build();
 

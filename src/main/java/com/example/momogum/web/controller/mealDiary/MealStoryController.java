@@ -38,18 +38,13 @@ public class MealStoryController {
      * */
     @Operation(summary = "팔로우한 회원들의 밥일기 조회 API")
     @GetMapping("/memberId/{memberId}")
-    public ApiResponse<List<MealDairiesDTO.GetStoryFollowResponseDTO>> getFollowStories(
+    public ApiResponse<List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO>> getFollowStories(
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
 
-        MealDairiesDTO.GetStoryFollowResponseDTO tempResult = MealDairiesDTO.GetStoryFollowResponseDTO.builder()
-                .memberImagePath("temp")
-                .isRead(Boolean.FALSE)
-                .nickname("temp")
-                .build();
+        List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> result = mealDiaryStoryService.getAll(memberId);
 
-        List<MealDairiesDTO.GetStoryFollowResponseDTO> resultList = List.of(tempResult);
-        return ApiResponse.onSuccess(resultList);
+        return ApiResponse.onSuccess(result);
     }
 
 

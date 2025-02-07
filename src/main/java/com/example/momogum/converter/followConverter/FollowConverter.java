@@ -10,6 +10,7 @@ public class FollowConverter {
    */
   public static FollowDTO.FollowingResponseDTO toFollowingResponseDTO(UserEntity userEntity, Boolean isMutualFollow) {
     return FollowDTO.FollowingResponseDTO.builder()
+        .userId(userEntity.getId())
         .name(userEntity.getName())
         .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
@@ -22,6 +23,7 @@ public class FollowConverter {
    */
   public static FollowDTO.FollowerResponseDTO toFollowerResponseDTO(UserEntity userEntity, Boolean isMutualFollow) {
     return FollowDTO.FollowerResponseDTO.builder()
+        .userId(userEntity.getId())
         .name(userEntity.getName())
         .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)

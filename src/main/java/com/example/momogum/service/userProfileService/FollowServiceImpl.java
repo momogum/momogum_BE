@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
+
   private final FollowingRepository followingRepository;
   private final FollowerRepository followerRepository;
   private final UserEntityRepository userEntityRepository;
@@ -73,6 +74,13 @@ public class FollowServiceImpl implements FollowService {
         .build();
   }
 
+  /**
+   *  맞팔로우 확인 메서드
+   */
+
+  private Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
+    return followerRepository.existsByUserAndFollower(targetUser, currentUser) ? true : null;
+  }
 
   /**
    * 팔로잉 목록 조회 (내가 팔로우한 사람들)
@@ -80,30 +88,29 @@ public class FollowServiceImpl implements FollowService {
   @Override
   @Transactional
   public List<FollowDTO.FollowingResponseDTO> getFollowings(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다."));
+    UserEntity user = findUserById(userId);
 
     return followingRepository.findByUserId(userId).stream()
-        .map(following -> {
-          Boolean isMutualFollow = followerRepository.existsByUserAndFollower(following.getFollowing(), user) ? true : null;
-          return FollowConverter.toFollowingResponseDTO(following.getFollowing(), isMutualFollow);
-        })
+        .map(following -> FollowConverter.toFollowingResponseDTO(
+            following.getFollowing(),
+            isMutualFollow(user, following.getFollowing())
+        ))
         .collect(Collectors.toList());
   }
+
   /**
    * 팔로워 목록 조회 (나를 팔로우하는 사람들)
    */
   @Override
   @Transactional
   public List<FollowDTO.FollowerResponseDTO> getFollowers(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new IllegalStateException("사용자를 찾을 수 없습니다."));
+    UserEntity user = findUserById(userId);
 
     return followerRepository.findByUserId(userId).stream()
-        .map(follower -> {
-          Boolean isMutualFollow = followingRepository.existsByUserAndFollowing(user, follower.getFollower()) ? true : null;
-          return FollowConverter.toFollowerResponseDTO(follower.getFollower(), isMutualFollow);
-        })
+        .map(follower -> FollowConverter.toFollowerResponseDTO(
+            follower.getFollower(),
+            isMutualFollow(user, follower.getFollower())
+        ))
         .collect(Collectors.toList());
   }
 
@@ -114,6 +121,38 @@ public class FollowServiceImpl implements FollowService {
     return userEntityRepository.findById(userId).orElseThrow(
         () -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND)
     );
+  }
+
+  /**
+   * 내가 팔로잉하는 유저 중에서 검색 (닉네임 또는 이름)
+   */
+  @Override
+  public List<FollowDTO.FollowingResponseDTO> searchFollowingsByQuery(Long userId, String query) {
+    UserEntity user = findUserById(userId);
+
+    return followingRepository.searchFollowingsByQuery(userId, query)
+        .stream()
+        .map(following -> FollowConverter.toFollowingResponseDTO(
+            following.getFollowing(),
+            isMutualFollow(user, following.getFollowing())
+        ))
+        .collect(Collectors.toList());
+  }
+
+  /**
+   * 나를 팔로우한 유저 중에서 검색 (닉네임 또는 이름)
+   */
+  @Override
+  public List<FollowDTO.FollowerResponseDTO> searchFollowersByQuery(Long userId, String query) {
+    UserEntity user = findUserById(userId);
+
+    return followerRepository.searchFollowersByQuery(userId, query)
+        .stream()
+        .map(follower -> FollowConverter.toFollowerResponseDTO(
+            follower.getFollower(),
+            isMutualFollow(user, follower.getFollower())
+        ))
+        .collect(Collectors.toList());
   }
 
 }

@@ -16,4 +16,9 @@ public interface FollowService {
   List<FollowDTO.FollowerResponseDTO> getFollowers(Long userId);
 
   FollowDTO.FollowStatsDTO getFollowStats(Long userId);
+
+  List<FollowDTO.FollowingResponseDTO> searchFollowingsByQuery(Long userId, String query);
+
+  List<FollowDTO.FollowerResponseDTO> searchFollowersByQuery(Long userId, String query);
+
 }

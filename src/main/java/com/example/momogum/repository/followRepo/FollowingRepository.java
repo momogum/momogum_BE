@@ -17,4 +17,8 @@ public interface FollowingRepository extends JpaRepository<Following,Long> {
   @Query("SELECT COUNT(f) FROM Following f WHERE f.user.id = :userId")
   int countByUserId(@Param("userId") Long userId);
 
+  // name or nickname 기준으로 검색
+  @Query("SELECT f FROM Following f WHERE f.user.id = :userId AND (LOWER(f.following.nickname) LIKE LOWER(CONCAT('%', :query, '%')) " +
+         "OR LOWER(f.following.name) LIKE LOWER(CONCAT('%', :query, '%')))")
+  List<Following> searchFollowingsByQuery(Long userId, String query);
 }

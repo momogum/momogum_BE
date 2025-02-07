@@ -20,6 +20,7 @@ public class FollowDTO {
   // 팔로워,팔로잉 멤버 확인 DTO
 
   public static class FollowingResponseDTO {
+    private Long userId;
     private String nickname;
     private String name;
     private String profileImage;
@@ -31,6 +32,7 @@ public class FollowDTO {
   @AllArgsConstructor
   @NoArgsConstructor
   public static class FollowerResponseDTO{
+    private Long userId;
     private String nickname;
     private String name;
     private String profileImage;

@@ -7,6 +7,7 @@ import com.example.momogum.service.userProfileService.ProfileImageService;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.user.ProfileImageDTO;
 import com.example.momogum.web.dto.user.UserDTO;
+import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -90,19 +91,6 @@ public class UserProfileController {
     return ApiResponse.onSuccess(followService.getFollowers(userId));
   }
 
-//  /**
-//  * 팔로잉, 팔로워 토글 (언팔로우, 팔로우)
-//  */
-//
-//  @Operation(summary = "팔로우 토글 API",
-//             description = "팔로우 등록 API<br>"+"팔로우 대상 PathVariable에 담아서 전달<br>"+"1번 클릭 팔로우 등록, 2번 클릭 : 언팔로우")
-//
-//  @PostMapping("/{userId}/follow/{targetUserId}")
-//  public ApiResponse<String> follow(@PathVariable Long userId, @PathVariable Long targetUserId) {
-//
-//
-//  }
-
   /**
    * 유저 프로필 기본 정보 수정 API
    */
@@ -142,6 +130,23 @@ public class UserProfileController {
   @GetMapping("{userId}/fullProfile")
   public  ApiResponse<UserDTO.FullProfileDTO> getFullProfile(@PathVariable Long userId) {
     return ApiResponse.onSuccess(userProfileServiceImpl.getFullProfile(userId));
+  }
+
+  /**
+   * 내가 작성한 밥일기 목록 조회 API
+   */
+  @Operation(summary = "작성한 밥일기 목록 조회 API", description = "본인이 작성한 밥일기의 목록을 조회합니다.")
+  @GetMapping("/{userId}/meal-diaries")
+  public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getUserMealDiaries(@PathVariable Long userId) {
+    List<ViewMealDiaryDTO.ViewMealDiaryResponse> response = userProfileServiceImpl.getUserMealDiaries(userId);
+    return ApiResponse.onSuccess(response);
+  }
+
+  @Operation(summary = "북마크한 밥일기 목록 조회 API", description = "북마크 해놓은 밥일기의 목록을 조회합니다.")
+  @GetMapping("/{userId}/bookmarked-meal-diaries")
+  public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getBookmarkedMealDiaries(@PathVariable Long userId) {
+    List<ViewMealDiaryDTO.ViewMealDiaryResponse> response = userProfileServiceImpl.getBookmarkedMealDiaries(userId);
+    return ApiResponse.onSuccess(response);
   }
 
 }

@@ -34,4 +34,7 @@ public interface UserEntityRepository extends JpaRepository<UserEntity,Long> {
             @Param("noSpaceKeyword") String noSpaceKeyword,
             @Param("partialKeyword") String partialKeyword
     );
+
+    Optional<UserEntity> findByNickname(String nickname);
+
 }

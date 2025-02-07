@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/Appointment")
-@Tag(name = "약속잡기 관련 API")
+@Tag(name = "약속잡기 모임 이름 정하기 API")
 @RequiredArgsConstructor
 public class AppointmentNameController {
 

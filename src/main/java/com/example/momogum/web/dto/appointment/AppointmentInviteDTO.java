@@ -1,5 +1,6 @@
 package com.example.momogum.web.dto.appointment;
 
+import com.example.momogum.domain.common.enums.InvitationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class AppointmentInviteDTO {
         private Long appointmentId;
 
         @Schema(description = "초대할 친구들의 사용자 이름 리스트")
-        private List<String> usernames;
+        private List<String> nicknames;
 
     }
 
@@ -31,8 +32,8 @@ public class AppointmentInviteDTO {
     @NoArgsConstructor
     public static class AppointmentInviteResponseDTO {
 
-        @Schema(description = "사용자 아이디")
-        private String username;
+        @Schema(description = "사용자 닉네임")
+        private String nickname;
 
         @Schema(description = "사용자 이름")
         private String name;
@@ -41,7 +42,7 @@ public class AppointmentInviteDTO {
         private String profileImage;
 
         @Schema(description = "초대 여부")
-        private boolean isInvited;
+        private InvitationStatus status;
 
     }
 }

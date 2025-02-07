@@ -16,9 +16,14 @@ public class AppointmentInvitation extends BaseEntity {
     // 다수 초대에 있어서 서비스단에서 각 쿼리를 만들어 보내줘야할 듯 합니다
     // 한번에 List<Long> userIds 처리는 어려울 듯 합니다
 
+    //개별 초대 기록의 고유 식별자 (하나의 약속(appointment)에 속하는 공통 식별자가 아님)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // 초대된 약속의 ID
+    @Column(name = "appointment_id", nullable = false)
+    private Long appointmentId;
 
     // 초대 상태
     @Enumerated(EnumType.STRING)

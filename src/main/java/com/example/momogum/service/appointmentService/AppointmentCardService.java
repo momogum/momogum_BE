@@ -1,4 +1,4 @@
-package com.example.momogum.service.appointment;
+package com.example.momogum.service.appointmentService;
 
 import com.example.momogum.domain.utils.S3UrlProvider;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.momogum.web.dto.appointment.AppointMentDTO.*;
+import static com.example.momogum.web.dto.appointment.AppointmentCardDTO.*;
 
 @Service
 @RequiredArgsConstructor

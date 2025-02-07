@@ -1,0 +1,203 @@
+package com.example.momogum.service.appointmentService;
+
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
+import com.example.momogum.domain.UserEntity;
+import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.domain.common.enums.InvitationStatus;
+import com.example.momogum.domain.common.enums.LoginType;
+import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
+import com.example.momogum.repository.followRepo.FollowingRepository;
+import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
+import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class AppointmentInviteServiceTest {
+
+    @InjectMocks
+    private AppointmentInviteService appointmentInviteService;
+
+    @Mock
+    private UserEntityRepository userEntityRepository;
+
+    @Mock
+    private AppointmentInviteRepository appointmentInviteRepository;
+
+    @Mock
+    private AppointmentInviteConverter converter;
+
+    @Mock
+    private FollowingRepository followingRepository;
+
+    private AppointmentInviteRequestDTO request;
+    private UserEntity user1;
+    private UserEntity user2;
+
+
+    @BeforeEach
+    void setUp() {
+
+        // 테스트 요청 객체 생성 (appointmentId와 초대할 사용자 닉네임 목록)
+        request = AppointmentInviteRequestDTO.builder()
+                .appointmentId(1L)
+                .nicknames(List.of("user1", "user2"))
+                .build();
+
+        // 테스트용 UserEntity 생성 (필요한 필드만 설정)
+         user1 = createTestUser(1L, "user1", "유저 닉네임 1");
+         user2 = createTestUser(2L, "user2", "유저 닉네임 2");
+
+        // repository에서 username으로 UserEntity 조회 시 설정
+        when(userEntityRepository.findByNickname("user1")).thenReturn(Optional.of(user1));
+        when(userEntityRepository.findByNickname("user2")).thenReturn(Optional.of(user2));
+
+        // converter의 DTO 변환 결과를 미리 설정 1
+        when(converter.toResponseDTO(user1, InvitationStatus.PENDING))
+                .thenReturn(AppointmentInviteResponseDTO.builder()
+                        .nickname("user1")
+                        .name("유저 닉네임 1")
+                        .profileImage("/path/to/image1")
+                        .status(InvitationStatus.PENDING)
+                        .build());
+
+        // converter의 DTO 변환 결과를 미리 설정 2
+        when(converter.toResponseDTO(user2, InvitationStatus.PENDING))
+                .thenReturn(AppointmentInviteResponseDTO.builder()
+                        .nickname("user2")
+                        .name("유저 닉네임 2")
+                        .profileImage("/path/to/image2")
+                        .status(InvitationStatus.PENDING)
+                        .build());
+    }
+
+    /**
+     * 테스트용 UserEntity 객체를 생성하는 팩토리 메서드.
+     */
+    private UserEntity createTestUser(Long id, String username, String name) {
+        return UserEntity.builder()
+                .id(id)
+                .nickname(username) //username이 nickname의 역할을 수행한다고 가정
+                .name(name)
+                .phoneNumber("010-1234-5678")
+                .about("About " + name)
+                .provider(LoginType.KAKAO)
+                .build();
+    }
+
+    /**
+     * getFriendsForInvitation 테스트
+     */
+    @DisplayName("getFriendsForInvitation 테스트")
+    @Test
+    void getFriendsForInvitation_SuccessTest() {
+
+        //given - 특정 appointmentId에 대한 특정 초대 목록 생성
+        Long currentUserId = 100L; //테스트용 ID 생성
+
+        // 1. appointmentId에 대한 초대 내역이 없다고 가정
+        when(appointmentInviteRepository.findByAppointmentId(request.getAppointmentId()))
+                .thenReturn(Collections.emptyList());
+
+        // 2. 현재 사용자가 팔로우 중인 사용자 목록 설정 (user1과 user2)
+        List<UserEntity> followedUsers = List.of(user1, user2);
+        when(followingRepository.findFollowedUsersByUserId(currentUserId))
+                .thenReturn(followedUsers);
+
+        //when - GET 친구 초대 가능 목록 호출 (초대 내역이 없으므로 모든 팔로우 사용자가 대상)
+        List<AppointmentInviteResponseDTO> result = appointmentInviteService.getFriendsForInvitation(request.getAppointmentId(), currentUserId);
+
+        // Then
+        assertEquals(2, result.size());
+        assertEquals("user1", result.get(0).getNickname());
+        assertEquals("user2", result.get(1).getNickname());
+    }
+
+    @DisplayName("inviteFriends 테스트 - 둘 다 초대가 되어있지 않은 경우, 둘 다 초대가 되어야 함.")
+    @Test
+    void inviteFriends_SuccessTest() {
+        // given - user1, user2 둘 다 초대가 되어있지 않은 상태
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user1))
+                .thenReturn(false);
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user2))
+                .thenReturn(false);
+
+        //when
+        List<AppointmentInviteResponseDTO> result = appointmentInviteService.inviteFriends(request);
+
+        //then
+        assertEquals(2, result.size());
+        assertEquals("user1", result.get(0).getNickname());
+        assertEquals("user2", result.get(1).getNickname());
+
+        //메서드 두 번 호출되었는지 확인
+        verify(appointmentInviteRepository, times(2)).save(any(AppointmentInvitation.class));
+    }
+
+    @DisplayName("inviteFriends 테스트 - user1은 초대 X, user2는 초대 O일 경우 -> user2만 초대 되어야 함")
+    @Test
+    void inviteFriends_DuplicateTest() {
+        //given - user1은 초대 O, user2은 초대 X
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user1))
+                .thenReturn(true);
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user2))
+                .thenReturn(false);
+
+        //when
+        List<AppointmentInviteResponseDTO> result = appointmentInviteService.inviteFriends(request);
+
+        //then
+        assertEquals(1, result.size());
+        assertEquals("user2", result.get(0).getNickname());
+
+        verify(appointmentInviteRepository, times(1)).save(any(AppointmentInvitation.class));
+    }
+
+    @DisplayName("inviteFriends 테스트 - 초대할 친구를 아무도 지정하지 않았을 경우 -> MEMBER_NOT_FOUND 오류가 발생해야 함.")
+    @Test
+    void inviteFriends_InvalidRequest_EmptyUsernamesTest() {
+        //given - 초대할 친구를 아무도 지정하지 않았을 경우
+        AppointmentInviteRequestDTO request = AppointmentInviteRequestDTO.builder()
+                .appointmentId(1L)
+                .nicknames(Collections.emptyList())
+                .build();
+
+        //when & then - 예상 기대값 : GeneralException - MEMBER_NOT_FOUND
+        GeneralException exception = assertThrows(GeneralException.class,
+                () -> appointmentInviteService.inviteFriends(request));
+        assertEquals(ErrorStatus.MEMBER_NOT_FOUND, exception.getCode());
+    }
+
+    @DisplayName("inviteFriends 테스트 - appointmnetId가 null일 경우 약속 관련 오류 (APPOINTMENT_NOT_EXIST) 발생")
+    @Test
+    void inviteFriends_InvalidRequest_NullAppointmentIdTest() {
+        //given - appointmentId == null
+        AppointmentInviteRequestDTO invalidRequest = AppointmentInviteRequestDTO.builder()
+                .appointmentId(null)
+                .nicknames(List.of("user1"))
+                .build();
+
+        //when & then - 예상 기대값 : GeneralException - APPOINTMENT_NOT_EXIST
+        GeneralException exception = assertThrows(GeneralException.class,
+                () -> appointmentInviteService.inviteFriends(invalidRequest));
+        assertEquals(ErrorStatus.APPOINTMENT_NOT_EXIST, exception.getCode());
+    }
+}

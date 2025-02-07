@@ -4,11 +4,9 @@ import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryStoryConverter;
-import com.example.momogum.domain.FollowEntity;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.MealDiaryStory;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.repository.followRepo.FollowRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;
@@ -25,7 +23,6 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
     private final MealDiaryStoryRepository mealDiaryStoryRepository;
     private final UserEntityRepository userEntityRepository;
-    private final FollowRepository followRepository;
 
     @Override
     public MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO get(Long storyId){

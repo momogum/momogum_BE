@@ -8,7 +8,6 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import com.example.momogum.domain.common.enums.Status;
-import com.example.momogum.repository.followRepo.FollowRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;

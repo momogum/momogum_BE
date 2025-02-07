@@ -61,7 +61,7 @@ public class AppointmentInviteService {
     @Transactional
     public List<AppointmentInviteResponseDTO> inviteFriends(AppointmentInviteRequestDTO request) {
 
-        validateRequest(request);
+        validateAppointmentInviteRequest(request);
 
         List<AppointmentInviteResponseDTO> invitedUsers = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class AppointmentInviteService {
         return invitedUsers;
     }
 
-    private static void validateRequest(AppointmentInviteRequestDTO request) {
+    private static void validateAppointmentInviteRequest(AppointmentInviteRequestDTO request) {
         if (request.getNicknames() == null || request.getNicknames().isEmpty()) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }

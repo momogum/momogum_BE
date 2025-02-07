@@ -14,7 +14,7 @@ import java.util.List;
 import static com.example.momogum.web.dto.appointment.AppointmentCardDTO.*;
 
 @RestController
-@RequestMapping("/Appointment")
+@RequestMapping("/appointment")
 @RequiredArgsConstructor
 @Tag(name = "약속잡기 카드 선택 및 반환 API")
 public class AppointmentCardsController {

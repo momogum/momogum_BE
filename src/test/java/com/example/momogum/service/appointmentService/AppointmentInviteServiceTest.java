@@ -13,6 +13,7 @@ import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -105,6 +106,7 @@ class AppointmentInviteServiceTest {
     /**
      * getFriendsForInvitation 테스트
      */
+    @DisplayName("getFriendsForInvitation 테스트")
     @Test
     void getFriendsForInvitation_SuccessTest() {
 
@@ -129,9 +131,7 @@ class AppointmentInviteServiceTest {
         assertEquals("user2", result.get(1).getNickname());
     }
 
-    /**
-     * inviteFriends 테스트 - 둘 다 초대가 되어있지 않은 경우, 둘 다 초대가 되어야 함.
-     */
+    @DisplayName("inviteFriends 테스트 - 둘 다 초대가 되어있지 않은 경우, 둘 다 초대가 되어야 함.")
     @Test
     void inviteFriends_SuccessTest() {
         // given - user1, user2 둘 다 초대가 되어있지 않은 상태
@@ -152,9 +152,7 @@ class AppointmentInviteServiceTest {
         verify(appointmentInviteRepository, times(2)).save(any(AppointmentInvitation.class));
     }
 
-    /**
-     * inviteFriends 테스트 - user1은 초대 X, user2는 초대 O일 경우 -> user2만 초대 되어야 함
-     */
+    @DisplayName("inviteFriends 테스트 - user1은 초대 X, user2는 초대 O일 경우 -> user2만 초대 되어야 함")
     @Test
     void inviteFriends_DuplicateTest() {
         //given - user1은 초대 O, user2은 초대 X
@@ -173,9 +171,7 @@ class AppointmentInviteServiceTest {
         verify(appointmentInviteRepository, times(1)).save(any(AppointmentInvitation.class));
     }
 
-    /**
-     * inviteFriends 테스트 - 초대할 친구를 아무도 지정하지 않았을 경우 -> MEMBER_NOT_FOUND 오류가 발생해야 함.
-     */
+    @DisplayName("inviteFriends 테스트 - 초대할 친구를 아무도 지정하지 않았을 경우 -> MEMBER_NOT_FOUND 오류가 발생해야 함.")
     @Test
     void inviteFriends_InvalidRequest_EmptyUsernamesTest() {
         //given - 초대할 친구를 아무도 지정하지 않았을 경우
@@ -190,9 +186,7 @@ class AppointmentInviteServiceTest {
         assertEquals(ErrorStatus.MEMBER_NOT_FOUND, exception.getCode());
     }
 
-    /**
-     * inviteFriends 테스트 - appointmnetId가 null일 경우 약속 관련 오류 (APPOINTMENT_NOT_EXIST) 발생
-     */
+    @DisplayName("inviteFriends 테스트 - appointmnetId가 null일 경우 약속 관련 오류 (APPOINTMENT_NOT_EXIST) 발생")
     @Test
     void inviteFriends_InvalidRequest_NullAppointmentIdTest() {
         //given - appointmentId == null

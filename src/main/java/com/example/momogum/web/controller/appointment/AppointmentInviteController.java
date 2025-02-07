@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Appointment")
+@RequestMapping("/appointment")
 @RequiredArgsConstructor
 @Tag(name = "약속잡기 친구 초대 API")
 public class AppointmentInviteController {

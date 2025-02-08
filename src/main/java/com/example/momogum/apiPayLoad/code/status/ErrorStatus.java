@@ -25,6 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"COMMENT4001","댓글을 찾을 수 없습니다"),
 
+    MEALDIARY_STORY_NOT_FOUND(HttpStatus.NOT_FOUND,"STORY4001","밥일기 스토리를 찾을 수 없습니다"),
+
     MEALDIARY_REPORTED(HttpStatus.BAD_REQUEST,"MEALDIARY4003","이미 신고 접수된 게시글 입니다"),
     MEALDIARY_KEYWORD_MAX(HttpStatus.BAD_REQUEST,"MEALDIARY4002","밥일기의 키워드는 최대 다섯개만 입력 할 수 있습니다"),
     MEALDIARY_NOT_FOUND(HttpStatus.NOT_FOUND,"MEALDIARY4001","밥일기를 찾을 수 없습니다"),
@@ -35,6 +37,17 @@ public enum ErrorStatus implements BaseErrorCode {
     IMAGE_REMOVE_ERROR(HttpStatus.SERVICE_UNAVAILABLE,"IMAGE5002","이미지 삭제 중 오류가 발생하였습니다"),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_GATEWAY,"IMAGE5004","이미지 등록 중 오류가 발생하였습니다"),
     IMAGE_DOWNLOAD_ERROR(HttpStatus.SERVICE_UNAVAILABLE,"IMAGE5003","이미지 다운로드 중 오류가 발생하였습니다"),
+
+    USER_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "유저 프로필을 찾을 수 없습니다"),
+    INVALID_NICKNAME_FORMAT(HttpStatus.BAD_REQUEST, "USER4002", "닉네임은 5~20자의 영어 소문자, 숫자, 특수문자만 가능합니다."),
+    INVALID_NAME_FORMAT(HttpStatus.BAD_REQUEST,"USER4003", "이름은 1~12자의 한글 또는 영문만 가능합니다."),
+    INVALID_ABOUT_LENGTH(HttpStatus.BAD_REQUEST, "USER4004", "한 줄 소개는 최대 40자까지 입력 가능합니다"),
+    PROFILE_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4005", "프로필 이미지를 찾을 수 없습니다"),
+    PROFILE_IMAGE_UPLOAD_FAILED(HttpStatus.BAD_GATEWAY, "USER4006", "프로필 이미지 업로드에 실패하였습니다"),
+    PROFILE_IMAGE_DELETE_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "USER4007", "프로필 이미지 삭제에 실패하였습니다"),
+    PROFILE_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "USER4008", "유저 프로필 업데이트에 실패하였습니다"),
+
+    TARGET_NOT_FOUND(HttpStatus.NOT_FOUND,"FOLLOW5001","대상을 찾을 수 없습니다"),
 
     //search에 사용
     KEYWWORD_BLANK(HttpStatus.BAD_REQUEST,"SEARCH4001","검색어는 필수입니다."),

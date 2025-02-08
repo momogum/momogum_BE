@@ -1,4 +1,4 @@
-package com.example.momogum.repository.ProfileImageRepo;
+package com.example.momogum.repository.profileImageRepo;
 
 import com.example.momogum.domain.ProfileImage;
 import java.util.Optional;

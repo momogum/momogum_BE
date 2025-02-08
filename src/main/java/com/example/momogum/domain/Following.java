@@ -25,12 +25,12 @@ public class Following extends BaseEntity {
 
     // 팔로우한 사람 (내가 팔로우하는 대상)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName ="id", nullable = false)
     private UserEntity user;
 
     // 내가 팔로우하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id", nullable = false)
+    @JoinColumn(name = "following_id", referencedColumnName ="id", nullable = false)
     private UserEntity following;
 
 }

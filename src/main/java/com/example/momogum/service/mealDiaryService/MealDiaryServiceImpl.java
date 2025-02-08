@@ -41,6 +41,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
     private final MealDiaryBookmarkRepository mealDiaryBookmarkRepository;
     private final MealDiaryReportRepository mealDiaryReportRepository;
+    private final MealDiaryStoryRepository mealDiaryStoryRepository;
 
     @Override
     public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
@@ -54,6 +55,12 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         mealDiaryImageUtil.uploadImages(files,dirName,newMealDiary.getId());
         extractedKeyword(request, newMealDiary);
 
+        MealDiaryStory newMealDiaryStory = MealDiaryStory.builder()
+                .name(byId.getName())
+                .mealDiary(mealDiary)
+                .build();
+
+        mealDiaryStoryRepository.save(newMealDiaryStory);
 
         return MealDiaryConverter.toCreateStoryResponseDTO(newMealDiary);
     }

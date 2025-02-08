@@ -21,7 +21,6 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 class AppointmentNameServiceTest {
 
-
     @MockBean
     private JwtUtil jwtUtil;
 

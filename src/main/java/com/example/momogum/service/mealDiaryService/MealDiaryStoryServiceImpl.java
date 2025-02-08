@@ -50,21 +50,12 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
 
-        return byMealDiaryIn.stream().map(mealDiaryStory ->
-                MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
-                        .mealDiaryImageLinks(mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink())
-                        .build()
-        ).toList();
+        return MealDiaryStoryConverter.toMealDiaryStoryReadAllDTO(byMealDiaryIn);
     }
 
 
 
 
-
-    private UserEntity findUser(Long userId) {
-        return userEntityRepository.findById(userId)
-                .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
 
     private MealDiaryStory findMealDiaryStory(Long storyId) {
         return mealDiaryStoryRepository.findById(storyId)

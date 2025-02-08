@@ -16,4 +16,12 @@ public class MealDiaryStoryConverter {
                 .mealDiaryImageLinks(imageLinks)
                 .build();
     }
+
+    public static List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> toMealDiaryStoryReadAllDTO(List<MealDiaryStory> mealDiaryStoryList) {
+        return mealDiaryStoryList.stream().map(mealDiaryStory ->
+                MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
+                        .mealDiaryImageLinks(mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink())
+                        .build()
+        ).toList();
+    }
 }

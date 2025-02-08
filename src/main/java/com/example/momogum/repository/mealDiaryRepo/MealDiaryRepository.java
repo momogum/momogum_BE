@@ -39,8 +39,7 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
     Slice<MealDiary> searchByKeyword(
             @Param("fullKeyword") String fullKeyword,
             @Param("noSpaceKeyword") String noSpaceKeyword,
-            @Param("partialKeyword") String partialKeyword,
-            Pageable pageable
+            @Param("partialKeyword") String partialKeyword
     );
 
 

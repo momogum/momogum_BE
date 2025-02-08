@@ -35,11 +35,9 @@ public class SearchController {
     @Operation(summary = "밥일기 검색 API")
     @GetMapping("/mealdiary")
     public ApiResponse<List<SearchDTO.PostSearchResponseDTO>> getPostSearch(
-            @RequestParam String request,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size) {
+            @RequestParam String request) {
 
-        List<SearchDTO.PostSearchResponseDTO> result = searchService.getPostSearch(request,page,size);
+        List<SearchDTO.PostSearchResponseDTO> result = searchService.getPostSearch(request);
 
         return ApiResponse.onSuccess(result);
     }

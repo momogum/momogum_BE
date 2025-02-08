@@ -9,12 +9,10 @@ import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.search.SearchDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +34,9 @@ public class SearchServiceImpl implements SearchService {
 
         List<UserEntity> users = userEntityRepository.searchByKeyword(request, requestWithoutSpaces, partialRequest);
 
+        if (users.isEmpty()) {
+            throw new SearchHandler(ErrorStatus.NO_RESULT_FOUND);
+        }
 
         return users.stream()
                 .map(SearchConverter::toAccountSearchResponseDTO)
@@ -43,19 +44,22 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<SearchDTO.PostSearchResponseDTO> getPostSearch(String request, int page, int size) {
+    public List<SearchDTO.PostSearchResponseDTO> getPostSearch(String request) {
 
         validateSearchRequest(request);
 
         String requestWithoutSpaces = request.replaceAll("\\s+", "");
         String partialRequest = "%" + request + "%";
 
-        Pageable pageable = PageRequest.of(page, size);
 
         // 검색 및 슬라이스 반환
         Slice<MealDiary> mealDiaries = mealDiaryRepository.searchByKeyword(
-                request, requestWithoutSpaces, partialRequest, pageable
+                request, requestWithoutSpaces, partialRequest
         );
+
+        if (mealDiaries.isEmpty()) {
+            throw new SearchHandler(ErrorStatus.NO_RESULT_FOUND);
+        }
 
         return mealDiaries.getContent().stream()
                 .map(SearchConverter::toPostSearchResponseDTO)
@@ -65,7 +69,7 @@ public class SearchServiceImpl implements SearchService {
     // 검색어 확인
     private void validateSearchRequest(String request) {
         if (request == null || request.isBlank()) {
-            throw new SearchHandler(ErrorStatus.KEYWWORD_BLANK);
+            throw new SearchHandler(ErrorStatus.KEYWORD_BLANK);
         }
     }
 }

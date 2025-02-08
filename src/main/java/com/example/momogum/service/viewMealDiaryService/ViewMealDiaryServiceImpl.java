@@ -1,5 +1,8 @@
 package com.example.momogum.service.viewMealDiaryService;
 
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 
@@ -9,6 +12,7 @@ import com.example.momogum.repository.redisRepository.RedisRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -23,7 +27,7 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
 
     private final RedisRepository redisRepository;
     private final MealDiaryRepository mealDiaryRepository;
-    private final UserEntityRepository userEntityRepository;
+
     private static final int SIZE = 6;
     private static final int TTL_MINUTES = 5;
 
@@ -39,7 +43,7 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
         // 공통 로직 호출
         List<ViewMealDiaryDTO.ViewMealDiaryResponse> responseList =
                 getUnViewedMealDiaries(userId, isRevisitMealDiaryIds);
-        System.out.println(responseList);
+
         // 결과 반환
         return new ViewMealDiaryDTO.ViewMealDiaryResponseListDTO(responseList);
     }
@@ -87,16 +91,10 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
         List<ViewMealDiaryDTO.ViewMealDiaryResponse> responseList = unViewedPosts.stream()
                 .map(post -> ViewMealDiaryDTO.ViewMealDiaryResponse.builder()
                         .mealDiaryId(post.getId())
-                        .foodImageURLs(post.getMealDiaryImages().stream()
-                                .map(MealDiaryImage::getImageLink)
-                                .toList())
-                        .userImageURL(post.getUserEntity().getProfileImage() != null
-                            ? post.getUserEntity().getProfileImage().getImageLink()
-                            : "default-profile.jpg")
+                        .foodImageURLs(getFoodImageURLs(post))
+                        .userImageURL(getUserProfileImage(post))
                         .foodCategory(post.getFoodCategory())
-                        .keyWord(post.getMealDiaryKeywords().stream()
-                                .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())
-                                .toList())
+                        .keyWord(getKeywords(post))
                         .isRevisit(post.getIsRevisit())
                         .build())
                 .toList();
@@ -109,5 +107,40 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
         redisRepository.setSessionTimeout(redisKey, TTL_MINUTES);
 
         return responseList;
+    }
+
+    // 사용자 관련 예외
+    private String getUserProfileImage(MealDiary post) {
+        if (post.getUserEntity() == null) {
+            throw new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        if (post.getUserEntity().getProfileImage() == null) {
+            throw new UserEntityHandler(ErrorStatus.PROFILE_IMAGE_NOT_FOUND);
+        }
+
+        return post.getUserEntity().getProfileImage().getImageLink();
+    }
+
+    // 키워드 예외
+    private List<String> getKeywords(MealDiary post) {
+        if (post.getMealDiaryKeywords() == null) {
+            return List.of();
+        }
+
+        return post.getMealDiaryKeywords().stream()
+                .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())
+                .toList();
+    }
+
+    // 음식 사진 예외
+    private List<String> getFoodImageURLs(MealDiary post) {
+        if (post.getMealDiaryImages() == null || post.getMealDiaryImages().isEmpty()) {
+            throw new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND);
+        }
+
+        return post.getMealDiaryImages().stream()
+                .map(MealDiaryImage::getImageLink)
+                .toList();
     }
 }

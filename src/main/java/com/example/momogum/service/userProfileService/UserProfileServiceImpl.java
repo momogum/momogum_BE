@@ -29,6 +29,30 @@ public class UserProfileServiceImpl implements UserProfileService {
   private final MealDiaryRepository mealDiaryRepository;
   private final MealDiaryBookmarkRepository mealDiaryBookmarkRepository;
 
+  private void updateFieldIfValid(
+      String newValue,
+      String currentValue,
+      Consumer<String> validator,
+      Consumer<String> setter) {
+
+    if (newValue != null && !newValue.equals(currentValue)) {
+      validator.accept(newValue);
+      setter.accept(newValue);
+    }
+  }
+
+  // 한줄 소개 검증 (변환된 값 반환)
+  private void updateFieldIfValid(
+      String newValue,
+      Function<String, String> validator,  // 검증 후 변환된 값 반환
+      Consumer<String> setter) {  // setter 실행
+
+    if (newValue != null) {
+      String validatedValue = validator.apply(newValue);
+      setter.accept(validatedValue);
+    }
+  }
+
 
   // 유저 닉네임, 실명, 프로필 이미지 조회
 
@@ -57,19 +81,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     UserEntity user = userEntityRepository.findById(userId)
         .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
 
-    // 닉네임 검증 및 중복 검사
-    if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
-      userProfileValidator.validateNickname(request.getNickname());
-      user.setNickname(request.getNickname());
-    }
-    // 유저 이름 검증
-    if (request.getName() != null && !request.getName().equals(user.getName())) {
-      userProfileValidator.validateName(request.getName());
-      user.setName(request.getName());
-    }
-    // 한줄 소개 검증 (빈 문자열 반환 가능)
-    user.setAbout(userProfileValidator.validateAbout(request.getAbout()));
+    updateFieldIfValid(request.getNickname(), user.getNickname(),
+        userProfileValidator::validateNickname, user::setNickname);
 
+    updateFieldIfValid(request.getName(), user.getName(),
+        userProfileValidator::validateName, user::setName);
+
+    updateFieldIfValid(request.getAbout(),
+        userProfileValidator::validateAbout, user::setAbout);
 
     return UserDTO.UserEditDTO.builder()
         .nickname(user.getNickname())

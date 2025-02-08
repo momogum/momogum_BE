@@ -7,7 +7,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "following", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_entity_id", "following_id"})
+        @UniqueConstraint(columnNames = {"user_id", "following_id"})
 })
 @Getter
 @Setter

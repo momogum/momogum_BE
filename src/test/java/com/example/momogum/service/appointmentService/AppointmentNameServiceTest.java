@@ -26,13 +26,13 @@ class AppointmentNameServiceTest {
     private JwtUtil jwtUtil;
 
     @Mock
-    private AppointmentNameRepository repository; // Repository Mock
+    private AppointmentNameRepository repository;
 
     @Mock
-    private AppointmentNameConverter converter; // Converter Mock
+    private AppointmentNameConverter converter;
 
     @InjectMocks
-    private AppointmentNameService service; // 테스트 대상(Service)
+    private AppointmentNameService service;
 
     @Test
     void Success_NameTest() {

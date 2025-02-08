@@ -23,7 +23,6 @@ import java.util.List;
 @ActiveProfiles("test")
 class AppointmentCardServiceTest {
 
-
     @MockBean
     private JwtUtil jwtUtil;
 

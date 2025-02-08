@@ -15,6 +15,8 @@ import com.example.momogum.web.dto.user.UserDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO.ViewMealDiaryResponse;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -25,6 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"COMMENT4001","댓글을 찾을 수 없습니다"),
 
+    MEALDIARY_STORY_NOT_FOUND(HttpStatus.NOT_FOUND,"STORY4001","밥일기 스토리를 찾을 수 없습니다"),
+
     MEALDIARY_REPORTED(HttpStatus.BAD_REQUEST,"MEALDIARY4003","이미 신고 접수된 게시글 입니다"),
     MEALDIARY_KEYWORD_MAX(HttpStatus.BAD_REQUEST,"MEALDIARY4002","밥일기의 키워드는 최대 다섯개만 입력 할 수 있습니다"),
     MEALDIARY_NOT_FOUND(HttpStatus.NOT_FOUND,"MEALDIARY4001","밥일기를 찾을 수 없습니다"),

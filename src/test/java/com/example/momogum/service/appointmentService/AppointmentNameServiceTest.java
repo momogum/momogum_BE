@@ -1,6 +1,7 @@
 package com.example.momogum.service.appointmentService;
 import com.example.momogum.converter.appointmentConverter.AppointmentNameConverter;
 import com.example.momogum.domain.appointment.AppointmentName;
+import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.appoinmentRepo.AppointmentNameRepository;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameResponseDTO;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 
@@ -18,6 +20,10 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentNameServiceTest {
+
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @Mock
     private AppointmentNameRepository repository; // Repository Mock

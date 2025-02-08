@@ -26,8 +26,6 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
     private final MealDiaryRepository mealDiaryRepository;
     private final MealDiaryStoryRepository mealDiaryStoryRepository;
-    private final UserEntityRepository userEntityRepository;
-
     private final FollowingRepository followingRepository;
 
     @Override
@@ -47,11 +45,15 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
         List<UserEntity> followedUsersByUserId = followingRepository.findFollowedUsersByUserId(userId);
         List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(followedUsersByUserId);
-
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
+
+        if (byMealDiaryIn.isEmpty()) {
+            throw new MealDiaryStoryHandler(ErrorStatus.MEALDIARY_STORY_NOT_FOUND);
+        }
 
         return MealDiaryStoryConverter.toMealDiaryStoryReadAllDTO(byMealDiaryIn);
     }
+
 
 
 

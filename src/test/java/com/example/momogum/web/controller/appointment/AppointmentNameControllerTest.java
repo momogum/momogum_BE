@@ -1,5 +1,6 @@
 package com.example.momogum.web.controller.appointment;
 
+import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,13 +26,16 @@ import java.time.LocalDateTime;
 @ActiveProfiles("test")
 class AppointmentNameControllerTest {
 
+    @MockBean
+    private JwtUtil jwtUtil;
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private AppointmentNameService appointmentNameService;
 
-    private static final String BASE_URL = "/Appointment";
+    private static final String BASE_URL = "/appointment";
 
     /**
      * 성공 테스트

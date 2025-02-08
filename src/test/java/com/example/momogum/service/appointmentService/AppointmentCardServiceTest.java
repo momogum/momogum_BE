@@ -1,5 +1,6 @@
 package com.example.momogum.service.appointmentService;
 
+import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.domain.utils.S3UrlProvider;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -20,6 +22,10 @@ import java.util.List;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentCardServiceTest {
+
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @Mock
     private S3UrlProvider s3UrlProvider;

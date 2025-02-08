@@ -7,6 +7,7 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.domain.common.enums.LoginType;
+import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
@@ -19,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Collections;
@@ -32,6 +34,10 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentInviteServiceTest {
+
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @InjectMocks
     private AppointmentInviteService appointmentInviteService;

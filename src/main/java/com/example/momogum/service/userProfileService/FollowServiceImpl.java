@@ -78,8 +78,9 @@ public class FollowServiceImpl implements FollowService {
    *  맞팔로우 확인 메서드
    */
 
-  private Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
-    return followerRepository.existsByUserAndFollower(targetUser, currentUser) ? true : null;
+  public Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
+    return followerRepository.existsByUserAndFollower(targetUser, currentUser)
+            && followerRepository.existsByUserAndFollower(currentUser, targetUser);
   }
 
   /**

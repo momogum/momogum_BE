@@ -4,12 +4,15 @@ import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
+import com.example.momogum.domain.Follower;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
+import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.service.userProfileService.FollowServiceImpl;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -27,29 +30,33 @@ public class AppointmentInviteService {
     private final UserEntityRepository userEntityRepository;
     private final AppointmentInviteRepository appointmentInviteRepository;
     private final AppointmentInviteConverter converter;
-    private final FollowingRepository followingRepository;
+    private final FollowerRepository followerRepository;
+
 
     /**
-     * GET 약속에 초대 가능한 친구 목록 반환
+     * GET 약속에 초대 가능한 친구 목록 반환 (나를 팔로워하는 사람들)
      * @return List<AppointmentInviteResponseDTO> 객체
      */
     @Transactional(readOnly = true)
     public List<AppointmentInviteResponseDTO> getFriendsForInvitation(Long appointmentId, Long userId) {
-        // 1. 현재 사용자가 팔로우 중인 사용자 조회
-        List<UserEntity> followedUsers = followingRepository.findFollowedUsersByUserId(userId);
+        // 1. 현재 사용자를 팔로우하는 사용자 조회 (즉, 내 팔로워 조회)
+        List<UserEntity> followers = followerRepository.findByUserId(userId)
+                .stream()
+                .map(Follower::getFollower)
+                .toList();
 
         // 2. 이미 초대된 사용자 조회
-        List<AppointmentInvitation> existingInvitations = appointmentInviteRepository.findByAppointmentId(appointmentId);
-        List<Long> invitedUserIds = existingInvitations.stream()
+        List<Long> invitedUserIds = appointmentInviteRepository.findByAppointmentId(appointmentId)
+                .stream()
                 .map(invitation -> invitation.getUserEntity().getId())
                 .toList();
 
-        // 3. 초대 가능한 사용자 필터링
-        List<UserEntity> availableUsers = followedUsers.stream()
+        // 3. 초대 가능한 사용자 필터링 (이미 초대된 사용자는 제외)
+        List<UserEntity> availableUsers = followers.stream()
                 .filter(user -> !invitedUserIds.contains(user.getId())) // 이미 초대된 사용자 제외
                 .toList();
 
-        // 4. DTO 변환
+        // 4. DTO 변환 후 반환
         return availableUsers.stream()
                 .map(user -> converter.toResponseDTO(user, InvitationStatus.PENDING))
                 .collect(Collectors.toList());
@@ -61,12 +68,11 @@ public class AppointmentInviteService {
      */
     @Transactional
     public List<AppointmentInviteResponseDTO> inviteFriends(AppointmentInviteRequestDTO request) {
-
         validateAppointmentInviteRequest(request);
 
         List<AppointmentInviteResponseDTO> invitedUsers = new ArrayList<>();
 
-        for(String username : request.getNicknames()) {
+        for (String username : request.getNicknames()) {
             UserEntity user = userEntityRepository.findByNickname(username)
                     .orElseThrow(() -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
 

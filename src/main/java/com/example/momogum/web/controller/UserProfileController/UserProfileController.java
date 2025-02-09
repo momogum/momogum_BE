@@ -59,39 +59,6 @@ public class UserProfileController {
   }
 
   /**
-   * 팔로잉, 팔로워 수 카운트
-   */
-
-  @Operation(summary = "팔로워/팔로잉 수 조회 API", description = "특정 유저의 팔로워 및 팔로잉 수를 조회합니다.")
-  @GetMapping("/{userId}/followCount")
-  public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
-    return ApiResponse.onSuccess(followService.getFollowStats(userId));
-  }
-
-  /**
-   * 팔로잉 목록 조회
-   */
-
-  @Operation(summary = "팔로잉 목록 조회 API", description = "유저의 팔로잉(내가 팔로우하는 사람들) 조회")
-  @GetMapping("/{userId}/following")
-  public ApiResponse<List<FollowDTO.FollowingResponseDTO>> getAllFollowing(@PathVariable Long userId) {
-
-    return ApiResponse.onSuccess(followService.getFollowings(userId));
-  }
-
-
-  /**
-   * 팔로워 목록 조회
-   */
-
-  @Operation(summary = "팔로워 목록 조회 API", description = "유저의 팔로워(나를 팔로우하는 사람들) 조회")
-  @GetMapping("/{userId}/followers")
-  public ApiResponse<List<FollowDTO.FollowerResponseDTO>> getAllFollowers(@PathVariable Long userId) {
-
-    return ApiResponse.onSuccess(followService.getFollowers(userId));
-  }
-
-  /**
    * 유저 프로필 기본 정보 수정 API
    */
 
@@ -123,18 +90,9 @@ public class UserProfileController {
   }
 
   /**
-   * 상대 프로필 조회 API
-   */
-
-  @Operation(summary = "상대 프로필 조회 API", description = "상대 프로필의 전체를 조회합니다.")
-  @GetMapping("{userId}/fullProfile")
-  public  ApiResponse<UserDTO.FullProfileDTO> getFullProfile(@PathVariable Long userId) {
-    return ApiResponse.onSuccess(userProfileServiceImpl.getFullProfile(userId));
-  }
-
-  /**
    * 내가 작성한 밥일기 목록 조회 API
    */
+
   @Operation(summary = "작성한 밥일기 목록 조회 API", description = "본인이 작성한 밥일기의 목록을 조회합니다.")
   @GetMapping("/{userId}/meal-diaries")
   public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getUserMealDiaries(@PathVariable Long userId) {

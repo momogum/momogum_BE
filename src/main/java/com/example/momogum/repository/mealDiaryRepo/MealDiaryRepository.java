@@ -16,10 +16,10 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
     List<MealDiary> findByUserEntity(UserEntity userEntity);
     List<MealDiary> findByUserEntityIn(List<UserEntity> userEntity);
 
-    @Query("SELECT m.id FROM MealDiary m WHERE m.isRevisit = :isRevisit AND m.userEntity.Id!= :userId ORDER BY m.likesCount DESC")
+    @Query("SELECT m.id FROM MealDiary m WHERE m.isRevisit = :isRevisit AND m.userEntity.id!= :userId ORDER BY m.likesCount DESC")
     List<Long> findAllByIsRevisit(@Param("isRevisit") IsRevisit isRevisit, @Param("userId")Long userId);
 
-    @Query("SELECT m.id FROM MealDiary m WHERE m.foodCategory = :foodCategory AND m.userEntity.Id != :userId ORDER BY m.likesCount DESC")
+    @Query("SELECT m.id FROM MealDiary m WHERE m.foodCategory = :foodCategory AND m.userEntity.id != :userId ORDER BY m.likesCount DESC")
     List<Long> findAllByFoodCategory(@Param("foodCategory") String foodCategory, @Param("userId")Long userId);
 
 

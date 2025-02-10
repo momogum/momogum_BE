@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SearchService {
 
-    List<SearchDTO.AccountSearchResponseDTO> getAccountSearch(String request);
+    List<SearchDTO.AccountSearchResponseDTO> getAccountSearch(String request, Long currentUserId);
 
     List<SearchDTO.PostSearchResponseDTO> getPostSearch(String request);
 }

@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class SearchDTO {
 
     @NoArgsConstructor
@@ -28,6 +30,12 @@ public class SearchDTO {
 
         @Schema(description = "회원 프로필 사진 URL")
         private String userImageURL;
+
+        @Schema(description = "검색 결과 중 사용자가 팔로우 한 사람 중 검색결과 대상을 팔로우한 사람 이름")
+        private List<String> searchFollowName;
+
+        @Schema(description = "검색 결과 중 사용자가 팔로우한 사람아 검색결과 대상을 팔로우 한 수")
+        private Integer searchFollowCount;
 
     }
 

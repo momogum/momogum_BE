@@ -19,13 +19,15 @@ public class SearchConverter {
                 .build();
     }
 
-    public static SearchDTO.AccountSearchResponseDTO toAccountSearchResponseDTO(UserEntity user) {
+    public static SearchDTO.AccountSearchResponseDTO toAccountSearchResponseDTO(UserEntity user, List<String> followNames, Integer count) {
 
         return SearchDTO.AccountSearchResponseDTO.builder()
                 .userId(user.getId())
                 .userName(user.getName())
                 .userNickName(user.getNickname())
                 .userImageURL(user.getProfileImage().getImageLink())
+                .searchFollowName(followNames)
+                .searchFollowCount(count)
                 .build();
     }
 

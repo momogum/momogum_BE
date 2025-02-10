@@ -28,7 +28,6 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
     private final RedisRepository redisRepository;
     private final MealDiaryRepository mealDiaryRepository;
 
-    private static final int SIZE = 6;
     private static final int TTL_MINUTES = 5;
 
     /**
@@ -80,7 +79,6 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
         List<Long> unViewedPostIds = allMealDiaryIds.stream()
                 .filter(id -> !viewedPosts.contains(id))
                 .sorted(Comparator.comparingLong(allMealDiaryIds::indexOf))
-                .limit(ViewMealDiaryServiceImpl.SIZE)
                 .toList();
 
         // 필터링된 Id로 MealDiary 엔티티 조회

@@ -24,9 +24,10 @@ public class SearchController {
     @Operation(summary = "계정 검색 API")
     @GetMapping("/account")
     public ApiResponse<List<SearchDTO.AccountSearchResponseDTO>> getAccountSearch(
-            @RequestParam String request) {
+            @RequestParam String request,
+            @RequestParam Long userId) {
 
-        List<SearchDTO.AccountSearchResponseDTO> result = searchService.getAccountSearch(request);
+        List<SearchDTO.AccountSearchResponseDTO> result = searchService.getAccountSearch(request, userId);
 
         return ApiResponse.onSuccess(result);
     }

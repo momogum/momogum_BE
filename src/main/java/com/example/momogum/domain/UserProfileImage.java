@@ -1,5 +1,6 @@
 package com.example.momogum.domain;
 
+import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserProfileImage {
+public class UserProfileImage extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,11 +47,5 @@ public class UserProfileImage {
   // 사용자가 업로드한 원본 파일 이름
   @Column
   private String imageName;
-
-  @Column(nullable = false, updatable = false)
-  private LocalDateTime createdAt = LocalDateTime.now();
-
-  @Column
-  private LocalDateTime updatedAt;
 
 }

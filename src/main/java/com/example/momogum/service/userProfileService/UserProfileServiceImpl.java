@@ -3,6 +3,7 @@ package com.example.momogum.service.userProfileService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.converter.ViewMealDiaryConverter;
 import com.example.momogum.converter.userConverter.UserProfileConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryBookmark;
@@ -17,6 +18,7 @@ import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO.ViewMealDiaryR
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -99,16 +101,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         .build();
   }
 
-  // 상대방 유저 프로필 조회
-
-  @Override
-  @Transactional
-  public UserDTO.FullProfileDTO getFullProfile(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
-    return UserProfileConverter.toFullProfileDTO(user);
-  }
 
   // 내가 작성한 밥일기 조회
   @Override
@@ -120,47 +112,21 @@ public class UserProfileServiceImpl implements UserProfileService {
     List<MealDiary> mealDiaries = mealDiaryRepository.findByUserEntity(user);
 
     return mealDiaries.stream()
-        .map(mealDiary -> ViewMealDiaryDTO.ViewMealDiaryResponse.builder()
-            .mealDiaryId(mealDiary.getId())
-//            .foodImageURLs(mealDiary.getMealDiaryImages().stream()
-//                .map(MealDiaryImage::getImageLink)
-//                .toList()) 밥일기 이미지 구현되면 수정하겠습니다.
-            .userImageURL(user.getProfileImage() != null
-                ? user.getProfileImage().getImageLink()
-                : "default-profile.jpg")
-            .foodCategory(mealDiary.getFoodCategory())
-            .keyWord(mealDiary.getMealDiaryKeywords().stream()
-                .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())
-                .toList())
-            .isRevisit(mealDiary.getIsRevisit())
-            .build()
-        ).toList();
+        .map(ViewMealDiaryConverter::toViewMealDiaryResponse) // ✅ 컨버터 사용
+        .collect(Collectors.toList());
   }
 
   // 북마크한 밥일기 조회
   @Override
   @Transactional(readOnly = true)
-  public List<ViewMealDiaryDTO.ViewMealDiaryResponse> getBookmarkedMealDiaries(Long userId) {
+  public List<ViewMealDiaryResponse> getBookmarkedMealDiaries(Long userId) {
     UserEntity user = userEntityRepository.findById(userId)
         .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
     List<MealDiaryBookmark> bookmarks = mealDiaryBookmarkRepository.findByUserEntity(user);
 
     return bookmarks.stream()
-        .map(bookmark -> ViewMealDiaryDTO.ViewMealDiaryResponse.builder()
-            .mealDiaryId(bookmark.getMealDiary().getId())
-//            .foodImageURLs(bookmark.getMealDiary().getMealDiaryImages().stream()
-//                .map(MealDiaryImage::getImageLink)
-//                .toList())
-            .userImageURL(bookmark.getMealDiary().getUserEntity().getProfileImage() != null
-                ? bookmark.getMealDiary().getUserEntity().getProfileImage().getImageLink()
-                : "default-profile.jpg")
-            .foodCategory(bookmark.getMealDiary().getFoodCategory())
-            .keyWord(bookmark.getMealDiary().getMealDiaryKeywords().stream()
-                .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())
-                .toList())
-            .isRevisit(bookmark.getMealDiary().getIsRevisit())
-            .build()
-        ).toList();
+        .map(ViewMealDiaryConverter::toViewMealDiaryResponse) // ✅ 컨버터 사용
+        .collect(Collectors.toList());
   }
 }

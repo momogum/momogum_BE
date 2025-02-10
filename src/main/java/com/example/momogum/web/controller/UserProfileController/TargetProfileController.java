@@ -21,14 +21,4 @@ public class TargetProfileController {
 
   private final UserProfileServiceImpl userProfileServiceImpl;
 
-  /**
-   * 상대 프로필 조회 API
-   */
-
-  @Operation(summary = "상대 프로필 조회 API", description = "상대 프로필의 전체를 조회합니다.")
-  @GetMapping("{userId}/profile")
-  public ApiResponse<FullProfileDTO> getFullProfile(@PathVariable Long userId) {
-    return ApiResponse.onSuccess(userProfileServiceImpl.getFullProfile(userId));
-  }
-
 }

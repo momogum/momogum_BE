@@ -11,14 +11,16 @@ import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowerResponseDTO;
-import jakarta.transaction.Transactional;
 import java.util.List;
+
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FollowServiceImpl implements FollowService {
 
   private final FollowingRepository followingRepository;
@@ -69,33 +71,32 @@ public class FollowServiceImpl implements FollowService {
     int followingCount = followingRepository.countByUserId(userId);
 
     return  FollowDTO.FollowStatsDTO.builder()
-        .followerCount(followerCount)
-        .followingCount(followingCount)
-        .build();
+            .followerCount(followerCount)
+            .followingCount(followingCount)
+            .build();
   }
 
   /**
    *  맞팔로우 확인 메서드
    */
-
-  private Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
-    return followerRepository.existsByUserAndFollower(targetUser, currentUser) ? true : null;
+  public Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
+    return followerRepository.existsByUserAndFollower(targetUser, currentUser)
+            && followerRepository.existsByUserAndFollower(currentUser, targetUser);
   }
 
   /**
    * 팔로잉 목록 조회 (내가 팔로우한 사람들)
    */
   @Override
-  @Transactional
   public List<FollowDTO.FollowingResponseDTO> getFollowings(Long userId) {
     UserEntity user = findUserById(userId);
 
     return followingRepository.findByUserId(userId).stream()
-        .map(following -> FollowConverter.toFollowingResponseDTO(
-            following.getFollowing(),
-            isMutualFollow(user, following.getFollowing())
-        ))
-        .collect(Collectors.toList());
+            .map(following -> FollowConverter.toFollowingResponseDTO(
+                    following.getFollowing(),
+                    isMutualFollow(user, following.getFollowing())
+            ))
+            .collect(Collectors.toList());
   }
 
   /**
@@ -107,11 +108,11 @@ public class FollowServiceImpl implements FollowService {
     UserEntity user = findUserById(userId);
 
     return followerRepository.findByUserId(userId).stream()
-        .map(follower -> FollowConverter.toFollowerResponseDTO(
-            follower.getFollower(),
-            isMutualFollow(user, follower.getFollower())
-        ))
-        .collect(Collectors.toList());
+            .map(follower -> FollowConverter.toFollowerResponseDTO(
+                    follower.getFollower(),
+                    isMutualFollow(user, follower.getFollower())
+            ))
+            .collect(Collectors.toList());
   }
 
   /**
@@ -119,7 +120,7 @@ public class FollowServiceImpl implements FollowService {
    */
   private UserEntity findUserById(Long userId) {
     return userEntityRepository.findById(userId).orElseThrow(
-        () -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND)
+            () -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND)
     );
   }
 
@@ -131,12 +132,12 @@ public class FollowServiceImpl implements FollowService {
     UserEntity user = findUserById(userId);
 
     return followingRepository.searchFollowingsByQuery(userId, query)
-        .stream()
-        .map(following -> FollowConverter.toFollowingResponseDTO(
-            following.getFollowing(),
-            isMutualFollow(user, following.getFollowing())
-        ))
-        .collect(Collectors.toList());
+            .stream()
+            .map(following -> FollowConverter.toFollowingResponseDTO(
+                    following.getFollowing(),
+                    isMutualFollow(user, following.getFollowing())
+            ))
+            .collect(Collectors.toList());
   }
 
   /**
@@ -147,12 +148,12 @@ public class FollowServiceImpl implements FollowService {
     UserEntity user = findUserById(userId);
 
     return followerRepository.searchFollowersByQuery(userId, query)
-        .stream()
-        .map(follower -> FollowConverter.toFollowerResponseDTO(
-            follower.getFollower(),
-            isMutualFollow(user, follower.getFollower())
-        ))
-        .collect(Collectors.toList());
+            .stream()
+            .map(follower -> FollowConverter.toFollowerResponseDTO(
+                    follower.getFollower(),
+                    isMutualFollow(user, follower.getFollower())
+            ))
+            .collect(Collectors.toList());
   }
 
 }

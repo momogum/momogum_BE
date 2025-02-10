@@ -3,12 +3,14 @@ package com.example.momogum.service.appointmentService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
+import com.example.momogum.domain.Follower;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
+import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
@@ -54,10 +56,12 @@ class AppointmentInviteServiceTest {
     @Mock
     private FollowingRepository followingRepository;
 
+    @Mock
+    private FollowerRepository followerRepository;
+
     private AppointmentInviteRequestDTO request;
     private UserEntity user1;
     private UserEntity user2;
-
 
     @BeforeEach
     void setUp() {
@@ -69,30 +73,19 @@ class AppointmentInviteServiceTest {
                 .build();
 
         // 테스트용 UserEntity 생성 (필요한 필드만 설정)
-         user1 = createTestUser(1L, "user1", "유저 닉네임 1");
-         user2 = createTestUser(2L, "user2", "유저 닉네임 2");
+        user1 = createTestUser(1L, "user1", "유저 닉네임 1");
+        user2 = createTestUser(2L, "user2", "유저 닉네임 2");
 
         // repository에서 username으로 UserEntity 조회 시 설정
-        when(userEntityRepository.findByNickname("user1")).thenReturn(Optional.of(user1));
-        when(userEntityRepository.findByNickname("user2")).thenReturn(Optional.of(user2));
+        when(userEntityRepository.findByNicknameIn(List.of("user1", "user2")))
+                .thenReturn(List.of(user1, user2));
 
         // converter의 DTO 변환 결과를 미리 설정 1
         when(converter.toResponseDTO(user1, InvitationStatus.PENDING))
-                .thenReturn(AppointmentInviteResponseDTO.builder()
-                        .nickname("user1")
-                        .name("유저 닉네임 1")
-                        .profileImage("/path/to/image1")
-                        .status(InvitationStatus.PENDING)
-                        .build());
+                .thenReturn(new AppointmentInviteResponseDTO("user1", "유저 닉네임 1", "/path/to/image1", InvitationStatus.PENDING));
 
-        // converter의 DTO 변환 결과를 미리 설정 2
         when(converter.toResponseDTO(user2, InvitationStatus.PENDING))
-                .thenReturn(AppointmentInviteResponseDTO.builder()
-                        .nickname("user2")
-                        .name("유저 닉네임 2")
-                        .profileImage("/path/to/image2")
-                        .status(InvitationStatus.PENDING)
-                        .build());
+                .thenReturn(new AppointmentInviteResponseDTO("user2", "유저 닉네임 2", "/path/to/image2", InvitationStatus.PENDING));
     }
 
     /**
@@ -110,34 +103,41 @@ class AppointmentInviteServiceTest {
     }
 
     /**
-     * getFriendsForInvitation 테스트
+     * 맞팔된 사용자만 초대 가능 테스트
      */
-    @DisplayName("getFriendsForInvitation 테스트")
+    @DisplayName("맞팔된 사용자만 초대 가능 - getFriendsForInvitation 테스트")
     @Test
     void getFriendsForInvitation_SuccessTest() {
 
-        //given - 특정 appointmentId에 대한 특정 초대 목록 생성
-        Long currentUserId = 100L; //테스트용 ID 생성
+        //Given - 특정 appointmentId에 대한 특정 초대 목록 생성
+        Long currentUserId = 100L; //테스트용 유저 ID 생성
 
-        // 1. appointmentId에 대한 초대 내역이 없다고 가정
+        // 현재 사용자가 팔로잉 하고 있는 목록 설정 (사용자 -> 팔로우 -> user1, user2)
+        List<UserEntity> followingUsers = List.of(user1, user2);
+        when(followingRepository.findFollowedUsersByUserId(currentUserId))
+                .thenReturn(followingUsers);
+
+        // 현재 사용자를 팔로우하는 목록 설정 (user1만 맞팔)
+        when(followerRepository.findByUserId(currentUserId))
+                .thenReturn(List.of(new Follower(1L, createTestUser(currentUserId, "currentUser", "현재 사용자"), user1)));
+
+        // 이미 초대된 사용자 목록 (초대된 사람 없다고 가정)
         when(appointmentInviteRepository.findByAppointmentId(request.getAppointmentId()))
                 .thenReturn(Collections.emptyList());
 
-        // 2. 현재 사용자가 팔로우 중인 사용자 목록 설정 (user1과 user2)
-        List<UserEntity> followedUsers = List.of(user1, user2);
-        when(followingRepository.findFollowedUsersByUserId(currentUserId))
-                .thenReturn(followedUsers);
-
-        //when - GET 친구 초대 가능 목록 호출 (초대 내역이 없으므로 모든 팔로우 사용자가 대상)
+        //When
         List<AppointmentInviteResponseDTO> result = appointmentInviteService.getFriendsForInvitation(request.getAppointmentId(), currentUserId);
 
-        // Then
-        assertEquals(2, result.size());
+        //Then - user1만 조회되어야 함
+        assertEquals(1, result.size());
         assertEquals("user1", result.get(0).getNickname());
-        assertEquals("user2", result.get(1).getNickname());
+
     }
 
-    @DisplayName("inviteFriends 테스트 - 둘 다 초대가 되어있지 않은 경우, 둘 다 초대가 되어야 함.")
+    /**
+     * 초대 성공 리스트 - Batch Insert
+     */
+    @DisplayName("inviteFriends 테스트 - Batch Insert로 초대 저장")
     @Test
     void inviteFriends_SuccessTest() {
         // given - user1, user2 둘 다 초대가 되어있지 않은 상태
@@ -154,27 +154,27 @@ class AppointmentInviteServiceTest {
         assertEquals("user1", result.get(0).getNickname());
         assertEquals("user2", result.get(1).getNickname());
 
-        //메서드 두 번 호출되었는지 확인
-        verify(appointmentInviteRepository, times(2)).save(any(AppointmentInvitation.class));
+        //Batch Insert -> saveAll()이 1번 호출되어야 함
+        verify(appointmentInviteRepository, times(1)).saveAll(anyList());
     }
 
-    @DisplayName("inviteFriends 테스트 - user1은 초대 X, user2는 초대 O일 경우 -> user2만 초대 되어야 함")
+    @DisplayName("inviteFriends 테스트 - 이미 초대된 사용자는 제외")
     @Test
     void inviteFriends_DuplicateTest() {
-        //given - user1은 초대 O, user2은 초대 X
+        //given - user1은 초대 X, user2은 초대 O
         when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user1))
-                .thenReturn(true);
-        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user2))
                 .thenReturn(false);
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user2))
+                .thenReturn(true);
 
         //when
         List<AppointmentInviteResponseDTO> result = appointmentInviteService.inviteFriends(request);
 
         //then
         assertEquals(1, result.size());
-        assertEquals("user2", result.get(0).getNickname());
+        assertEquals("user1", result.get(0).getNickname());
 
-        verify(appointmentInviteRepository, times(1)).save(any(AppointmentInvitation.class));
+        verify(appointmentInviteRepository, times(1)).saveAll(anyList());
     }
 
     @DisplayName("inviteFriends 테스트 - 초대할 친구를 아무도 지정하지 않았을 경우 -> MEMBER_NOT_FOUND 오류가 발생해야 함.")

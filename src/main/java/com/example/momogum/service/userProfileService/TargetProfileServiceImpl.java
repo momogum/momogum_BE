@@ -41,13 +41,16 @@ public class TargetProfileServiceImpl implements TargetProfileService {
    */
   @Override
   @Transactional(readOnly = true)
-  public UserDTO.FullProfileDTO getTargetProfile(Long targetUserId, boolean isFollowing) {
+  public UserDTO.FullProfileDTO getTargetProfile(Long currentUserId, Long targetUserId) {
+    UserEntity currentUser = userEntityRepository.findById(currentUserId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
     UserEntity targetUser = userEntityRepository.findById(targetUserId)
         .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
 
-    List<ViewMealDiaryResponse> mealDiaries = getTargetMealDiaries(targetUserId);
+    boolean isFollowing = followService.isMutualFollow(currentUser, targetUser);
 
-    return TargetProfileConverter.toFullProfileDTO(targetUser, mealDiaries, isFollowing);
+    return TargetProfileConverter.toFullProfileDTO(targetUser, getTargetMealDiaries(currentUserId, targetUserId), isFollowing);
   }
 
   /**
@@ -55,12 +58,14 @@ public class TargetProfileServiceImpl implements TargetProfileService {
    */
   @Override
   @Transactional(readOnly = true)
-  public List<ViewMealDiaryDTO.ViewMealDiaryResponse> getTargetMealDiaries(Long targetUserId) {
+  public List<ViewMealDiaryResponse> getTargetMealDiaries(Long currentUserId, Long targetUserId) {
     UserEntity targetUser = userEntityRepository.findById(targetUserId)
         .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
 
-    return mealDiaryRepository.findByUserEntity(targetUser)
-        .stream()
+    UserEntity currentUser = userEntityRepository.findById(currentUserId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    return mealDiaryRepository.findByUserEntity(targetUser).stream()
         .map(ViewMealDiaryConverter::toViewMealDiaryResponse)
         .collect(Collectors.toList());
   }
@@ -70,9 +75,12 @@ public class TargetProfileServiceImpl implements TargetProfileService {
    */
   @Override
   @Transactional(readOnly = true)
-  public List<ViewMealDiaryDTO.ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long targetUserId) {
+  public List<ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long currentUserId, Long targetUserId) {
     UserEntity targetUser = userEntityRepository.findById(targetUserId)
         .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
+
+    UserEntity currentUser = userEntityRepository.findById(currentUserId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
     List<MealDiaryBookmark> bookmarks = mealDiaryBookmarkRepository.findByUserEntity(targetUser);
 

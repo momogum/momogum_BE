@@ -61,5 +61,4 @@ public class SearchDTO {
         private IsRevisit isRevisit;
     }
 
-
 }

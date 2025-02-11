@@ -25,6 +25,7 @@ public class FollowDTO {
     private String name;
     private String profileImage;
     private Boolean isMutualFollow;
+    private String searchQuery;
   }
 
   @Getter
@@ -37,6 +38,7 @@ public class FollowDTO {
     private String name;
     private String profileImage;
     private Boolean isMutualFollow;
+    private String searchQuery;
   }
 
   @Getter

@@ -78,6 +78,8 @@ public class UserDTO {
         private int followerCount;
         @Schema(description = "팔로잉 수")
         private int followingCount;
+        @Schema(description = "팔로잉 여부")
+        private Boolean isFollowing;
         @Schema(description = "밥일기 피드")
         private List<ViewMealDiaryDTO.ViewMealDiaryResponse> viewMealDiary;
     }

@@ -30,6 +30,9 @@ public class MealDiaryStoryReadDTO {
     @AllArgsConstructor
     public static class MealDiaryStoryReadAllResponseDTO {
 
+        @Schema(description = "회원의 nickname입니다")
+        String nickname;
+
         @Schema(description = "대표 이미지 링크입니다")
         String mealDiaryImageLinks;
 

@@ -57,5 +57,17 @@ public class TargetProfileController {
     return ApiResponse.onSuccess(mealDiaries);
   }
 
+  /**
+   * 상대 유저가 저장한 밥일기 목록 조회 API
+   */
+  @Operation(summary = "상대방이 저장한 밥일기 목록 조회 API", description = "특정 사용자가 북마크한 밥일기 목록을 조회합니다.")
+  @GetMapping("/{targetUserId}/bookmarked-meal-diaries")
+  public ApiResponse<List<ViewMealDiaryResponse>> getTargetBookmarkedMealDiaries(
+      @PathVariable Long targetUserId
+  ) {
+    List<ViewMealDiaryResponse> bookmarkedMealDiaries = targetProfileServiceImpl.getTargetBookmarkedMealDiaries(targetUserId);
+    return ApiResponse.onSuccess(bookmarkedMealDiaries);
+  }
+
 
 }

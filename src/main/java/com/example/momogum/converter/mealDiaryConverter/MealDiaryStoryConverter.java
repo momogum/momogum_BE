@@ -15,6 +15,8 @@ public class MealDiaryStoryConverter {
         return MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO.builder()
                 .name(mealDiaryStory.getName())
                 .mealDiaryImageLinks(imageLinks)
+                .description(mealDiaryStory.getMealDiary().getDescription())
+                .location(mealDiaryStory.getMealDiary().getDescription())
                 .build();
     }
 

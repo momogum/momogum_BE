@@ -21,6 +21,12 @@ public class MealDiaryStoryReadDTO {
 
         @Schema(description = "이미지 링크입니다")
         List<String> mealDiaryImageLinks;
+
+        @Schema(description = "식당이름 입니다")
+        String location;
+
+        @Schema(description = "식당후기 입니다")
+        String description;
     }
 
 

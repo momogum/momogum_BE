@@ -18,8 +18,6 @@ public interface UserProfileService {
   // 유저 프로필 수정
   UserDTO.UserEditDTO updateUserProfile(Long userId, UserDTO.UserEditDTO request);
 
-  // 상대 유저 프로필 조회
-  UserDTO.FullProfileDTO getFullProfile(Long userId);
 
   // 작성한,북마크한 밥일기 조회
   List<ViewMealDiaryDTO.ViewMealDiaryResponse> getUserMealDiaries(Long userId);

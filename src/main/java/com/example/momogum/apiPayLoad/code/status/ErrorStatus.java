@@ -50,7 +50,8 @@ public enum ErrorStatus implements BaseErrorCode {
     TARGET_NOT_FOUND(HttpStatus.NOT_FOUND,"FOLLOW5001","대상을 찾을 수 없습니다"),
 
     //search에 사용
-    KEYWWORD_BLANK(HttpStatus.BAD_REQUEST,"SEARCH4001","검색어는 필수입니다."),
+    KEYWORD_BLANK(HttpStatus.BAD_REQUEST,"SEARCH4001","검색어는 필수입니다."),
+    NO_RESULT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", "검색 결과가 없습니다."),
 
 
     APPOINTMENT_NOT_EXIST(HttpStatus.NOT_FOUND,"APPOINTMENT4001","약속을 찾을 수 없습니다");

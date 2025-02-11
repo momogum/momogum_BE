@@ -24,12 +24,26 @@ public class RedisRepository {
 
     // 사용자가 조회한 postId 목록 조회
     public Set<Long> getViewedPosts(String userId) {
-        String key = generateKey(userId);
+        try {
+            // Redis 키 생성 및 조회
+            String key = generateKey(userId);
+            Set<Object> redisMembers = redisTemplate.opsForSet().members(key);
 
-        return Objects.requireNonNull(redisTemplate.opsForSet().members(key)).stream()
-                .map(Object::toString)
-                .map(Long::valueOf)
-                .collect(Collectors.toSet());
+            // null 체크 후 빈 집합 반환
+            if (redisMembers == null) {
+                return Set.of();
+            }
+
+            // 타입 변환
+            return redisMembers.stream()
+                    .map(Object::toString)
+                    .map(Long::valueOf)
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            // 예외 발생 시 빈 집합 반환 및 로깅
+            System.err.println("Redis 조회 중 오류 발생: " + e.getMessage());
+            return Set.of();
+        }
     }
 
     // Redis Key 생성

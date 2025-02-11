@@ -10,4 +10,6 @@ public interface TargetProfileService {
   UserDTO.FullProfileDTO getTargetProfile(Long targetUserId, boolean isFollowing);
 
   List<ViewMealDiaryResponse> getTargetMealDiaries(Long targetUserId);
+
+  List<ViewMealDiaryDTO.ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long targetUserId);
 }

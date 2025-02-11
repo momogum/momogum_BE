@@ -1,5 +1,6 @@
 package com.example.momogum.service.userProfileService;
 
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowerResponseDTO;
 import java.util.List;
@@ -16,6 +17,8 @@ public interface FollowService {
   List<FollowDTO.FollowerResponseDTO> getFollowers(Long userId);
 
   FollowDTO.FollowStatsDTO getFollowStats(Long userId);
+
+  Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser);
 
   List<FollowDTO.FollowingResponseDTO> searchFollowingsByQuery(Long userId, String query);
 

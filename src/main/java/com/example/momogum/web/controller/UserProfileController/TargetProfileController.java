@@ -5,6 +5,7 @@ import com.example.momogum.service.userProfileService.FollowServiceImpl;
 import com.example.momogum.service.userProfileService.TargetProfileServiceImpl;
 import com.example.momogum.service.userProfileService.UserProfileService;
 import com.example.momogum.service.userProfileService.UserProfileServiceImpl;
+import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.user.UserDTO;
 import com.example.momogum.web.dto.user.UserDTO.FullProfileDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
@@ -67,6 +68,32 @@ public class TargetProfileController {
   ) {
     List<ViewMealDiaryResponse> bookmarkedMealDiaries = targetProfileServiceImpl.getTargetBookmarkedMealDiaries(targetUserId);
     return ApiResponse.onSuccess(bookmarkedMealDiaries);
+  }
+
+  /**
+   * 상대 유저의 팔로잉 목록 조회 API
+   */
+  @Operation(summary = "상대방의 팔로잉 목록 조회 API", description = "특정 사용자가 팔로우하고 있는 사람 목록을 조회합니다.")
+  @GetMapping("/{targetUserId}/following")
+  public ApiResponse<List<FollowDTO.FollowingResponseDTO>> getTargetFollowings(
+      @RequestHeader("X-User-Id") Long currentUserId,
+      @PathVariable Long targetUserId
+  ) {
+    List<FollowDTO.FollowingResponseDTO> followingList = targetProfileServiceImpl.getTargetFollowings(currentUserId, targetUserId);
+    return ApiResponse.onSuccess(followingList);
+  }
+
+  /**
+   * 상대 유저의 팔로워 목록 조회 API
+   */
+  @Operation(summary = "상대방의 팔로워 목록 조회 API", description = "특정 사용자를 팔로우하고 있는 사람 목록을 조회합니다.")
+  @GetMapping("/{targetUserId}/followers")
+  public ApiResponse<List<FollowDTO.FollowerResponseDTO>> getTargetFollowers(
+      @RequestHeader("X-User-Id") Long currentUserId,
+      @PathVariable Long targetUserId
+  ) {
+    List<FollowDTO.FollowerResponseDTO> followerList = targetProfileServiceImpl.getTargetFollowers(currentUserId, targetUserId);
+    return ApiResponse.onSuccess(followerList);
   }
 
 

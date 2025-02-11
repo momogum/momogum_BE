@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface TargetProfileService {
 
-  UserDTO.FullProfileDTO getTargetProfile(Long targetUserId, boolean isFollowing);
+  UserDTO.FullProfileDTO getTargetProfile(Long currentUserId, Long targetUserId);
 
-  List<ViewMealDiaryResponse> getTargetMealDiaries(Long targetUserId);
+  List<ViewMealDiaryResponse> getTargetMealDiaries(Long currentUserId, Long targetUserId);
 
-  List<ViewMealDiaryDTO.ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long targetUserId);
+  List<ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long currentUserId, Long targetUserId);
 
   List<FollowDTO.FollowingResponseDTO> getTargetFollowings(Long currentUserId, Long targetUserId);
 

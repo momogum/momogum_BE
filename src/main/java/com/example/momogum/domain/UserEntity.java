@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
+import org.apache.catalina.User;
 
 @Entity
 @Table(name = "users")
@@ -84,5 +85,9 @@ public class UserEntity extends BaseEntity {
     }
     public void minusFollowerCount(){
         this.followerCount = Math.max(0, this.followerCount - 1);
+    }
+
+    public void removeProfileImage(UserEntity user){
+        user.setProfileImage(null);
     }
 }

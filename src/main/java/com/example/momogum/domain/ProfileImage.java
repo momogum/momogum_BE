@@ -52,4 +52,8 @@ public class ProfileImage {
   @Column
   private String imageName;
 
+  public void removeUser(ProfileImage profileImage){
+    profileImage.setUser(null);
+  }
+
 }

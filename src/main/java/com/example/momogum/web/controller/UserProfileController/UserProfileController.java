@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,13 +79,16 @@ public class UserProfileController {
    */
 
   @Operation(summary= "유저 프로필 이미지 수정 API", description =  "유저 프로필 이미지를 수정하고 수정된 정보를 반환합니다.")
-  @PutMapping("/{userId}/profileImage")
-  public ApiResponse<ProfileImageDTO.ProfileImageResponseDTO> updateUserProfileImage(
-      @PathVariable Long userId, @RequestPart(required = false) MultipartFile file) {
+  @PostMapping(path= "/profileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ApiResponse<List<String>> updateUserProfileImage(
+      @RequestPart(value = "userId") Long userId,  @RequestPart(value = "files") List<MultipartFile> files) {
+
+    String dirname = "user-profile-images";
 
     // 프로필 이미지 업로드 호출
-    ProfileImageDTO.ProfileImageResponseDTO updatedImage = profileImageService.uploadProfileImage(
-        file, userId);
+    // 반환값 수정해야함 FIXME
+    List<String> updatedImage = profileImageService.uploadImages(
+        files, dirname,userId);
 
     return ApiResponse.onSuccess(updatedImage);
   }

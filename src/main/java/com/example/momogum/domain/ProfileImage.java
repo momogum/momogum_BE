@@ -56,5 +56,24 @@ public class ProfileImage {
   public void removeUser(ProfileImage profileImage){
     profileImage.setUser(null);
   }
+  
+  @Column(nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
+
+
+  // 저장 전 자동으로 현재 시간 설정
+  @PrePersist
+  public void prePersist() {
+    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  // 업데이트 전 자동으로 변경 시간 설정
+  @PreUpdate
+  public void preUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
 }

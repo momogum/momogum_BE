@@ -15,15 +15,19 @@ public class MealDiaryStoryConverter {
         return MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO.builder()
                 .name(mealDiaryStory.getName())
                 .mealDiaryImageLinks(imageLinks)
+                .description(mealDiaryStory.getMealDiary().getDescription())
+                .location(mealDiaryStory.getMealDiary().getDescription())
                 .build();
     }
 
     public static List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> toMealDiaryStoryReadAllDTO(List<MealDiaryStory> mealDiaryStoryList) {
         return mealDiaryStoryList.stream().map(mealDiaryStory -> {
             List<MealDiaryImage> mealDiaryImages = mealDiaryStory.getMealDiary().getMealDiaryImages();
+            String name = mealDiaryStory.getName();
             String imageLink = (mealDiaryImages != null && !mealDiaryImages.isEmpty()) ? mealDiaryImages.get(0).getImageLink() : null;
             return MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
                     .mealDiaryImageLinks(imageLink)
+                    .nickname(name)
                     .build();
         }).toList();
     }

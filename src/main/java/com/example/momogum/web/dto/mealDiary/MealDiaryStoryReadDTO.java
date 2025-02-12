@@ -21,6 +21,12 @@ public class MealDiaryStoryReadDTO {
 
         @Schema(description = "이미지 링크입니다")
         List<String> mealDiaryImageLinks;
+
+        @Schema(description = "식당이름 입니다")
+        String location;
+
+        @Schema(description = "식당후기 입니다")
+        String description;
     }
 
 
@@ -29,6 +35,9 @@ public class MealDiaryStoryReadDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MealDiaryStoryReadAllResponseDTO {
+
+        @Schema(description = "회원의 nickname입니다")
+        String nickname;
 
         @Schema(description = "대표 이미지 링크입니다")
         String mealDiaryImageLinks;

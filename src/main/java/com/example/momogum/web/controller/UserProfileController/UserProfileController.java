@@ -9,6 +9,7 @@ import com.example.momogum.web.dto.user.ProfileImageDTO;
 import com.example.momogum.web.dto.user.UserDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
@@ -109,13 +110,15 @@ public class UserProfileController {
   /**
    * 프로필 이미지 커스텀 이미지로 수정
    */
-  @Operation(summary = "갤러리 이미지로 변경", description = "모든 경우에서 갤러리 이미지를 업로드하여 프로필로 변경")
-  @PutMapping("/{userId}/uploadCustomProfileImage")
-  public ApiResponse<String> uploadCustomProfileImage(@PathVariable Long userId, @RequestPart MultipartFile file) {
+  @Operation(summary = "갤러리 이미지로 변경", description = "사용자가 직접 업로드한 이미지로 프로필을 변경")
+  @PutMapping(value = "/{userId}/uploadCustomProfileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ApiResponse<String> uploadCustomProfileImage(
+      @PathVariable Long userId,
+      @RequestPart("file") @Parameter(description = "업로드할 커스텀 프로필 이미지") MultipartFile file) {
+
     String updatedImageUrl = profileImageService.uploadCustomProfileImage(file, userId);
     return ApiResponse.onSuccess(updatedImageUrl);
   }
-
   /**
    * 내가 작성한 밥일기 목록 조회 API
    */

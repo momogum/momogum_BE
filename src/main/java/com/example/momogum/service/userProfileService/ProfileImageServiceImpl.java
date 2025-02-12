@@ -67,7 +67,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
       // 기존 이미지 있으면 삭제
       deleteImage(userId);
     }
-    // 없으면 일단 진행
+    // 없어도 일단 진행
     catch (FileNotFoundException e) {
       log.warn("삭제할 기존 프로필 이미지가 없음: {}", e.getMessage());
     }
@@ -99,7 +99,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
       // 기존 이미지 있으면 삭제
       deleteImage(userId);
     }
-    // 없으면 일단 진행
+    // 없어도 일단 진행
     catch (FileNotFoundException e) {
       log.warn("삭제할 기존 프로필 이미지가 없음: {}", e.getMessage());
     }
@@ -108,6 +108,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     ProfileImage newProfileImage = uploadImage("user-profile-images", file, user);
     profileImageRepository.save(newProfileImage);
     user.setProfileImage(newProfileImage);
+    userEntityRepository.save(user);
 
     return newProfileImage.getImageLink();
   }

@@ -18,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -72,6 +73,8 @@ public class TokenService {
                     .fileName("example-file-name")  // 실제 파일 이름
                     .imageName("example-original-name")  // 원본 파일 이름
                     .build();
+
+
 
             // 양방향 연관 관계 설정
             profileImage.setUser(newUser);

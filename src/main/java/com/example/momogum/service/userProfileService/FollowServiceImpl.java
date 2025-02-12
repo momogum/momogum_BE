@@ -1,6 +1,7 @@
 package com.example.momogum.service.userProfileService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.followConverter.FollowConverter;
 import com.example.momogum.domain.Follower;
@@ -25,39 +26,46 @@ public class FollowServiceImpl implements FollowService {
   private final FollowerRepository followerRepository;
   private final UserEntityRepository userEntityRepository;
 
-
+//  /**
+//   * 팔로우, 언팔로우 토글 구현
+//   */
+//
 //  @Override
-//  public void toggleFollowUser(Long userId, Long targetId) {
-//    UserEntity follower = findUserById(userId);
-//    UserEntity target = findUserById(targetId);
+//  @Transactional
+//  public void toggleFollowUser(Long currentUserId, Long targetUserId) {
+//    UserEntity follower = userEntityRepository.findById(currentUserId)
+//        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+//
+//    UserEntity target = userEntityRepository.findById(targetUserId)
+//        .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
 //
 //    boolean isFollowing = followingRepository.existsByUserAndFollowing(follower, target);
 //
 //    if (isFollowing) {
-//        // 언팔로우 처리
-//        followingRepository.deleteByUserAndFollowing(follower, target);
-//        follower.minusFollowingCount();  //팔로잉 카운트 감소
-//        target.minusFollowerCount();  //팔로워 카운트 감소
+//      Following following = followingRepository.findByUserAndFollowing(follower, target)
+//          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
+//      followingRepository.delete(following);
 //
-//        followerRepository.deleteByUserAndFollower(target, follower);
+//      Follower followerEntity = followerRepository.findByUserAndFollower(target, follower)
+//          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
+//      followerRepository.delete(followerEntity);
 //    } else {
-//        // 팔로우 처리
-//        Following newFollowing = Following.builder()
-//                .user(follower)
-//                .following(target)
-//                .build();
-//        followingRepository.save(newFollowing);
-//        follower.addFollowingCount();  //팔로잉 카운트 증가
+//      Following newFollowing = Following.builder()
+//          .user(follower)
+//          .following(target)
+//          .build();
+//      followingRepository.save(newFollowing);
 //
-//        Follower newFollower = Follower.builder()
-//                .user(target)
-//                .follower(follower)
-//                .build();
-//        followerRepository.save(newFollower);
-//        target.addFollowerCount();  //팔로워 카운트 증가
+//      Follower newFollower = Follower.builder()
+//          .user(target)
+//          .follower(follower)
+//          .build();
+//      followerRepository.save(newFollower);
 //    }
+//
+//    updateFollowCounts(follower);
+//    updateFollowCounts(target);
 //  }
-
   /**
    * 현재 사용자가 특정 사용자를 팔로우하고 있는지 여부 반환
    */
@@ -71,21 +79,22 @@ public class FollowServiceImpl implements FollowService {
     return followingRepository.existsByUserAndFollowing(currentUser, targetUser);
   }
 
-  /**
-   * 팔로잉, 팔로워 수 카운트
-   */
-
-  @Override
-  public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
-
-    int followerCount = followerRepository.countByUserId(userId);
-    int followingCount = followingRepository.countByUserId(userId);
-
-    return  FollowDTO.FollowStatsDTO.builder()
-        .followerCount(followerCount)
-        .followingCount(followingCount)
-        .build();
-  }
+//  /**
+//   * 팔로잉, 팔로워 수 카운트
+//   */
+//
+//  @Override
+//  public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
+//    UserEntity user = userEntityRepository.findById(userId)
+//        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+//
+//    updateFollowCounts(user);  // 최신 값 반영
+//
+//    return FollowDTO.FollowStatsDTO.builder()
+//        .followerCount(user.getFollowerCount())
+//        .followingCount(user.getFollowingCount())
+//        .build();
+//  }
 
   /**
    *  맞팔로우 확인 메서드

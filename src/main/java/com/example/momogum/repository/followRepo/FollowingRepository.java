@@ -3,6 +3,7 @@ package com.example.momogum.repository.followRepo;
 import com.example.momogum.domain.Following;
 import com.example.momogum.domain.UserEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,9 @@ public interface FollowingRepository extends JpaRepository<Following, Long> {
 
   // 특정 사용자의 팔로우 수 카운트
   int countByUserId(Long userId);
+
+  // 유저를 찾아서 팔로잉
+  // Optional<Following> findByUserAndFollowing(UserEntity user, UserEntity following);
 
   // 특정 사용자가 팔로우한 모든 사용자 가져오기
   @Query("SELECT f.following FROM Following f WHERE f.user.id = :userId")

@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfileImageService {
 
+  String setDefaultProfileImage(Long userId);
+
+  String uploadCustomProfileImage(MultipartFile file, Long userId);
 
   List<String> uploadImages(List<MultipartFile> files, String dirName, Long userId);
 

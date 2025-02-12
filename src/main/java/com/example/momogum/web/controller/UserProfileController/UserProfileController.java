@@ -97,6 +97,26 @@ public class UserProfileController {
   }
 
   /**
+   * 프로필 이미지 기본 이미지로 수정
+   */
+  @Operation(summary = "기본 프로필 이미지로 변경", description = "모든 경우에서 기본 프로필 이미지로 변경")
+  @PutMapping("/{userId}/setDefaultProfileImage")
+  public ApiResponse<String> setDefaultProfileImage(@PathVariable Long userId) {
+    String defaultImageUrl = profileImageService.setDefaultProfileImage(userId);
+    return ApiResponse.onSuccess(defaultImageUrl);
+  }
+
+  /**
+   * 프로필 이미지 커스텀 이미지로 수정
+   */
+  @Operation(summary = "갤러리 이미지로 변경", description = "모든 경우에서 갤러리 이미지를 업로드하여 프로필로 변경")
+  @PutMapping("/{userId}/uploadCustomProfileImage")
+  public ApiResponse<String> uploadCustomProfileImage(@PathVariable Long userId, @RequestPart MultipartFile file) {
+    String updatedImageUrl = profileImageService.uploadCustomProfileImage(file, userId);
+    return ApiResponse.onSuccess(updatedImageUrl);
+  }
+
+  /**
    * 내가 작성한 밥일기 목록 조회 API
    */
 
@@ -114,10 +134,7 @@ public class UserProfileController {
     return ApiResponse.onSuccess(response);
   }
 
-  /**
-   * sd
-   */
-
+  @Operation(summary = "이미지 삭제 API(테스트 용)")
   @DeleteMapping("")
   public ApiResponse<String> deleteUserProfile(@RequestParam Long userId)
       throws FileNotFoundException {
@@ -126,6 +143,7 @@ public class UserProfileController {
     return ApiResponse.onSuccess("aa");
   }
 
+  @Operation(summary = "기본 이미지 조회 API(테스트 용)")
   @GetMapping("")
   public String getafads(){
     return profileImageService.viewProfileImage();

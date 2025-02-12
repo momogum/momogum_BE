@@ -90,4 +90,16 @@ public class UserEntity extends BaseEntity {
     public void removeProfileImage(UserEntity user){
         user.setProfileImage(null);
     }
+
+//    // 기본 프로필 이미지 설정
+//    public void setDefaultProfileImage(String defaultImageUrl) {
+//        if (this.profileImage == null) {
+//            this.profileImage = ProfileImage.builder()
+//                .imageLink(defaultImageUrl)
+//                .user(this)
+//                .fileName("default-profile.png")
+//                .imageName("기본 프로필 이미지")
+//                .build();
+//        }
+//    }
 }

@@ -36,11 +36,84 @@ public class ProfileImageServiceImpl implements ProfileImageService {
   private final UserEntityRepository userEntityRepository;
   private final ProfileImageRepository profileImageRepository;
 
+  private static final String DEFAULT_PROFILE_IMAGE_URL
+      = "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png";
 
+
+//  /**
+//   * 유저 생성시 프로필 이미지 기본 이미지로 추가 메서드
+//   */
+//
+//  @Transactional
+//  public void createDefaultProfileImage(Long userId) {
+//    UserEntity user = userEntityRepository.findById(userId)
+//        .orElseThrow(() -> new IllegalArgumentException("회원 못찾음 -> 수정필요"));
+//
+//    user.setDefaultProfileImage(DEFAULT_PROFILE_IMAGE_URL);
+//    profileImageRepository.save(user.getProfileImage());
+//    userEntityRepository.save(user);
+//  }
+
+  /**
+   * 프로필 이미지를 기본이미지로 업데이트하는 메서드입니다
+   * 이미지 삭제 -> 기본 이미지로 업데이트
+   */
+
+  @Transactional
+  public String setDefaultProfileImage(Long userId) {
+    UserEntity user = findUser(userId);
+
+    try {
+      // 기존 이미지 있으면 삭제
+      deleteImage(userId);
+    }
+    // 없으면 일단 진행
+    catch (FileNotFoundException e) {
+      log.warn("삭제할 기존 프로필 이미지가 없음: {}", e.getMessage());
+    }
+    // 기본 프로필 이미지 설정
+    ProfileImage defaultProfile = ProfileImage.builder()
+        .user(user)
+        .imageLink(DEFAULT_PROFILE_IMAGE_URL)
+        .fileName("default-profile.png")
+        .imageName("기본 프로필 이미지")
+        .build();
+
+    profileImageRepository.save(defaultProfile);
+    user.setProfileImage(defaultProfile);
+    userEntityRepository.save(user);
+
+    return DEFAULT_PROFILE_IMAGE_URL;
+  }
+
+  /**
+   * 프로필 이미지를 본인이 업로드 한 것으로 업데이트하는 메서드입니다.
+   * 이미지 삭제 -> 재업로드로 업데이트
+   */
+
+  @Transactional
+  public String uploadCustomProfileImage(MultipartFile file, Long userId) {
+    UserEntity user = findUser(userId);
+
+    try {
+      // 기존 이미지 있으면 삭제
+      deleteImage(userId);
+    }
+    // 없으면 일단 진행
+    catch (FileNotFoundException e) {
+      log.warn("삭제할 기존 프로필 이미지가 없음: {}", e.getMessage());
+    }
+
+    // 새 이미지 업로드
+    ProfileImage newProfileImage = uploadImage("user-profile-images", file, user);
+    profileImageRepository.save(newProfileImage);
+    user.setProfileImage(newProfileImage);
+
+    return newProfileImage.getImageLink();
+  }
 
   /**
    * 이미지를 업로드하는 메서드입니다
-   *
    * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
    * */
   @Override
@@ -68,52 +141,46 @@ public class ProfileImageServiceImpl implements ProfileImageService {
   }
 
 
+  /**
+   * 프로필 이미지 삭제 메서드
+   */
   @Transactional
   @Override
   public void deleteImage(Long userId) throws FileNotFoundException {
 
     UserEntity findUser = findUser(userId);
-    List<ProfileImage> findProfileImages = profileImageRepository.findByUser(findUser);
+    ProfileImage profileImage = findUser.getProfileImage();
 
-    if (findUser == null || findProfileImages.isEmpty()) {
+    if (findUser == null || profileImage == null) {
       throw new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND);
     }
 
-    // 엔티티 매니저를 사용하여 flush() 호출
-    entityManager.flush();  // 영속성 컨텍스트의 상태를 DB에 강제로 반영
+    try {
+      // S3에서 이미지 삭제
+      amazonS3.deleteObject(bucket, profileImage.getFileName());
 
-    // S3에서 이미지 삭제 및 데이터베이스 레코드 삭제
-    for (ProfileImage profileImage : findProfileImages) {
-      try {
-        // S3에서 이미지 삭제
-        amazonS3.deleteObject(bucket, profileImage.getFileName());
+      // UserEntity에서 ProfileImage 참조 해제
+      findUser.setProfileImage(null);
 
+      // ProfileImage의 UserEntity 참조 해제
+      profileImage.setUser(null);
 
-        /**
-         *
-         * JPA의 영속성 컨텍스트안에 삭제해야하는 엔티티와 연관된 엔티티가 존재함
-         * 그렇기 때문에 삭제 쿼리가 발생하지 않는 오류 발견
-         *
-         * -> 엔티티 간의 연관관계를 끊어줌
-         *
-         * */
-        profileImage.getUser().removeProfileImage(findUser);
-        profileImage.removeUser(profileImage);
+      // 즉시 반영하여 JPA가 기존 ProfileImage를 관리하지 않도록 함
+      entityManager.flush();
 
+      // 데이터베이스에서 ProfileImage 삭제
+      profileImageRepository.delete(profileImage);
 
-
-        // 데이터베이스에서 이미지 레코드 삭제
-        profileImageRepository.delete(profileImage);
-      } catch (Exception e) {
-        throw new ImageHandler(ErrorStatus.IMAGE_REMOVE_ERROR);
-      }
+      // 영속성 컨텍스트에서 해당 엔티티 제거 (JPA가 관리하지 않도록)
+      entityManager.clear();
+    } catch (Exception e) {
+      throw new ImageHandler(ErrorStatus.IMAGE_REMOVE_ERROR);
     }
   }
 
 
   /**
    * 매핑되어있는 정보를 통해 이미지를 찾는 메서드입니다
-   *
    * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
    * */
   @Override
@@ -135,9 +202,8 @@ public class ProfileImageServiceImpl implements ProfileImageService {
 
   /**
    * 이미지를 업로드하는 메서드입니다
-   *
    * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
-   * */
+   */
   private ProfileImage uploadImage(String dirName, MultipartFile file, UserEntity user) {
 
     String fileName = dirName + "/" + UUID.randomUUID() + "-" + file.getOriginalFilename();

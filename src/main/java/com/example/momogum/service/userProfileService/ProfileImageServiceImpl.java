@@ -40,19 +40,27 @@ public class ProfileImageServiceImpl implements ProfileImageService {
       = "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png";
 
 
-//  /**
-//   * 유저 생성시 프로필 이미지 기본 이미지로 추가 메서드
-//   */
-//
-//  @Transactional
-//  public void createDefaultProfileImage(Long userId) {
-//    UserEntity user = userEntityRepository.findById(userId)
-//        .orElseThrow(() -> new IllegalArgumentException("회원 못찾음 -> 수정필요"));
-//
-//    user.setDefaultProfileImage(DEFAULT_PROFILE_IMAGE_URL);
-//    profileImageRepository.save(user.getProfileImage());
-//    userEntityRepository.save(user);
-//  }
+  /**
+   * 유저 생성시 프로필 이미지 기본 이미지로 추가 메서드
+   */
+
+  @Transactional
+  @Override
+  public void createDefaultProfileImage(Long userId) {
+    UserEntity user = userEntityRepository.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("회원 못찾음 -> 수정필요"));
+
+    ProfileImage defaultProfile = ProfileImage.builder()
+        .user(user)
+        .imageLink(DEFAULT_PROFILE_IMAGE_URL)
+        .fileName("default-profile.png")
+        .imageName("기본 프로필 이미지")
+        .build();
+
+    profileImageRepository.save(defaultProfile);
+    user.setProfileImage(defaultProfile);
+    userEntityRepository.save(user);
+  }
 
   /**
    * 프로필 이미지를 기본이미지로 업데이트하는 메서드입니다

@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
-import org.apache.catalina.User;
 
 @Entity
 @Table(name = "users")
@@ -91,15 +90,4 @@ public class UserEntity extends BaseEntity {
         user.setProfileImage(null);
     }
 
-//    // 기본 프로필 이미지 설정
-//    public void setDefaultProfileImage(String defaultImageUrl) {
-//        if (this.profileImage == null) {
-//            this.profileImage = ProfileImage.builder()
-//                .imageLink(defaultImageUrl)
-//                .user(this)
-//                .fileName("default-profile.png")
-//                .imageName("기본 프로필 이미지")
-//                .build();
-//        }
-//    }
 }

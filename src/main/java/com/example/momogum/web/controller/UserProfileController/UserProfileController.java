@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/userProfiles")
 @RequiredArgsConstructor
-@Tag(name = "UserProfile API",description = "유저프로필 API")
+@Tag(name = "유저프로필 API",description = "유저프로필 API")
 public class UserProfileController {
 
   private final UserProfileServiceImpl userProfileServiceImpl;
@@ -119,6 +119,7 @@ public class UserProfileController {
     String updatedImageUrl = profileImageService.uploadCustomProfileImage(file, userId);
     return ApiResponse.onSuccess(updatedImageUrl);
   }
+
   /**
    * 내가 작성한 밥일기 목록 조회 API
    */

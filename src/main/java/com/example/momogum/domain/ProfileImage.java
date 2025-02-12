@@ -1,13 +1,6 @@
 package com.example.momogum.domain;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,4 +45,24 @@ public class ProfileImage {
   @Column
   private String imageName;
 
+
+  @Column(nullable = false, updatable = false)
+  private LocalDateTime createdAt;
+
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
+
+
+  // 저장 전 자동으로 현재 시간 설정
+  @PrePersist
+  public void prePersist() {
+    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  // 업데이트 전 자동으로 변경 시간 설정
+  @PreUpdate
+  public void preUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
 }

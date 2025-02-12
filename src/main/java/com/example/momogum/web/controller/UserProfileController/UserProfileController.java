@@ -13,15 +13,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,10 +56,10 @@ public class UserProfileController {
 
   @Operation(summary = "유저 정보 조회 API", description = " 유저의 기본 정보를 반환")
   @GetMapping("/userId/{userId}")
-  public ApiResponse<UserDTO.UserResponseDTO> getUserProfile(@PathVariable Long userId) {
+  public ApiResponse<String> getUserProfile(@PathVariable Long userId) {
 
-    UserDTO.UserResponseDTO userProfile = userProfileServiceImpl.getUserProfile(userId);
-    return ApiResponse.onSuccess(userProfile);
+    String imagesByUserId = profileImageService.findImagesByUserId(userId);
+    return ApiResponse.onSuccess(imagesByUserId);
   }
 
   /**
@@ -81,7 +84,7 @@ public class UserProfileController {
   @Operation(summary= "유저 프로필 이미지 수정 API", description =  "유저 프로필 이미지를 수정하고 수정된 정보를 반환합니다.")
   @PostMapping(path= "/profileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResponse<List<String>> updateUserProfileImage(
-      @RequestPart(value = "userId") Long userId,  @RequestPart(value = "files") List<MultipartFile> files) {
+      @RequestParam(value = "userId") Long userId,  @RequestPart(value = "files") List<MultipartFile> files) {
 
     String dirname = "user-profile-images";
 
@@ -109,6 +112,23 @@ public class UserProfileController {
   public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getBookmarkedMealDiaries(@PathVariable Long userId) {
     List<ViewMealDiaryDTO.ViewMealDiaryResponse> response = userProfileServiceImpl.getBookmarkedMealDiaries(userId);
     return ApiResponse.onSuccess(response);
+  }
+
+  /**
+   * sd
+   */
+
+  @DeleteMapping("")
+  public ApiResponse<String> deleteUserProfile(@RequestParam Long userId)
+      throws FileNotFoundException {
+
+    profileImageService.deleteImage(userId);
+    return ApiResponse.onSuccess("aa");
+  }
+
+  @GetMapping("")
+  public String getafads(){
+    return profileImageService.viewProfileImage();
   }
 
 }

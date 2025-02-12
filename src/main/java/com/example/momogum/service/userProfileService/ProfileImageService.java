@@ -15,5 +15,7 @@ public interface ProfileImageService {
   @Transactional
   void deleteImage(Long userId) throws FileNotFoundException;
 
-  String findImagesByMealId(Long userId);
+  String findImagesByUserId(Long userId);
+
+  String viewProfileImage();
 }

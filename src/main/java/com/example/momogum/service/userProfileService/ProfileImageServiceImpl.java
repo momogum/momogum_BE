@@ -1,7 +1,5 @@
 package com.example.momogum.service.userProfileService;
 
-import static org.hibernate.query.sqm.tree.SqmNode.log;
-
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -48,7 +46,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
   @Override
   public List<String> uploadImages(List<MultipartFile> files, String dirName, Long userId) {
 
-    log.info("userId: ",userId);
+    log.info("userId: {} ",userId);
     List<ProfileImage> images = new ArrayList<>();
 
     UserEntity byId = findUser(userId);
@@ -119,12 +117,20 @@ public class ProfileImageServiceImpl implements ProfileImageService {
    * 사용하시는 옵션에 맞게 수정해서 사용해주시면 될 것 같습니다
    * */
   @Override
-  public String findImagesByMealId(Long userId) {
+  public String findImagesByUserId(Long userId) {
 
     UserEntity findUser = findUser(userId);
 
     return findUser.getProfileImage()
         .getImageLink();
+  }
+
+  /**
+   * 기본 이미지 조회
+   */
+  @Override
+  public String viewProfileImage() {
+    return "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png";
   }
 
   /**
@@ -142,11 +148,10 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     String originalFileName = file.getOriginalFilename();
 
     try {
-      log.info("Uploading image: {}");
-
       amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), metadata));
-      log.info("Image uploaded successfully: {}");
+      log.info("아마존에 접속 성공");
     } catch (AmazonServiceException e) {
+      log.error(e.getMessage());
       throw new ImageHandler(ErrorStatus.IMAGE_UPLOAD_ERROR);
     } catch (SdkClientException e) {
       throw new RuntimeException("S3 client error: " + e.getMessage(), e);
@@ -164,8 +169,6 @@ public class ProfileImageServiceImpl implements ProfileImageService {
         .imageName(originalFileName)
         .build();
   }
-
-
 
 
   private UserEntity findUser(Long userId) {

@@ -49,4 +49,11 @@ public class FollowDTO {
     private int followerCount;
     private int followingCount;
   }
+
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ToggleFollowRequest {
+    private Long targetUserId; // 팔로우 대상이 될 유저 ID
+  }
 }

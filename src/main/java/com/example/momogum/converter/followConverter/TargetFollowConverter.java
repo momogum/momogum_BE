@@ -15,7 +15,6 @@ public class TargetFollowConverter {
         .name(userEntity.getName())
         .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
-        .isMutualFollow(isMutualFollow)
         .build();
   }
 
@@ -29,7 +28,6 @@ public class TargetFollowConverter {
         .name(userEntity.getName())
         .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
-        .isMutualFollow(isMutualFollow)
         .build();
   }
 }

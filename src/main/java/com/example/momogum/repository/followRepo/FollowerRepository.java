@@ -16,11 +16,11 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
 
   boolean existsByUserAndFollower(UserEntity user, UserEntity follower);
 
-  // 유저와 팔로우 찾음
-  Optional<Follower> findByUserAndFollower(UserEntity user, UserEntity follower);
-
   @Query("SELECT COUNT(f) FROM Follower f WHERE f.user.id = :userId")
   int countByUserId(@Param("userId") Long userId);
+
+  //유저와 팔로우 찾음
+  Optional<Follower> findByUserAndFollower(UserEntity user, UserEntity follower);
 
   // name or nickname 기준으로 검색
   @Query("SELECT f FROM Follower f WHERE f.user.id = :userId AND (LOWER(f.follower.nickname) LIKE LOWER(CONCAT('%', :query, '%')) " +

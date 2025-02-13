@@ -16,8 +16,7 @@ public class UserReportConverter {
   public static UserReportDTO.UserReportResponseDTO toUserReportResponseDTO(UserEntity reportedUser) {
     return UserReportDTO.UserReportResponseDTO.builder()
         .reportedUserId(reportedUser.getId())
-        .message("신고가 접수되었습니다.<br>"+"검토는 최대 24시간 소요됩니다.")
+        .message("신고가 정상적으로 접수되었습니다.")
         .build();
   }
-
 }

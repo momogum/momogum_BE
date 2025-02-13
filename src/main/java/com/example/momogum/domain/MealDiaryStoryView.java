@@ -15,9 +15,11 @@ public class MealDiaryStoryView extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private boolean isViewed;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meal_diary_id")
-    private MealDiary mealDiary;
+    @JoinColumn(name = "meal_diary_story_id")
+    private MealDiaryStory mealDiaryStory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")

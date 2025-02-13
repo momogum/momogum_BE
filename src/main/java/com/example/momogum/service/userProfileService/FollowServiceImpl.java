@@ -26,46 +26,47 @@ public class FollowServiceImpl implements FollowService {
   private final FollowerRepository followerRepository;
   private final UserEntityRepository userEntityRepository;
 
-//  /**
-//   * 팔로우, 언팔로우 토글 구현
-//   */
-//
-//  @Override
-//  @Transactional
-//  public void toggleFollowUser(Long currentUserId, Long targetUserId) {
-//    UserEntity follower = userEntityRepository.findById(currentUserId)
-//        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//    UserEntity target = userEntityRepository.findById(targetUserId)
-//        .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-//
-//    boolean isFollowing = followingRepository.existsByUserAndFollowing(follower, target);
-//
-//    if (isFollowing) {
-//      Following following = followingRepository.findByUserAndFollowing(follower, target)
-//          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-//      followingRepository.delete(following);
-//
-//      Follower followerEntity = followerRepository.findByUserAndFollower(target, follower)
-//          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-//      followerRepository.delete(followerEntity);
-//    } else {
-//      Following newFollowing = Following.builder()
-//          .user(follower)
-//          .following(target)
-//          .build();
-//      followingRepository.save(newFollowing);
-//
-//      Follower newFollower = Follower.builder()
-//          .user(target)
-//          .follower(follower)
-//          .build();
-//      followerRepository.save(newFollower);
-//    }
-//
-//    updateFollowCounts(follower);
-//    updateFollowCounts(target);
-//  }
+  /**
+   * 팔로우, 언팔로우 토글 구현
+   */
+
+  @Override
+  @Transactional
+  public FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId) {
+    UserEntity follower = findUserById(currentUserId);
+    UserEntity target = findUserById(targetUserId);
+
+    boolean isFollowing = followingRepository.existsByUserAndFollowing(follower, target);
+
+    if (isFollowing) {
+      Following following = followingRepository.findByUserAndFollowing(follower, target)
+          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
+      // 팔로잉 삭제
+      followingRepository.delete(following);
+
+      Follower followerEntity = followerRepository.findByUserAndFollower(target, follower)
+          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
+      // 팔로우 삭제
+      followerRepository.delete(followerEntity);
+    } else {
+      Following newFollowing = Following.builder()
+          .user(follower)
+          .following(target)
+          .build();
+      // 팔로잉 시작
+      followingRepository.save(newFollowing);
+
+      Follower newFollower = Follower.builder()
+          .user(target)
+          .follower(follower)
+          .build();
+      // 유저에 팔로우 저장
+      followerRepository.save(newFollower);
+    }
+
+    return getFollowStats(currentUserId);
+  }
+
   /**
    * 현재 사용자가 특정 사용자를 팔로우하고 있는지 여부 반환
    */
@@ -79,22 +80,19 @@ public class FollowServiceImpl implements FollowService {
     return followingRepository.existsByUserAndFollowing(currentUser, targetUser);
   }
 
-//  /**
-//   * 팔로잉, 팔로워 수 카운트
-//   */
-//
-//  @Override
-//  public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
-//    UserEntity user = userEntityRepository.findById(userId)
-//        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//    updateFollowCounts(user);  // 최신 값 반영
-//
-//    return FollowDTO.FollowStatsDTO.builder()
-//        .followerCount(user.getFollowerCount())
-//        .followingCount(user.getFollowingCount())
-//        .build();
-//  }
+  /**
+   * 팔로잉, 팔로워 수 카운트
+   */
+
+  @Override
+  public FollowDTO.FollowStatsDTO getFollowStats(Long userId) {
+    UserEntity user = findUserById(userId);
+
+    return FollowDTO.FollowStatsDTO.builder()
+        .followerCount(user.getFollowerCount())
+        .followingCount(user.getFollowingCount())
+        .build();
+  }
 
   /**
    *  맞팔로우 확인 메서드

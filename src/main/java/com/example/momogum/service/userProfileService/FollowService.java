@@ -9,15 +9,15 @@ import org.springframework.stereotype.Service;
 
 public interface FollowService {
 
-  // FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId);
+  FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId);
 
   List<FollowDTO.FollowingResponseDTO> getFollowings(Long userId);
 
   List<FollowDTO.FollowerResponseDTO> getFollowers(Long userId);
 
-  // void updateFollowCounts(UserEntity user);
+ // void updateFollowCounts(UserEntity user);
 
-  // FollowDTO.FollowStatsDTO getFollowStats(Long userId);
+  FollowDTO.FollowStatsDTO getFollowStats(Long userId);
 
   Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser);
 

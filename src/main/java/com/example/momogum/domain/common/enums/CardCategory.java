@@ -11,4 +11,8 @@ public enum CardCategory {
     EVENT("event");
 
     private final String category;
+
+    public String getCategory() {
+        return category;
+    }
 }

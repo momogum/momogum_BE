@@ -1,9 +1,11 @@
 package com.example.momogum.service.appointmentService;
 
+import com.example.momogum.domain.common.enums.CardCategory;
 import com.example.momogum.domain.utils.S3UrlProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,31 +17,34 @@ public class AppointmentCardService {
 
     private final S3UrlProvider s3UrlProvider;
 
-    /**
-     * 주어진 카테고리 이름에 따라 카드 리스트를 반환합니다.
-     * @param category 카테고리 이름 (ex. 'basic', 'fun')
-     * @return AppointmentCardResponseDTO 리스트
-     */
+    public List<AppointmentCardResponseDTO> getAllCards() {
+        return s3UrlProvider.getAllUrls().stream()
+                .map(url -> {
+                    String category = extractCategoryFromUrl(url);
+                    return new AppointmentCardResponseDTO(category, url);
+                })
+                .collect(Collectors.toList());
+    }
+
+    //Enum 형식
+    public List<AppointmentCardResponseDTO> getCards(CardCategory category) {
+        return getCardsByCategory(category.getCategory());
+    }
+
+    //파라미터 형식
     public List<AppointmentCardResponseDTO> getCardsByCategory(String category) {
         List<String> imageUrls = s3UrlProvider.getUrlsByCategory(category);
 
         return imageUrls.stream()
-                .map(url -> new AppointmentCardResponseDTO(category,url))
+                .map(url -> new AppointmentCardResponseDTO(category, url))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 기본 카드 리스트 반환
-     */
-    public List<AppointmentCardResponseDTO> getBasicCards() {
-        return getCardsByCategory("basic");
+    private String extractCategoryFromUrl(String url) {
+        return Arrays.stream(CardCategory.values())
+                .map(CardCategory::getCategory)
+                .filter(url::contains)
+                .findFirst()
+                .orElse("unknown");
     }
-
-    /**
-     * 재미 카드 리스트 반환
-     */
-    public List<AppointmentCardResponseDTO> getFunCards() {
-        return getCardsByCategory("fun");
-    }
-
 }

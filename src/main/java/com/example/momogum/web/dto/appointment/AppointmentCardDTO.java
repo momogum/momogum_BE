@@ -15,7 +15,7 @@ public class AppointmentCardDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AppointmentCardResponseDTO {
-        private String type;       // 카드 카테고리 (예: 기본, 재미)
+        private String category;       // 카드 카테고리 (예: 기본, 재미)
         private String imageUrl;   // S3 이미지 URL
     }
 }

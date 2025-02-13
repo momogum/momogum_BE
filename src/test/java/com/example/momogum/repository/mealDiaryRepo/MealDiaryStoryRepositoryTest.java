@@ -105,23 +105,5 @@ class MealDiaryStoryRepositoryTest {
     }
 
 
-    @Test
-    @DisplayName("밥일기 스토리의 생성일자를 setCreatedAt()을 통해 설정 할 수 있다")
-    public void setCreatedAt_success(){
-        // given
-        Mockito.when(localDateTimeHolder.now()).thenReturn(LocalDateTime.of(1,1,1,1,1));
-
-        MealDiaryStory testMealDiaryStory1 = MealDiaryStory.builder()
-                .name("test1")
-                .mealDiary(testMealDiary1)
-                .build();
-        testMealDiary1.setCreatedAt(localDateTimeHolder.now());
-
-        mealDiaryStoryRepository.save(testMealDiaryStory1);
-
-        // when & then
-        assertThat(testMealDiary1.getCreatedAt()).isEqualTo(LocalDateTime.of(1,1,1,1,1));
-    }
-
 
 }

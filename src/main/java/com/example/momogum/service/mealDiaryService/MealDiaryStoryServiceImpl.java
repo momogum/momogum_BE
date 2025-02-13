@@ -63,7 +63,6 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         // 원활한 테스트를 위해 int를 반환
         int deletedCount = mealDiaryStoryRepository.deleteByCreatedAtBefore(threeDaysAgo);
         log.info("삭제된 스토리 갯수: {}", deletedCount);
-
     }
 
 

@@ -15,7 +15,7 @@ public interface FollowService {
 
   List<FollowDTO.FollowerResponseDTO> getFollowers(Long userId);
 
- // void updateFollowCounts(UserEntity user);
+  void removeFollower(Long currentUserId, Long followerId);
 
   FollowDTO.FollowStatsDTO getFollowStats(Long userId);
 

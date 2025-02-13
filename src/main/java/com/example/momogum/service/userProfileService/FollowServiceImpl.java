@@ -27,7 +27,7 @@ public class FollowServiceImpl implements FollowService {
   private final UserEntityRepository userEntityRepository;
 
   /**
-   * 팔로우, 언팔로우 토글 구현
+   * 팔로우(언팔로우) 토글 구현
    */
 
   @Override
@@ -66,6 +66,42 @@ public class FollowServiceImpl implements FollowService {
 
     return getFollowStats(currentUserId);
   }
+
+  /**
+   * 내 팔로워에서 삭제 토글 구현
+   */
+
+  @Override
+  @Transactional
+  public void removeFollower(Long currentUserId, Long followerId) {
+    UserEntity currentUser = userEntityRepository.findById(currentUserId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    UserEntity follower = userEntityRepository.findById(followerId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    // 나의 팔로워 목록에서 특정 사용자가 존재하는지 확인
+    boolean isFollower = followerRepository.existsByUserAndFollower(currentUser, follower);
+
+    if (!isFollower) {
+      throw new GeneralException(ErrorStatus.TARGET_NOT_FOUND);
+    }
+
+    // 팔로워 삭제 (나의 팔로워 목록에서 제거)
+    Follower followerEntity = followerRepository.findByUserAndFollower(currentUser, follower)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
+    followerRepository.delete(followerEntity);
+
+    // 상대방의 팔로잉 목록에서 나를 제거
+    Following followingEntity = followingRepository.findByUserAndFollowing(follower, currentUser)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
+    followingRepository.delete(followingEntity);
+
+    // 팔로워/팔로잉 수 감소
+    currentUser.minusFollowerCount();
+    follower.minusFollowingCount();
+  }
+
 
   /**
    * 현재 사용자가 특정 사용자를 팔로우하고 있는지 여부 반환

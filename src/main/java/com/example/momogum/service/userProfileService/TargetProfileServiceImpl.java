@@ -2,21 +2,30 @@ package com.example.momogum.service.userProfileService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.ViewMealDiaryConverter;
 import com.example.momogum.converter.followConverter.FollowConverter;
 import com.example.momogum.converter.followConverter.TargetFollowConverter;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryConverter;
+import com.example.momogum.converter.mealDiaryConverter.MealDiaryReportConverter;
 import com.example.momogum.converter.userConverter.TargetProfileConverter;
 import com.example.momogum.converter.userConverter.UserProfileConverter;
+import com.example.momogum.converter.userConverter.UserReportConverter;
+import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryBookmark;
+import com.example.momogum.domain.MealDiaryReport;
+import com.example.momogum.domain.Report;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryBookmarkRepo.MealDiaryBookmarkRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
+import com.example.momogum.repository.reportRepo.ReportRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.FollowDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
 import com.example.momogum.web.dto.user.UserDTO;
+import com.example.momogum.web.dto.user.UserReportDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO.ViewMealDiaryResponse;
 import java.util.List;
@@ -35,6 +44,7 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   private final FollowerRepository followerRepository;
   private final FollowingRepository followingRepository;
   private final FollowService followService;
+  private final ReportRepository reportRepository;
 
   /**
    * 상대 유저의 프로필 정보 조회
@@ -136,6 +146,35 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   public Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
     return followerRepository.existsByUserAndFollower(targetUser, currentUser)
         && followerRepository.existsByUserAndFollower(currentUser, targetUser);
+  }
+
+  /**
+   * 상대 유저 신고하기 메서드
+   */
+
+  @Override
+  @Transactional
+  public UserReportDTO.UserReportResponseDTO report(Long reporterId, UserReportDTO.UserReportRequestDTO request) {
+
+    UserEntity reporter = findReporter(reporterId);
+    UserEntity reportedUser = findUser(request.getReportedUserId());
+
+    Report newReport = UserReportConverter.toUserReport(reporter, reportedUser);
+
+    reportRepository.save(newReport);
+
+    return UserReportConverter.toUserReportResponseDTO(reportedUser);
+  }
+
+  // 회원 검색 메서드
+  private UserEntity findUser(Long userId) {
+    return userEntityRepository.findById(userId)
+        .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
+  }
+  // 신고 회원 검색 메서드
+  private UserEntity findReporter(Long userId) {
+    return userEntityRepository.findById(userId)
+        .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
   }
 
 }

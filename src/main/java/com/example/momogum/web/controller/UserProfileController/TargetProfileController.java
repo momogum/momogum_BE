@@ -3,6 +3,7 @@ package com.example.momogum.web.controller.UserProfileController;
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.service.userProfileService.FollowServiceImpl;
 import com.example.momogum.service.userProfileService.TargetProfileServiceImpl;
@@ -10,8 +11,7 @@ import com.example.momogum.service.userProfileService.UserProfileService;
 import com.example.momogum.service.userProfileService.UserProfileServiceImpl;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.user.UserDTO;
-import com.example.momogum.web.dto.user.UserDTO.FullProfileDTO;
-import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
+import com.example.momogum.web.dto.user.UserReportDTO;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO.ViewMealDiaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -19,6 +19,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -101,5 +103,17 @@ public class TargetProfileController {
     return ApiResponse.onSuccess(followerList);
   }
 
+  /**
+   * 상대 유저 신고하기 API
+   */
+  @Operation(summary = "상대 유저 신고하기 API", description = "부적절한 상대 유저를 신고합니다.")
+  @PostMapping("/report")
+  public ApiResponse<UserReportDTO.UserReportResponseDTO> report(
+      @RequestHeader("X-User-Id") Long reporterId,
+      @RequestBody UserReportDTO.UserReportRequestDTO request) {
+
+    UserReportDTO.UserReportResponseDTO result = targetProfileServiceImpl.report(reporterId,request);
+    return ApiResponse.onSuccess(result);
+  }
 
 }

@@ -58,8 +58,7 @@ public class UserProfileServiceImpl implements UserProfileService {
   }
 
 
-  // 유저 닉네임, 실명, 프로필 이미지 조회
-
+  // 유저 닉네임, 실명, 프로필 이미지 조회 FIXME 이미지 할당
   @Override
   @Transactional(readOnly = true)
   public UserDTO.UserResponseDTO getUserProfile(Long userId) {
@@ -112,7 +111,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     List<MealDiary> mealDiaries = mealDiaryRepository.findByUserEntity(user);
 
     return mealDiaries.stream()
-        .map(ViewMealDiaryConverter::toViewMealDiaryResponse) // ✅ 컨버터 사용
+        .map(ViewMealDiaryConverter::toViewMealDiaryResponse)
         .collect(Collectors.toList());
   }
 
@@ -126,7 +125,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     List<MealDiaryBookmark> bookmarks = mealDiaryBookmarkRepository.findByUserEntity(user);
 
     return bookmarks.stream()
-        .map(ViewMealDiaryConverter::toViewMealDiaryResponse) // ✅ 컨버터 사용
+        .map(ViewMealDiaryConverter::toViewMealDiaryResponse)
         .collect(Collectors.toList());
   }
 }

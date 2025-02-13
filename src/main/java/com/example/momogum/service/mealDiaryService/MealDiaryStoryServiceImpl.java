@@ -2,11 +2,14 @@ package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryStoryConverter;
 import com.example.momogum.domain.*;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
+import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryViewRepository;
+import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -26,23 +30,37 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
     private final MealDiaryRepository mealDiaryRepository;
     private final MealDiaryStoryRepository mealDiaryStoryRepository;
     private final FollowingRepository followingRepository;
+    private final UserEntityRepository userEntityRepository;
+    private final MealDiaryStoryViewRepository mealDiaryStoryViewRepository;
 
     @Override
-    public MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO get(Long storyId){
+    public MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO get(Long memberId,Long storyId){
+
+        UserEntity findUser = findUser(memberId);
 
         MealDiaryStory mealDiaryStory = findMealDiaryStory(storyId);
         List<String> imageLinks = mealDiaryStory.getMealDiary().getMealDiaryImages().stream()
                 .map(MealDiaryImage::getImageLink)
                 .toList();
 
+        MealDiaryStoryView newMealDiaryView = MealDiaryStoryView.builder()
+                .mealDiaryStory(mealDiaryStory)
+                .isViewed(true)
+                .userEntity(findUser)
+                .build();
+        mealDiaryStoryViewRepository.save(newMealDiaryView);
+
         return MealDiaryStoryConverter.toMealDiaryStoryReadDTO(mealDiaryStory,imageLinks);
     }
-
 
     @Override
     public List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> getAll(Long userId){
 
+        UserEntity findUser = findUser(userId);
+        log.info("유저 아이디: {}", userId);
+
         List<UserEntity> followedUsersByUserId = followingRepository.findFollowedUsersByUserId(userId);
+        log.info("유저의 팔로우: {}", followedUsersByUserId);
         List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(followedUsersByUserId);
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
 
@@ -50,7 +68,20 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
             throw new MealDiaryStoryHandler(ErrorStatus.MEALDIARY_STORY_NOT_FOUND);
         }
 
-        return MealDiaryStoryConverter.toMealDiaryStoryReadAllDTO(byMealDiaryIn);
+        return byMealDiaryIn.stream().map(mealDiaryStory -> {
+
+            List<MealDiaryImage> mealDiaryImages = mealDiaryStory.getMealDiary().getMealDiaryImages();
+            MealDiaryStoryView byUserEntityAndMealDiaryStory = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
+            String name = mealDiaryStory.getName();
+            String imageLink = (mealDiaryImages != null && !mealDiaryImages.isEmpty()) ? mealDiaryImages.get(0).getImageLink() : null;
+            boolean isViewed = byUserEntityAndMealDiaryStory != null && byUserEntityAndMealDiaryStory.isViewed();
+
+            return MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
+                    .mealDiaryImageLinks(imageLink)
+                    .nickname(name)
+                    .isViewed(isViewed)
+                    .build();
+        }).toList();
     }
 
 
@@ -69,6 +100,11 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
 
 
+
+    private UserEntity findUser(Long memberId) {
+        return userEntityRepository.findById(memberId)
+                .orElseThrow(() -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
 
     private MealDiaryStory findMealDiaryStory(Long storyId) {
         return mealDiaryStoryRepository.findById(storyId)

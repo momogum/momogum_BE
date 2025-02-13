@@ -42,5 +42,8 @@ public class MealDiaryStoryReadDTO {
         @Schema(description = "대표 이미지 링크입니다")
         String mealDiaryImageLinks;
 
+        @Schema(description = "스토리 조회 여부 입니다")
+        boolean isViewed;
+
     }
 }

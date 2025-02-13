@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 public interface MealDiaryStoryService {
-    MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO get(Long storyId);
+    MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO get(Long memberId,Long storyId);
 
     List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> getAll(Long userId);
 

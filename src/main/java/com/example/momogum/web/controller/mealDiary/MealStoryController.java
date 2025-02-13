@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/meal-stories")
 @Tag(name = "밥일기 스토리 API")
 @RequiredArgsConstructor
+@Slf4j
 public class MealStoryController {
 
     private final MealDiaryStoryService mealDiaryStoryService;
@@ -42,6 +44,8 @@ public class MealStoryController {
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
 
+        log.info("memberId={}", memberId);
+
         List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> result = mealDiaryStoryService.getAll(memberId);
 
         return ApiResponse.onSuccess(result);
@@ -52,10 +56,13 @@ public class MealStoryController {
      * 개별 스토리 조회
      * */
     @Operation(summary = "개별 스토리 조회 API")
-    @GetMapping("/storyId/{storyId}")
-    public ApiResponse<MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO> getOne(@PathVariable Long storyId) {
+    @GetMapping("/memberId/{memberId}/storyId/{storyId}")
+    public ApiResponse<MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO> getOne(
+            @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
+            @PathVariable Long memberId,
+            @PathVariable Long storyId) {
 
-        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO result = mealDiaryStoryService.get(storyId);
+        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO result = mealDiaryStoryService.get(memberId,storyId);
 
         return ApiResponse.onSuccess(result);
     }

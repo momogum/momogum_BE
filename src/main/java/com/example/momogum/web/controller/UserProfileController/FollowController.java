@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/follows")
 @RequiredArgsConstructor
-@Tag(name = "Follow API",description = "팔로잉 팔로우 API")
+@Tag(name = "팔로우 API",description = "팔로잉 팔로우와 관련된 API")
 public class FollowController {
 
   private final FollowService followService;

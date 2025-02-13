@@ -1,6 +1,6 @@
 package com.example.momogum.domain;
-import jakarta.persistence.*;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,7 +45,10 @@ public class ProfileImage {
   @Column
   private String imageName;
 
-
+  public void removeUser(ProfileImage profileImage){
+    profileImage.setUser(null);
+  }
+  
   @Column(nullable = false, updatable = false)
   private LocalDateTime createdAt;
 

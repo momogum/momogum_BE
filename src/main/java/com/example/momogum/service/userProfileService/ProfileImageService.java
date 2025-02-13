@@ -2,26 +2,25 @@ package com.example.momogum.service.userProfileService;
 
 
 import com.example.momogum.web.dto.user.ProfileImageDTO;
+import java.io.FileNotFoundException;
+import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ProfileImageService {
 
-  /**
-   *프로필 이미지 업로드 메서드
-   */
+  void createDefaultProfileImage(Long userId);
 
-  ProfileImageDTO.ProfileImageResponseDTO uploadProfileImage(MultipartFile file, Long userId);
+  String setDefaultProfileImage(Long userId);
 
-  /**
-   * 유저 프로필 이미지를 삭제하는 메서드
-   */
+  String uploadCustomProfileImage(MultipartFile file, Long userId);
 
-  void deleteProfileImage(Long userId);
+  List<String> uploadImages(List<MultipartFile> files, String dirName, Long userId);
 
-  /**
-   *기본 프로필 이미지를 설정하는 메서드*
-   */
+  @Transactional
+  void deleteImage(Long userId) throws FileNotFoundException;
 
-  void setDefaultProfileImage(Long userId);
+  String findImagesByUserId(Long userId);
 
+  String viewProfileImage();
 }

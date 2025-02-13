@@ -2,6 +2,7 @@ package com.example.momogum.repository.userEntityRepo;
 
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.LoginType;
+import jakarta.annotation.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByProviderAndProviderId(LoginType provider, String providerId);
 
     // ID로 UserEntity 조회
+    @Nullable
     Optional<UserEntity> findById(Long id);
 
     // Nickname 중복 여부 확인

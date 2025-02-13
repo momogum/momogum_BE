@@ -3,6 +3,7 @@ package com.example.momogum.domain.common;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,9 +15,12 @@ import java.time.LocalDateTime;
 @Getter
 public abstract class BaseEntity {
 
+    // 직접 수정할 수 있도록 setter 추가
+    @Setter
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
 }

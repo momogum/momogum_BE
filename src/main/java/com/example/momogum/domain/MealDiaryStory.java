@@ -4,6 +4,7 @@ import com.example.momogum.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,4 +28,5 @@ public class MealDiaryStory extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     private MealDiary mealDiary;
+
 }

@@ -2,20 +2,19 @@ package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
-import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryStoryConverter;
 import com.example.momogum.domain.*;
-import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
-import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -52,6 +51,17 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         }
 
         return MealDiaryStoryConverter.toMealDiaryStoryReadAllDTO(byMealDiaryIn);
+    }
+
+
+    // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Override
+    public void delete(){
+        LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);
+
+        // 원활한 테스트를 위해 int를 반환
+        int deletedCount = mealDiaryStoryRepository.deleteByCreatedAtBefore(threeDaysAgo);
     }
 
 

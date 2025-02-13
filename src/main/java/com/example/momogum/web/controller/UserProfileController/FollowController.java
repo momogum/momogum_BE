@@ -25,30 +25,30 @@ public class FollowController {
 
   private final FollowService followService;
 
-//  /**
-//   * 팔로우 토글
-//   */
-//
-//  @Operation(summary = "팔로우 토글 API", description = "팔로우 등록 API 입니다. 헤더에 현재 로그인한 사용자 ID를 담아서 요청하시면 됩니다.<br>"
-//      +"바디에 팔로우할 대상 ID를 넣어서 요청하시면 됩니다.<br>"+"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우")
-//  @PostMapping("/toggle")
-//  public ApiResponse<String> toggleFollow(
-//      @RequestHeader("X-User-Id") Long currentUserId, // 현재 로그인한 사용자 ID
-//      @RequestBody FollowDTO.ToggleFollowRequest request // 팔로우 대상 ID를 포함한 요청 바디
-//  ) {
-//    followService.toggleFollowUser(currentUserId, request.getTargetUserId());
-//    return ApiResponse.onSuccess("팔로우 상태가 변경되었습니다.");
-//  }
+  /**
+   * 팔로우 토글
+   */
 
-//  /**
-//   * 팔로잉, 팔로워 수 카운트
-//   */
-//
-//  @Operation(summary = "팔로워/팔로잉 수 조회 API", description = "특정 유저의 팔로워 및 팔로잉 수를 조회합니다.")
-//  @GetMapping("/{userId}/followCount")
-//  public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
-//    return ApiResponse.onSuccess(followService.getFollowStats(userId));
-//  }
+  @Operation(summary = "팔로우 토글 API", description = "팔로우 등록 API 입니다. 헤더에 현재 로그인한 사용자 ID를 담아서 요청하시면 됩니다.<br>"
+      +"바디에 팔로우할 대상 ID를 넣어서 요청하시면 됩니다.<br>"+"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우")
+  @PostMapping("/toggle")
+  public ApiResponse<String> toggleFollow(
+      @RequestHeader("X-User-Id") Long currentUserId, // 현재 로그인한 사용자 ID
+      @RequestBody FollowDTO.ToggleFollowRequest request // 팔로우 대상 ID를 포함한 요청 바디
+  ) {
+    followService.toggleFollowUser(currentUserId, request.getTargetUserId());
+    return ApiResponse.onSuccess("팔로우 상태가 변경되었습니다.");
+  }
+
+  /**
+   * 팔로잉, 팔로워 수 카운트
+   */
+
+  @Operation(summary = "팔로워/팔로잉 수 조회 API", description = "특정 유저의 팔로워 및 팔로잉 수를 조회합니다.")
+  @GetMapping("/{userId}/followCount")
+  public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
+    return ApiResponse.onSuccess(followService.getFollowStats(userId));
+  }
 
   /**
    * 팔로잉 목록 조회

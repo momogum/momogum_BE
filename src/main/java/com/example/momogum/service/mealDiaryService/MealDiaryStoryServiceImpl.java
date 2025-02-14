@@ -78,6 +78,7 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
             String imageLink = (mealDiaryImages != null && !mealDiaryImages.isEmpty()) ? mealDiaryImages.get(0).getImageLink() : null;
 
             return MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
+                    .mealDiaryStoryId(mealDiaryStory.getId())
                     .mealDiaryImageLinks(imageLink)
                     .nickname(name)
                     .isViewed(isViewed)
@@ -102,12 +103,14 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
         MealDiaryStory mealDiaryStory = byMealDiaryIn != null && !byMealDiaryIn.isEmpty() ? byMealDiaryIn.get(0) : null;
+
+        Long mealDiaryStoryId = mealDiaryStory != null ? mealDiaryStory.getId() : null;
         String imageLink = mealDiaryStory != null ? mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink() : null;
 
         MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
         boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
 
-        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed);
+        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed,mealDiaryStoryId);
     }
 
 

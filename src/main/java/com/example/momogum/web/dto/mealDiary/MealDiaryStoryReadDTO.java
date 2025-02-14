@@ -34,6 +34,9 @@ public class MealDiaryStoryReadDTO {
     @AllArgsConstructor
     public static class MealDiaryStoryReadAllResponseDTO {
 
+        @Schema(description = "스토리 식별자입니다")
+        Long mealDiaryStoryId;
+
         @Schema(description = "스토리를 작성한 회원의 nickname입니다")
         String nickname;
 
@@ -54,6 +57,9 @@ public class MealDiaryStoryReadDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MyMealDiaryStoryReadResponseDTO{
+
+        @Schema(description = "스토리 식별자입니다")
+        Long mealDiaryStoryId;
 
         @Schema(description = "회원의 nickname입니다")
         String nickname;

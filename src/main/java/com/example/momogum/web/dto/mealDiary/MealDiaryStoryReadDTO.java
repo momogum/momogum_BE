@@ -3,6 +3,7 @@ package com.example.momogum.web.dto.mealDiary;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class MealDiaryStoryReadDTO {
@@ -41,6 +42,9 @@ public class MealDiaryStoryReadDTO {
 
         @Schema(description = "스토리 조회 여부 입니다")
         boolean isViewed;
+
+        @Schema(description = "스토리 조회를 최신차 순으로 조회하기 위한 필드 입니다")
+        LocalDateTime createdAt;
 
     }
 

@@ -98,6 +98,7 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink);
     }
 
+
     // 매일 자정에 실행
     @Scheduled(cron = "0 0 0 * * ?")
     @Override

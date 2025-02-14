@@ -10,6 +10,8 @@ public interface MealDiaryStoryService {
 
     List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> getAll(Long userId);
 
+    MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO getMine(Long userId);
+
     // 매일 자정에 실행
     @Scheduled(cron = "0 0 0 * * ?")
     void delete();

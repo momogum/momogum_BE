@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -53,28 +52,29 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         return MealDiaryStoryConverter.toMealDiaryStoryReadDTO(mealDiaryStory,imageLinks);
     }
 
+
     @Override
     public List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> getAll(Long userId){
 
+        // 회원을 찾고
         UserEntity findUser = findUser(userId);
-        log.info("유저 아이디: {}", userId);
 
+        // 회원이 팔로우하는 회원이 작성한 스토리를 조회한다
         List<UserEntity> followedUsersByUserId = followingRepository.findFollowedUsersByUserId(userId);
-        log.info("유저의 팔로우: {}", followedUsersByUserId);
         List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(followedUsersByUserId);
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
 
-        if (byMealDiaryIn.isEmpty()) {
-            throw new MealDiaryStoryHandler(ErrorStatus.MEALDIARY_STORY_NOT_FOUND);
-        }
-
         return byMealDiaryIn.stream().map(mealDiaryStory -> {
-
+            // 스토리들을 하나씩 조회하며 DTO를 만들고 반환한다
             List<MealDiaryImage> mealDiaryImages = mealDiaryStory.getMealDiary().getMealDiaryImages();
-            MealDiaryStoryView byUserEntityAndMealDiaryStory = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
             String name = mealDiaryStory.getName();
+
+            // 이때 회원이 해당 스토리를 조회하였는지 여부를 같이 추가한다 -> Converter를 쓸 수 없는 이유
+            // converter가 repository를 의존하게 되기 때문
+            MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
+            boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
+
             String imageLink = (mealDiaryImages != null && !mealDiaryImages.isEmpty()) ? mealDiaryImages.get(0).getImageLink() : null;
-            boolean isViewed = byUserEntityAndMealDiaryStory != null && byUserEntityAndMealDiaryStory.isViewed();
 
             return MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
                     .mealDiaryImageLinks(imageLink)
@@ -84,6 +84,20 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         }).toList();
     }
 
+
+    @Override
+    public MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO getMine(Long userId){
+        UserEntity findUser = findUser(userId);
+        List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
+        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
+        MealDiaryStory mealDiaryStory = byMealDiaryIn != null && !byMealDiaryIn.isEmpty() ? byMealDiaryIn.get(0) : null;
+        String imageLink = mealDiaryStory != null ? mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink() : null;
+
+        return MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO.builder()
+                .nickname(findUser.getNickname())
+                .mealDiaryImageLinks(imageLink)
+                .build();
+    }
 
     // 매일 자정에 실행
     @Scheduled(cron = "0 0 0 * * ?")

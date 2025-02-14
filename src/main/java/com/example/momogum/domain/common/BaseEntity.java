@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 @Getter
 public abstract class BaseEntity {
 
-    // 직접 수정할 수 있도록 setter 추가
-    @Setter
     @CreatedDate
     private LocalDateTime createdAt;
 

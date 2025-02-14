@@ -35,11 +35,12 @@ public class MealDiaryStoryConverter {
         }).toList();
     }
 
-    public static MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO toMyMealDiaryStoryReadDTO(UserEntity findUser, String imageLink) {
+    public static MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO toMyMealDiaryStoryReadDTO(UserEntity findUser, String imageLink, boolean isViewed) {
 
         return MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO.builder()
                 .nickname(findUser.getNickname())
                 .mealDiaryImageLinks(imageLink)
+                .isViewed(isViewed)
                 .build();
     }
 

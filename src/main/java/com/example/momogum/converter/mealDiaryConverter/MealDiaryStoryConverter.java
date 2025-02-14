@@ -3,6 +3,7 @@ package com.example.momogum.converter.mealDiaryConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 import com.example.momogum.domain.MealDiaryStory;
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;
 
 import java.util.List;
@@ -32,6 +33,14 @@ public class MealDiaryStoryConverter {
                     .nickname(name)
                     .build();
         }).toList();
+    }
+
+    public static MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO toMyMealDiaryStoryReadDTO(UserEntity findUser, String imageLink) {
+
+        return MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO.builder()
+                .nickname(findUser.getNickname())
+                .mealDiaryImageLinks(imageLink)
+                .build();
     }
 
 }

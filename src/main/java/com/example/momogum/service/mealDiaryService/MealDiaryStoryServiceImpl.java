@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -80,8 +81,16 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                     .mealDiaryImageLinks(imageLink)
                     .nickname(name)
                     .isViewed(isViewed)
+                    .createdAt(mealDiaryStory.getCreatedAt())
                     .build();
-        }).toList();
+        })
+                .sorted(
+                        // viewed가 false인 스토리를 우선적으로 조회
+                        Comparator.comparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::isViewed)
+                                // 스토리를 createdAt을 기준으로 최신순으로 조회
+                                .thenComparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::getCreatedAt, Comparator.reverseOrder())
+                )
+                .toList();
     }
 
 

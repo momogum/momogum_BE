@@ -1,15 +1,12 @@
-package com.example.momogum.web.controller.appointment;
+package com.example.momogum.service.appointmentService.orchestrator;
 
 import com.example.momogum.domain.common.enums.CardCategory;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
-import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentInviteDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
 import lombok.RequiredArgsConstructor;

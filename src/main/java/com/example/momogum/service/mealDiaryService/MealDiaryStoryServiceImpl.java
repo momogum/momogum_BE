@@ -87,16 +87,15 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
     @Override
     public MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO getMine(Long userId){
+
         UserEntity findUser = findUser(userId);
+
         List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
         MealDiaryStory mealDiaryStory = byMealDiaryIn != null && !byMealDiaryIn.isEmpty() ? byMealDiaryIn.get(0) : null;
         String imageLink = mealDiaryStory != null ? mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink() : null;
 
-        return MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO.builder()
-                .nickname(findUser.getNickname())
-                .mealDiaryImageLinks(imageLink)
-                .build();
+        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink);
     }
 
     // 매일 자정에 실행

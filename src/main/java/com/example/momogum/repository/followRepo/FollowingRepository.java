@@ -3,11 +3,14 @@ package com.example.momogum.repository.followRepo;
 import com.example.momogum.domain.Following;
 import com.example.momogum.domain.UserEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface FollowingRepository extends JpaRepository<Following, Long> {
+
+  Optional<Following> findByUserAndFollowing(UserEntity user, UserEntity following);
 
   // 맞팔 여부 확인
   boolean existsByUserAndFollowing(UserEntity user, UserEntity following);

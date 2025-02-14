@@ -25,6 +25,7 @@ public class FollowDTO {
     private String name;
     private String profileImage;
     private Boolean isMutualFollow;
+    private String searchQuery;
   }
 
   @Getter
@@ -37,6 +38,7 @@ public class FollowDTO {
     private String name;
     private String profileImage;
     private Boolean isMutualFollow;
+    private String searchQuery;
   }
 
   @Getter
@@ -46,5 +48,19 @@ public class FollowDTO {
   public static class FollowStatsDTO{
     private int followerCount;
     private int followingCount;
+  }
+
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ToggleFollowRequest {
+    private Long targetUserId; // 팔로우 대상이 될 유저 ID
+  }
+
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class removeFollower{
+    private Long followUserId;
   }
 }

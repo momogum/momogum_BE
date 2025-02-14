@@ -78,9 +78,10 @@ public class UserProfileController {
   }
 
 
+
   /**
    * 유저 프로필 이미지 수정 API
-   */
+
 
   @Operation(summary= "유저 프로필 이미지 수정 API", description =  "유저 프로필 이미지를 수정하고 수정된 정보를 반환합니다.")
   @PostMapping(path= "/profileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -96,6 +97,7 @@ public class UserProfileController {
 
     return ApiResponse.onSuccess(updatedImage);
   }
+  */
 
   /**
    * 프로필 이미지 기본 이미지로 수정
@@ -138,6 +140,7 @@ public class UserProfileController {
     return ApiResponse.onSuccess(response);
   }
 
+  /**
   @Operation(summary = "이미지 삭제 API(테스트 용)")
   @DeleteMapping("")
   public ApiResponse<String> deleteUserProfile(@RequestParam Long userId)
@@ -152,6 +155,7 @@ public class UserProfileController {
   public String getafads(){
     return profileImageService.viewProfileImage();
   }
+  */
 
 }
 

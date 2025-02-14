@@ -5,6 +5,7 @@ import com.example.momogum.domain.UserEntity;
 import java.util.List;
 
 import com.example.momogum.web.dto.search.FollowStatusDTO;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,9 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
 
   @Query("SELECT COUNT(f) FROM Follower f WHERE f.user.id = :userId")
   int countByUserId(@Param("userId") Long userId);
+
+  //유저와 팔로우 찾음
+  Optional<Follower> findByUserAndFollower(UserEntity user, UserEntity follower);
 
   // name or nickname 기준으로 검색
   @Query("SELECT f FROM Follower f WHERE f.user.id = :userId AND (LOWER(f.follower.nickname) LIKE LOWER(CONCAT('%', :query, '%')) " +

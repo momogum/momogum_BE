@@ -104,7 +104,10 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         MealDiaryStory mealDiaryStory = byMealDiaryIn != null && !byMealDiaryIn.isEmpty() ? byMealDiaryIn.get(0) : null;
         String imageLink = mealDiaryStory != null ? mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink() : null;
 
-        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink);
+        MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
+        boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
+
+        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed);
     }
 
 

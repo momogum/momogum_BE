@@ -12,7 +12,4 @@ public enum CardCategory {
 
     private final String category;
 
-    public String getCategory() {
-        return category;
-    }
 }

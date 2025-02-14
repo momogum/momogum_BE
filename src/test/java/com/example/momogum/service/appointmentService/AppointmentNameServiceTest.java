@@ -3,7 +3,7 @@ import com.example.momogum.converter.appointmentConverter.AppointmentNameConvert
 import com.example.momogum.domain.appointment.AppointmentName;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.appoinmentRepo.AppointmentNameRepository;
-import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameResponseDTO;
+import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,7 +38,7 @@ class AppointmentNameServiceTest {
     void Success_NameTest() {
 
         //given
-        AppointmentNameResponseDTO appointmentNameDTO = AppointmentNameResponseDTO.builder()
+        AppointmentNameRequestDTO appointmentNameDTO = AppointmentNameRequestDTO.builder()
                 .name("더술 출발")
                 .menu("더술 닭 한마리")
                 .date(LocalDateTime.of(2025, 1, 24, 18, 0))
@@ -73,7 +73,7 @@ class AppointmentNameServiceTest {
     void Fail_NameTest() {
 
         //given
-        AppointmentNameResponseDTO appointmentNameDTO = AppointmentNameResponseDTO.builder()
+        AppointmentNameRequestDTO appointmentNameDTO = AppointmentNameRequestDTO.builder()
                 .name("더술 출발")
                 .menu("더술 닭 한마리")
                 .date(LocalDateTime.of(2025, 1, 24, 18, 0))

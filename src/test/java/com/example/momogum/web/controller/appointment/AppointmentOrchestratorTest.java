@@ -6,14 +6,11 @@ import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
-import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
+import com.example.momogum.service.appointmentService.orchestrator.AppointmentOrchestrator;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentInviteDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentNameDTO;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
-import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,7 +102,7 @@ class AppointmentOrchestratorTest {
         );
 
         //5. 카드 조회 서비스를 위한 데이터 생성
-        category = CardCategory.valueOf(request.getCardCategory().getCategory());
+        category = CardCategory.valueOf(request.getCardCategory().getCategory().toUpperCase());
 
         selectedCards = List.of(
                 AppointmentCardResponseDTO.builder()
@@ -122,7 +119,7 @@ class AppointmentOrchestratorTest {
     @Test
     public void testCreateWholeAppointmentSuccess() {
         //Given
-        when(inviteService.inviteFriends(inviteRequest)).thenReturn(invitedFriends);
+        when(inviteService.inviteFriends(any(AppointmentInviteRequestDTO.class))).thenReturn(invitedFriends);
 
         when(cardService.getCards(category)).thenReturn(selectedCards);
 

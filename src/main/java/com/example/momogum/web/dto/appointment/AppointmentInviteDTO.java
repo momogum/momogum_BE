@@ -2,16 +2,14 @@ package com.example.momogum.web.dto.appointment;
 
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 public class AppointmentInviteDTO {
 
     @Getter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

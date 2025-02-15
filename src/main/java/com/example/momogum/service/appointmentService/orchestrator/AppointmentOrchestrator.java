@@ -36,7 +36,7 @@ public class AppointmentOrchestrator {
         List<AppointmentInviteResponseDTO> invitedFriends = inviteService.inviteFriends(inviteRequest);
 
         // 2) 카드 로직 수행 (cardCategory 이용한 특정 카드 목록 조회)
-        CardCategory category = CardCategory.valueOf(request.getCardCategory().getCategory());
+        CardCategory category = CardCategory.valueOf(request.getCardCategory().getCategory().toUpperCase());
         List<AppointmentCardResponseDTO> selectedCards = cardService.getCards(category);
 
         // 3) 약속 식사(이름) 수정

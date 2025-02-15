@@ -20,7 +20,7 @@ public class AppointmentNameDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AppointmentNameResponseDTO {
+    public static class AppointmentNameRequestDTO {
 
         @Schema(description = "식사 모임 이름")
         @NotBlank(message = "필수 작성 항목입니다.")

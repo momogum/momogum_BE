@@ -21,7 +21,7 @@ public class AppointmentNameService {
      * @param request CreateMealPlanNameDTO
      * @return appointmentId
      */
-    public Long creatAppointmentName(AppointmentNameResponseDTO request) {
+    public Long creatAppointmentName(AppointmentNameRequestDTO request) {
 
         AppointmentName appointmentName = converter.convert(request);
 

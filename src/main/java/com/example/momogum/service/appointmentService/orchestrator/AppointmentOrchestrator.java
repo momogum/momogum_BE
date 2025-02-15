@@ -26,9 +26,11 @@ public class AppointmentOrchestrator {
     @Transactional
     public AppointmentOrchestratorResponseDTO createWholeAppointment(AppointmentOrchestratorRequestDTO request) {
 
+        Long appointmentId = nameService.creatAppointmentName(request.getAppointmentName());
+
         // 1) 초대 로직 수행
         AppointmentInviteRequestDTO inviteRequest = AppointmentInviteRequestDTO.builder()
-                .appointmentId(request.getAppointmentId())
+                .appointmentId(appointmentId)
                 .nicknames(request.getNicknames())
                 .build();
 
@@ -39,14 +41,12 @@ public class AppointmentOrchestrator {
         CardCategory category = CardCategory.valueOf(request.getCardCategory().getCategory().toUpperCase());
         List<AppointmentCardResponseDTO> selectedCards = cardService.getCards(category);
 
-        // 3) 약속 식사(이름) 수정
-        Long appointmentId = nameService.creatAppointmentName(request.getAppointmentName());
 
         // 4) 전체 결과를 AppointmentOrchestratorResponseDTO 형식으로 반환
         return AppointmentOrchestratorResponseDTO.builder()
+                .appointmentNameId(appointmentId)
                 .invitedFriends(invitedFriends)
                 .selectedCards(selectedCards)
-                .appointmentNameId(appointmentId)
                 .build();
 
     }

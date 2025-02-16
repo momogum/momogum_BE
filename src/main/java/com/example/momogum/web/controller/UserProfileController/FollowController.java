@@ -1,9 +1,11 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.service.searchService.SearchServiceImpl;
 import com.example.momogum.service.userProfileService.FollowService;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowingResponseDTO;
+import com.example.momogum.web.dto.search.SearchDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FollowController {
 
   private final FollowService followService;
+  private final SearchServiceImpl searchServiceImpl;
 
   /**
    * 팔로우 추가 토글
@@ -95,14 +98,14 @@ public class FollowController {
    * 닉네임 또는 이름으로 팔로잉하는 유저 검색
    */
   @Operation(summary = "닉네임 또는 이름으로 팔로잉 검색", description = "나를 팔로잉하는 유저의 닉네임 or 이름 검색")
-  @GetMapping("/followings/search")
-  public ApiResponse<List<FollowDTO.FollowingResponseDTO>> searchFollowingsByQuery(
+  @GetMapping("/{userId}/search/followings/name")
+  public ApiResponse<List<SearchDTO.FollowingSearchResponseDTO>> getFollowigsSearch(
       //현재 사용자 아이디
-      @RequestParam Long userId,
+      @PathVariable Long userId,
       //검색할 사용자 name or nickname
       @RequestParam String query) {
 
-    List<FollowingResponseDTO> result = followService.searchFollowingsByQuery(userId, query);
+    List<SearchDTO.FollowingSearchResponseDTO> result = searchServiceImpl.getFollowingsSearch(userId, query);
     return ApiResponse.onSuccess(result);
   }
 
@@ -110,12 +113,12 @@ public class FollowController {
    * 닉네임 또는 이름으로 나를 팔로우한 유저 검색
    */
   @Operation(summary = "닉네임 또는 이름으로 팔로워 검색", description = "내가 팔로우하는 유저의 닉네임 or 이름 검색")
-  @GetMapping("/followers/search")
-  public ApiResponse<List<FollowDTO.FollowerResponseDTO>> searchFollowersByQuery(
-      @RequestParam Long userId,
+  @GetMapping("/{userId}/search/followers/name")
+  public ApiResponse<List<SearchDTO.FollowerSearchResponseDTO>> getFollowersSearch(
+      @PathVariable Long userId,
       @RequestParam String query) {
 
-    List<FollowDTO.FollowerResponseDTO> result = followService.searchFollowersByQuery(userId, query);
+    List<SearchDTO.FollowerSearchResponseDTO> result = searchServiceImpl.getFollowersSearch(userId, query);
     return ApiResponse.onSuccess(result);
   }
 

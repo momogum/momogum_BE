@@ -10,4 +10,8 @@ public interface SearchService {
     List<SearchDTO.AccountSearchResponseDTO> getAccountSearch(String request, Long currentUserId);
 
     List<SearchDTO.PostSearchResponseDTO> getPostSearch(String request);
+
+    List<SearchDTO.FollowerSearchResponseDTO> getFollowersSearch(Long currentUserId, String request);
+
+    List<SearchDTO.FollowingSearchResponseDTO> getFollowingsSearch(Long currentUserId, String request);
 }

@@ -11,6 +11,7 @@ import com.example.momogum.domain.ProfileImage;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.profileImageRepo.ProfileImageRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ public class ProfileImageServiceImpl implements ProfileImageService {
   private static final String DEFAULT_PROFILE_IMAGE_URL
       = "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png";
 
-
   /**
    * 유저 생성시 프로필 이미지 기본 이미지로 추가 메서드
    */
@@ -58,8 +58,11 @@ public class ProfileImageServiceImpl implements ProfileImageService {
         .build();
 
     profileImageRepository.save(defaultProfile);
+    log.info("기본 프로필 이미지 저장 완료: {}", defaultProfile.getImageLink());
+
     user.setProfileImage(defaultProfile);
     userEntityRepository.save(user);
+    log.info("유저와 기본 프로필 이미지 연결 완료 userId: {}, profileImage: {}", user.getId(), user.getProfileImage().getImageLink());
   }
 
   /**

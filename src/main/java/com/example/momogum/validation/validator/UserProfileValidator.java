@@ -15,7 +15,7 @@ public class UserProfileValidator {
 
   // 최소 5 ~ 최대 20자
   // 영어 소문자, 숫자, 특수문자까지 허용
-  private static final String NICKNAME_PATTERN = "^[a-z0-9!@#$%^&*()_+\\-=]{5,20}$";
+  private static final String NICKNAME_PATTERN = "^[a-z0-9!@#$%^&*()_.+\\-=]{5,20}$";
   // 1~12자의 한글 또는 영문만 허용
   private static final String NAME_PATTERN = "^[a-zA-Z가-힣]{1,12}$";
   private static final int ABOUT_MAX_LENGTH = 40;

@@ -61,4 +61,40 @@ public class SearchDTO {
         private IsRevisit isRevisit;
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class FollowerSearchResponseDTO {
+        @Schema(description = "회원 Id")
+        private Long userId;
+
+        @Schema(description = "회원 계정 아이디")
+        private String userName;
+
+        @Schema(description = "회원 이름")
+        private String userNickName;
+
+        @Schema(description = "회원 프로필 사진 URL")
+        private String userImageURL;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class FollowingSearchResponseDTO {
+        @Schema(description = "회원 Id")
+        private Long userId;
+
+        @Schema(description = "회원 계정 아이디")
+        private String userName;
+
+        @Schema(description = "회원 이름")
+        private String userNickName;
+
+        @Schema(description = "회원 프로필 사진 URL")
+        private String userImageURL;
+    }
+
 }

@@ -44,12 +44,16 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                 .map(MealDiaryImage::getImageLink)
                 .toList();
 
-        MealDiaryStoryView newMealDiaryView = MealDiaryStoryView.builder()
-                .mealDiaryStory(mealDiaryStory)
-                .isViewed(true)
-                .userEntity(findUser)
-                .build();
-        mealDiaryStoryViewRepository.save(newMealDiaryView);
+        MealDiaryStoryView isViewed = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
+
+        if(isViewed==null){
+            MealDiaryStoryView newMealDiaryView = MealDiaryStoryView.builder()
+                    .mealDiaryStory(mealDiaryStory)
+                    .isViewed(true)
+                    .userEntity(findUser)
+                    .build();
+            mealDiaryStoryViewRepository.save(newMealDiaryView);
+        }
 
         // 스토리를 작성한 회원의 프로필 이미지 입니다
         String profileImageLink = mealDiaryStory.getMealDiary().getUserEntity().getProfileImage() != null ?

@@ -17,13 +17,15 @@ public class AppointmentCard extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = false)
+    private Appointment appointment;
+
     // 카드 유형
     private String type;
 
     // 카드 설명
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "apm_id")
-    private AppointmentName appointmentName;
 }

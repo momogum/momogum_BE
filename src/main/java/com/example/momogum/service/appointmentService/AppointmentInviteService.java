@@ -114,7 +114,6 @@ public class AppointmentInviteService {
 
             //3. 초대 요청을 위한 객체 생성 후 리스트에 추가 (Bulk insert)
             AppointmentInvitation invitation = AppointmentInvitation.builder()
-                    .appointmentId(request.getAppointmentId())
                     .userEntity(user)
                     .status(InvitationStatus.PENDING)
                     .build();

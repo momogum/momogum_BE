@@ -1,11 +1,14 @@
 package com.example.momogum.web.controller.appointment;
 
+import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
+import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.common.enums.CardCategory;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
+import com.example.momogum.service.appointmentService.AppointmentService;
 import com.example.momogum.service.appointmentService.orchestrator.AppointmentOrchestrator;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
@@ -17,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -49,11 +53,21 @@ class AppointmentOrchestratorTest {
     @Mock
     private AppointmentNameService nameService;
 
+    @Mock
+    private AppointmentConverter appointmentConverter;
+
+    @Mock
+    private AppointmentService appointmentService;
+
+
     private AppointmentOrchestratorRequestDTO request;
     private AppointmentInviteRequestDTO inviteRequest;
     private List<AppointmentInviteResponseDTO> invitedFriends;
     private CardCategory category;
     private List<AppointmentCardResponseDTO> selectedCards;
+    private Appointment appointment;
+
+
 
     @BeforeEach
     void setUp() {
@@ -114,32 +128,53 @@ class AppointmentOrchestratorTest {
                         .imageUrl("https://example-bucket.s3.amazonaws.com/fun/image1.jpg")
                         .build()
         );
+
+        //6. Appointment 객체 생성
+        appointment = Appointment.builder()
+                .name("약속 이름")
+                .menu("식사 메뉴")
+                .date(time)
+                .location("마라미방")
+                .notes("꾸밈 3단계")
+                .build();
     }
 
     @Test
     public void testCreateWholeAppointmentSuccess() {
+
         //Given
+        when(appointmentConverter.toEntity(request)).thenReturn(appointment);
+
         when(inviteService.inviteFriends(any(AppointmentInviteRequestDTO.class))).thenReturn(invitedFriends);
 
         when(cardService.getCards(category)).thenReturn(selectedCards);
 
-        when(nameService.creatAppointmentName(request.getAppointmentName())).thenReturn(1L);
+        doNothing().when(nameService).saveAppointmentName(request.getAppointmentName());
+
+        when(appointmentService.save(any(Appointment.class))).thenReturn(appointment);
+
+        when(appointmentConverter.toResponseDTO(appointment,selectedCards)).thenReturn(
+                AppointmentOrchestratorResponseDTO.builder()
+                        .appointmentId(1L)
+                        .invitedFriends(invitedFriends)
+                        .selectedCards(selectedCards)
+                        .build()
+        );
 
         //When
         AppointmentOrchestratorResponseDTO response = orchestrator.createWholeAppointment(request);
 
         //Then
         assertNotNull(response);
-        assertEquals(1L, response.getAppointmentNameId());
+        assertEquals(1L, response.getAppointmentId());
         assertEquals(invitedFriends, response.getInvitedFriends());
         assertEquals(selectedCards, response.getSelectedCards());
 
         //verify
         verify(inviteService, times(1)).inviteFriends(inviteRequest);
         verify(cardService, times(1)).getCards(category);
-        verify(nameService, times(1)).creatAppointmentName(request.getAppointmentName());
-
-
+        verify(nameService, times(1)).saveAppointmentName(request.getAppointmentName());
+        verify(appointmentService, times(1)).save(appointment);
     }
 
 }

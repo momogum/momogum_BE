@@ -59,12 +59,9 @@ class AppointmentNameServiceTest {
         when(repository.save(appointmentName)).thenReturn(appointmentName);
 
         //when
-        Long appointmnetNameId = service.creatAppointmentName(appointmentNameDTO);
+        service.saveAppointmentName(appointmentNameDTO);
 
         //then
-        assertNotNull(appointmnetNameId);
-        assertEquals(appointmnetNameId, 1L);
-
         verify(converter, times(1)).convert(appointmentNameDTO);
         verify(repository, times(1)).save(appointmentName);
     }
@@ -95,7 +92,7 @@ class AppointmentNameServiceTest {
 
         // when
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            service.creatAppointmentName(appointmentNameDTO);
+            service.saveAppointmentName(appointmentNameDTO);
         });
 
         // 예외 메시지 확인

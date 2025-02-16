@@ -5,7 +5,6 @@ import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
 import com.example.momogum.domain.Follower;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
@@ -27,7 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

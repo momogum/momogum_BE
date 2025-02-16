@@ -58,11 +58,8 @@ class AppointmentNameControllerTest {
 
         String jsonRequest = objectMapper.writeValueAsString(appointmentNameDTO);
 
+        doNothing().when(appointmentNameService).saveAppointmentName(Mockito.any());
 
-        Long appointmentNameId = 1L;
-
-        when(appointmentNameService.creatAppointmentName(Mockito.any()))
-                .thenReturn(appointmentNameId);
 
         //Expected
         mockMvc.perform(post(BASE_URL + "/name")
@@ -71,6 +68,8 @@ class AppointmentNameControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.isSuccess").value(true))  // 수정된 경로
                 .andExpect(jsonPath("$.message").value("성공입니다."));
+
+        Mockito.verify(appointmentNameService, Mockito.times(1)).saveAppointmentName(Mockito.any());
 
     }
 
@@ -104,7 +103,7 @@ class AppointmentNameControllerTest {
 
         // 실패시 service 호출 X
         Mockito.verify(appointmentNameService, Mockito.times(0))
-                .creatAppointmentName(Mockito.any());
+                .saveAppointmentName(Mockito.any());
     }
 
 

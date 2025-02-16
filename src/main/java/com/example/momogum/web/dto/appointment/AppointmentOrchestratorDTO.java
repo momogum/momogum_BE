@@ -56,7 +56,7 @@ public class AppointmentOrchestratorDTO {
         private List<AppointmentCardResponseDTO> selectedCards;
 
         @Schema(description = "저장된 약속 ID 입니다.")
-        private Long appointmentNameId;
+        private Long appointmentId;
 
     }
 }

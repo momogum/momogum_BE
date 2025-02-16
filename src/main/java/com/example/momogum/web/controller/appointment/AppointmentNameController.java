@@ -2,7 +2,6 @@ package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
-import com.example.momogum.web.dto.appointment.AppointmentDTO.CreateAppointmentResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,13 +24,9 @@ public class AppointmentNameController {
     @Operation(summary = "모임 이름 정하기 API",
             description = "CreateAppointmentNameDTO을 통해 값을 한 번에 입력받습니다.")
     @PostMapping("/name")
-    public ApiResponse<CreateAppointmentResponseDTO> createAppointmentName(@RequestBody @Valid AppointmentNameDTO.AppointmentNameRequestDTO request) {
-        Long appointmentNameId = appointmentNameService.creatAppointmentName(request);
+    public ApiResponse<String> createAppointmentName(@RequestBody @Valid AppointmentNameDTO.AppointmentNameRequestDTO request) {
+        appointmentNameService.saveAppointmentName(request);
         // 성공 응답 반환
-        return ApiResponse.onSuccess(
-                CreateAppointmentResponseDTO.builder()
-                        .appointmentId(appointmentNameId)
-                        .build()
-        );
+        return ApiResponse.onSuccess("모임 이름 정하기 API 성공");
     }
 }

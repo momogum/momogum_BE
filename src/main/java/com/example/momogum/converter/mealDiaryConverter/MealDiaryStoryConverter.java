@@ -20,6 +20,7 @@ public class MealDiaryStoryConverter {
                 .description(mealDiaryStory.getMealDiary().getDescription())
                 .location(mealDiaryStory.getMealDiary().getDescription())
                 .profileImageLink(profileImageLink)
+                .createdAt(mealDiaryStory.getCreatedAt())
                 .build();
     }
 

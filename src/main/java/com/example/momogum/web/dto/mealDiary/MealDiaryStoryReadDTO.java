@@ -28,6 +28,9 @@ public class MealDiaryStoryReadDTO {
 
         @Schema(description = "식당후기 입니다")
         String description;
+
+        @Schema(description = "스토리 생성일자")
+        LocalDateTime createdAt;
     }
 
 

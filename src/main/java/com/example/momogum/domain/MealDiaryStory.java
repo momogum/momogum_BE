@@ -29,4 +29,7 @@ public class MealDiaryStory extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private MealDiary mealDiary;
 
+    public void setCreateAt(LocalDateTime createAt) {
+    }
+
 }

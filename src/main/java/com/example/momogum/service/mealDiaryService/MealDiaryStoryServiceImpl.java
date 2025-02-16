@@ -71,8 +71,19 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
         // 회원이 팔로우하는 회원이 작성한 스토리를 조회한다
         List<UserEntity> followedUsersByUserId = followingRepository.findFollowedUsersByUserId(userId);
+        if (followedUsersByUserId.isEmpty()) {
+            return List.of();
+        }
+
         List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(followedUsersByUserId);
+        if (findMealDiaries.isEmpty()) {
+            return List.of();
+        }
+
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
+        if (byMealDiaryIn.isEmpty()) {
+            return List.of();
+        }
 
         return byMealDiaryIn.stream().map(mealDiaryStory -> {
             // 스토리들을 하나씩 조회하며 DTO를 만들고 반환한다
@@ -102,7 +113,7 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                         // viewed가 false인 스토리를 우선적으로 조회
                         Comparator.comparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::isViewed)
                                 // 스토리를 createdAt을 기준으로 최신순으로 조회
-                                .thenComparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::getCreatedAt, Comparator.reverseOrder())
+                                .thenComparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::getCreatedAt, Comparator.naturalOrder())
                 )
                 .toList();
     }

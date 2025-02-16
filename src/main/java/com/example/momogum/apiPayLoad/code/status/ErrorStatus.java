@@ -46,6 +46,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PROFILE_IMAGE_UPLOAD_FAILED(HttpStatus.BAD_GATEWAY, "USER4006", "프로필 이미지 업로드에 실패하였습니다"),
     PROFILE_IMAGE_DELETE_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "USER4007", "프로필 이미지 삭제에 실패하였습니다"),
     PROFILE_UPDATE_FAILED(HttpStatus.BAD_REQUEST, "USER4008", "유저 프로필 업데이트에 실패하였습니다"),
+    MEMBER_FOLLOWING_NONE(HttpStatus.BAD_REQUEST,"USER4009","회원이 팔로우하고 있는 회원이 존재하지 않습니다"),
 
     TARGET_NOT_FOUND(HttpStatus.NOT_FOUND,"FOLLOW5001","대상을 찾을 수 없습니다"),
 

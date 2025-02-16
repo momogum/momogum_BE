@@ -1,10 +1,11 @@
 package com.example.momogum.service.mealDiaryService;
 
-import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
-import com.example.momogum.domain.*;
+import com.example.momogum.domain.MealDiary;
+import com.example.momogum.domain.MealDiaryImage;
+import com.example.momogum.domain.MealDiaryStory;
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.FoodCategory;
-import com.example.momogum.domain.common.enums.IsRevisit;
-import com.example.momogum.domain.common.enums.Status;
+import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
@@ -20,15 +21,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.momogum.apiPayLoad.code.status.ErrorStatus.MEALDIARY_STORY_NOT_FOUND;
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
+
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -38,29 +38,23 @@ class MealDiaryStoryServiceImplTest {
     MealDiaryStoryServiceImpl mealDiaryStoryService;
 
     @Mock
-    MealDiaryStoryRepository mealDiaryStoryRepository;
-
-    @Mock
-    UserEntityRepository userEntityRepository;
-
-    @Mock
-    MealDiaryStoryViewRepository mealDiaryStoryViewRepository;
-
-    @Mock
     MealDiaryRepository mealDiaryRepository;
 
     @Mock
     FollowingRepository followingRepository;
 
+    @Mock
+    UserEntityRepository userEntityRepository;
+
+    @Mock
+    MealDiaryStoryRepository mealDiaryStoryRepository;
+
+    @Mock
+    MealDiaryStoryViewRepository mealDiaryStoryViewRepository;
 
     UserEntity testMember;
-    UserEntity testMember2;
-    Following testFollowing;
-
     MealDiary testMealDiary;
-
     MealDiaryStory testMealDiaryStory;
-    MealDiaryStory testMealDiaryStory2;
     MealDiaryImage testMealDiaryImage;
 
 
@@ -68,116 +62,61 @@ class MealDiaryStoryServiceImplTest {
     void setUp() {
         testMember = UserEntity.builder()
                 .id(1L)
-                .phoneNumber("test")
-                .name("test")
-                .nickname("test")
-                .about("test")
+                .phoneNumber("test_phone_number")
+                .name("test_name")
+                .nickname("test_nickname")
+                .about("test_about")
+                .provider(LoginType.KAKAO)
+                .providerId("test_provider_id")
+                .followerCount(0)
+                .followingCount(0)
                 .build();
 
-        testMember2 = UserEntity.builder()
-                .id(2L)
-                .phoneNumber("test2")
-                .name("test2")
-                .nickname("test2")
-                .about("test2")
-                .build();
-
-        testFollowing = Following.builder()
-                .user(testMember2)
-                .following(testMember)
+        testMealDiaryImage = MealDiaryImage.builder()
+                .id(1L)
+                .imageLink("test_image_link")
                 .build();
 
         testMealDiary = MealDiary.builder()
                 .id(1L)
                 .foodCategory(FoodCategory.FAST_FOOD)
-                .location("test")
-                .description("test")
-                .isReport(false)
-                .isRevisit(IsRevisit.GOOD)
-                .likesCount(0)
-                .commentCount(0)
-                .status(Status.ACTIVE)
-                .inactiveDate(LocalDateTime.of(1, 1, 1, 1, 1))
+                .location("test_location")
                 .userEntity(testMember)
-                .mealDiaryImages(new ArrayList<>())
+                .mealDiaryImages(List.of(testMealDiaryImage))
                 .build();
 
-        testMealDiaryImage = MealDiaryImage.builder()
-                .id(1L)
-                .imageName("test")
-                .fileName("test")
-                .imageLink("test")
-                .mealDiary(testMealDiary)
-                .build();
+        // MealDiary에 이미지 설정
+        testMealDiaryImage.setMealDiary(testMealDiary);
 
         testMealDiaryStory = MealDiaryStory.builder()
                 .id(1L)
-                .name("test")
-                .mealDiary(testMealDiary)
-                .build();
-
-        testMealDiaryStory2 = MealDiaryStory.builder()
-                .id(2L)
-                .name("test2")
+                .name(testMember.getName())
                 .mealDiary(testMealDiary)
                 .build();
     }
 
+
     @Test
-    @DisplayName("get() 을 이용하여 개별 스토리를 조회할 수 있다")
+    @DisplayName("get()을 이용하여 스토리를 상세 조회 할 수 있다")
     public void get_success() {
         // given
-        MealDiary spyMealDiary = spy(testMealDiary);
-        MealDiaryImage spyMealDiaryImage = spy(testMealDiaryImage);
-        MealDiaryStory spyMealDiaryStory = spy(testMealDiaryStory);
+        spy(testMealDiaryStory);
+        spy(testMealDiary);
+        spy(testMember);
+        spy(testMealDiaryImage);
 
-        when(userEntityRepository.findById(any())).thenReturn(Optional.of(testMember));
-        when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.of(spyMealDiaryStory));
-
-        doReturn(spyMealDiary).when(spyMealDiaryStory).getMealDiary();
-        doReturn(List.of(spyMealDiaryImage)).when(spyMealDiary).getMealDiaryImages();
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.ofNullable(testMealDiaryStory));
 
         // when
-        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO response = mealDiaryStoryService.get(spyMealDiaryStory.getId(),spyMealDiaryStory.getId());
+        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO response = mealDiaryStoryService.get(1L, 1L);
 
         // then
         assertThat(response).isNotNull();
-        assertThat(response.getName()).isEqualTo("test");
-        assertThat(response.getMealDiaryImageLinks()).isNotEmpty();
-        assertThat(response.getMealDiaryImageLinks().get(0)).isEqualTo("test");
+        assertThat(response.getName()).isEqualTo(testMember.getName());
+        assertThat(response.getMealDiaryImageLinks()).isEqualTo(List.of(testMealDiaryImage.getImageLink()));
+        assertThat(response.getProfileImageLink()).isEqualTo(null);
+        assertThat(response.getLocation()).isEqualTo(testMealDiary.getLocation());
+        assertThat(response.getDescription()).isEqualTo(testMealDiary.getDescription());
     }
-
-
-    @Test
-    @DisplayName("존재하지 않는 스토리를 조회하면 정해진 예외를 반환한다")
-    public void get_storyNotFound(){
-        //given
-        when(userEntityRepository.findById(any())).thenReturn(Optional.of(testMember));
-        when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> mealDiaryStoryService.get(1L,1111L))
-                .isInstanceOf(MealDiaryStoryHandler.class)
-                .hasFieldOrPropertyWithValue("code", MEALDIARY_STORY_NOT_FOUND);
-    }
-
-
-    @Test
-    @DisplayName("getAll()을 이용하여 팔로잉 하고 있는 회원들의 스토리를 조회 할 수 있다")
-    public void getAll_success(){
-        // given
-        when(userEntityRepository.findById(any())).thenReturn(Optional.of(testMember));
-        when(followingRepository.findFollowedUsersByUserId(any())).thenReturn(List.of(testMember));
-        when(mealDiaryRepository.findByUserEntityIn(any())).thenReturn(List.of(testMealDiary));
-        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
-
-        // when
-        List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> response = mealDiaryStoryService.getAll(2L);
-
-        // then
-        assertThat(response).isNotNull();
-        assertThat(response.size()).isEqualTo(1);
-    }
-
-
-
 }

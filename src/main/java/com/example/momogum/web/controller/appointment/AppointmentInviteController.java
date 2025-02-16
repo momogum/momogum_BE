@@ -1,11 +1,17 @@
 package com.example.momogum.web.controller.appointment;
 
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.domain.utils.JwtUtil;
+import com.example.momogum.service.UserService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +24,7 @@ import java.util.List;
 public class AppointmentInviteController {
 
     private final AppointmentInviteService appointmentInviteService;
+    private final UserService userService;
 
     /**
      * GET /Appointment/{appointmentId}/invites
@@ -33,10 +40,13 @@ public class AppointmentInviteController {
     @GetMapping("/{appointmentId}/invites")
     public ResponseEntity<List<AppointmentInviteResponseDTO>> getFriendsForInvitations(
             @PathVariable Long appointmentId,
-            @RequestParam Long userId
+            HttpServletRequest request
     ) {
+        Long userId = userService.getUserIdFromRequest(request);
         List<AppointmentInviteResponseDTO> invitations = appointmentInviteService.getFriendsForInvitation(appointmentId, userId);
+
         return ResponseEntity.ok(invitations);
+
     }
 
     /**

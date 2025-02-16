@@ -36,6 +36,9 @@ public class AppointmentOrchestratorDTO {
         @Schema(description = "약속 카드 카테고리 입니다.")
         private CardCategory cardCategory;
 
+        @Schema(description = "선택한 카드 이미지 URL 입니다.")
+        private String selectedCardUrl;
+
         @Schema(description = "약속 식사 모임 이름 정하기 DTO 입니다.")
         private AppointmentNameRequestDTO appointmentName;
     }

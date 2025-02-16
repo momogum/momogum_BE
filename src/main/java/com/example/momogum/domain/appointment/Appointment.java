@@ -1,5 +1,7 @@
 package com.example.momogum.domain.appointment;
 
+import com.example.momogum.web.dto.appointment.AppointmentNameDTO;
+import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,17 +34,13 @@ public class Appointment {
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentCard> selectedCards = new ArrayList<>();
 
-    //초대 친구 추가 연관관계 메서드
-    public void addInvitation(AppointmentInvitation invitation) {
-        invitations.add(invitation);
-        invitation.setAppointment(this);
+    // Appointment 업데이트 메서드
+    public void updateAppointmentDetails(AppointmentNameRequestDTO request) {
+        this.name = request.getName();
+        this.menu = request.getMenu();
+        this.date = request.getDate();
+        this.location = request.getLocation();
+        this.notes = request.getNotes();
     }
-
-    //카드 추가 메서드
-    public void addCard(AppointmentCard card) {
-        selectedCards.add(card);
-        card.setAppointment(this);
-    }
-
 
 }

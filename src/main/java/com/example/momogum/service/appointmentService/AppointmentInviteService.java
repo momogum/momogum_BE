@@ -6,9 +6,11 @@ import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
 import com.example.momogum.domain.Follower;
 import com.example.momogum.domain.UserEntity;
+import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
+import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
@@ -34,6 +36,7 @@ public class AppointmentInviteService {
     private final AppointmentInviteConverter converter;
     private final FollowerRepository followerRepository;
     private final FollowingRepository followingRepository;
+    private final AppointmentRepository appointmentRepository;
 
 
     /**
@@ -94,6 +97,11 @@ public class AppointmentInviteService {
         Map<String, UserEntity> userMap = users.stream()
                 .collect(Collectors.toMap(UserEntity::getNickname, Function.identity()));
 
+        // 3️⃣ Appointment 조회 (🔥 appointmentId를 통해 객체 가져오기)
+        Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
+
+
         //DB에 저장할 초대 요청 리스트
         List<AppointmentInvitation> invitationsToSave = new ArrayList<>();
 
@@ -114,6 +122,7 @@ public class AppointmentInviteService {
 
             //3. 초대 요청을 위한 객체 생성 후 리스트에 추가 (Bulk insert)
             AppointmentInvitation invitation = AppointmentInvitation.builder()
+                    .appointment(appointment)
                     .userEntity(user)
                     .status(InvitationStatus.PENDING)
                     .build();

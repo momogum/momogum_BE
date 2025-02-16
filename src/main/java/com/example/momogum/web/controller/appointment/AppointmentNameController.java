@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.example.momogum.web.dto.appointment.AppointmentNameDTO.*;
+
 @RestController
 @RequestMapping("/appointment")
 @Tag(name = "약속잡기 모임 이름 정하기 API")
@@ -24,7 +26,7 @@ public class AppointmentNameController {
     @Operation(summary = "모임 이름 정하기 API",
             description = "CreateAppointmentNameDTO을 통해 값을 한 번에 입력받습니다.")
     @PostMapping("/name")
-    public ApiResponse<String> createAppointmentName(@RequestBody @Valid AppointmentNameDTO.AppointmentNameRequestDTO request) {
+    public ApiResponse<String> createAppointmentName(@RequestBody @Valid AppointmentNameRequestDTO request) {
         appointmentNameService.saveAppointmentName(request);
         // 성공 응답 반환
         return ApiResponse.onSuccess("모임 이름 정하기 API 성공");

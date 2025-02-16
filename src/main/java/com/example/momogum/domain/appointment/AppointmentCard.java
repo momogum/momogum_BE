@@ -1,6 +1,7 @@
 package com.example.momogum.domain.appointment;
 
 import com.example.momogum.domain.common.BaseEntity;
+import com.example.momogum.domain.common.enums.CardCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,24 +9,22 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class AppointmentCard extends BaseEntity {
-
-    // Flyway를 활용하면 DB에 필요한 사전정보 넣을 때 도움이 될수도 있다고 생각이 듭니다 ! 참고만 해주시면 감사하겠습니다 !
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
 
-    // 카드 유형
-    private String type;
+    private String imageUrl; // 선택된 카드 URL
 
-    // 카드 설명
-    private String description;
+    @Enumerated(EnumType.STRING)
+    private CardCategory category;
 
 }

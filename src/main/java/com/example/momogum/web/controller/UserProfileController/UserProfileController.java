@@ -57,10 +57,11 @@ public class UserProfileController {
 
   @Operation(summary = "유저 정보 조회 API", description = " 유저의 기본 정보를 반환")
   @GetMapping("/userId/{userId}")
-  public ApiResponse<String> getUserProfile(@PathVariable Long userId) {
+  public ApiResponse<UserDTO.UserResponseDTO> getUserProfile(@PathVariable Long userId) {
 
-    String imagesByUserId = profileImageService.findImagesByUserId(userId);
-    return ApiResponse.onSuccess(imagesByUserId);
+    UserDTO.UserResponseDTO getUserProfile = userProfileServiceImpl.getUserProfile(userId);
+
+    return ApiResponse.onSuccess(getUserProfile);
   }
 
   /**

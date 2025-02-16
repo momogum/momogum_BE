@@ -55,6 +55,9 @@ public class ProfileImage {
   @Column(nullable = false)
   private LocalDateTime updatedAt;
 
+  // 유저에 기본 이미지 할당
+
+
 
   // 저장 전 자동으로 현재 시간 설정
   @PrePersist

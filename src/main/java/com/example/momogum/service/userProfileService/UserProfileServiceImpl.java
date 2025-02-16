@@ -71,7 +71,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         .name(user.getName())
         .profileImage(user.getProfileImage() != null
             ? user.getProfileImage().getImageLink()
-            : "default-profile.jpg")
+            : "\"https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png\"")
         .about(user.getAbout())
         .build();
   }

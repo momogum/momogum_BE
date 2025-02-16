@@ -47,6 +47,14 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
             @Param("partialKeyword") String partialKeyword
     );
 
+    @Query("SELECT u FROM UserEntity u WHERE u.id IN :userIds " +
+        "AND (LOWER(u.nickname) LIKE LOWER(CONCAT('%', :query, '%')) " +
+        "OR LOWER(u.name) LIKE LOWER(CONCAT('%', :query, '%')))")
+    List<UserEntity> searchByKeywordAndUserIds(@Param("query") String query,
+        @Param("userIds") List<Long> userIds);
+
+
+
     Optional<UserEntity> findByNickname(String nickname);
 
     List<UserEntity> findByNicknameIn(List<String> nicknames);

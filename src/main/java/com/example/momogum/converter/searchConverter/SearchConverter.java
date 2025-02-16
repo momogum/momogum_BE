@@ -31,4 +31,24 @@ public class SearchConverter {
                 .build();
     }
 
+    public static SearchDTO.FollowerSearchResponseDTO toFollowerSearchResponseDTO(UserEntity user) {
+
+        return SearchDTO.FollowerSearchResponseDTO.builder()
+            .userId(user.getId())
+            .userName(user.getName())
+            .userNickName(user.getNickname())
+            .userImageURL(user.getProfileImage().getImageLink())
+            .build();
+    }
+
+    public static SearchDTO.FollowingSearchResponseDTO toFollowingSearchResponseDTO(UserEntity user) {
+
+        return SearchDTO.FollowingSearchResponseDTO.builder()
+            .userId(user.getId())
+            .userName(user.getName())
+            .userNickName(user.getNickname())
+            .userImageURL(user.getProfileImage().getImageLink())
+            .build();
+    }
+
 }

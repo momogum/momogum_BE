@@ -67,7 +67,8 @@ public class AuthController {
                             .id(null)
                             .name(kakaoResponseDTO.getKakao_account().getProfile().getNickname())
                             .nickname(null)
-                            .profileImage(kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url())
+                            // FIXME : 회원가입시 프로필 이미지로 기본 값 할당 (https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png)
+                            .profileImage("kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url()")
                             .isNewUser(true)
                             .build()
             );

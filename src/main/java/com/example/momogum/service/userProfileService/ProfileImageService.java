@@ -1,9 +1,11 @@
 package com.example.momogum.service.userProfileService;
 
 
+import com.example.momogum.domain.ProfileImage;
 import com.example.momogum.web.dto.user.ProfileImageDTO;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 

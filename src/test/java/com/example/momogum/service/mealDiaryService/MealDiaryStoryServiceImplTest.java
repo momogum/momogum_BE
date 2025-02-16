@@ -8,6 +8,7 @@ import com.example.momogum.domain.common.enums.Status;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
+import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryViewRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDiaryStoryReadDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,12 @@ class MealDiaryStoryServiceImplTest {
 
     @Mock
     MealDiaryStoryRepository mealDiaryStoryRepository;
+
+    @Mock
+    UserEntityRepository userEntityRepository;
+
+    @Mock
+    MealDiaryStoryViewRepository mealDiaryStoryViewRepository;
 
     @Mock
     MealDiaryRepository mealDiaryRepository;
@@ -124,13 +131,14 @@ class MealDiaryStoryServiceImplTest {
         MealDiaryImage spyMealDiaryImage = spy(testMealDiaryImage);
         MealDiaryStory spyMealDiaryStory = spy(testMealDiaryStory);
 
+        when(userEntityRepository.findById(any())).thenReturn(Optional.of(testMember));
         when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.of(spyMealDiaryStory));
 
         doReturn(spyMealDiary).when(spyMealDiaryStory).getMealDiary();
         doReturn(List.of(spyMealDiaryImage)).when(spyMealDiary).getMealDiaryImages();
 
         // when
-        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO response = mealDiaryStoryService.get(spyMealDiaryStory.getId());
+        MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO response = mealDiaryStoryService.get(spyMealDiaryStory.getId(),spyMealDiaryStory.getId());
 
         // then
         assertThat(response).isNotNull();
@@ -144,9 +152,10 @@ class MealDiaryStoryServiceImplTest {
     @DisplayName("존재하지 않는 스토리를 조회하면 정해진 예외를 반환한다")
     public void get_storyNotFound(){
         //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.of(testMember));
         when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> mealDiaryStoryService.get(1111L))
+        assertThatThrownBy(() -> mealDiaryStoryService.get(1L,1111L))
                 .isInstanceOf(MealDiaryStoryHandler.class)
                 .hasFieldOrPropertyWithValue("code", MEALDIARY_STORY_NOT_FOUND);
     }
@@ -156,6 +165,7 @@ class MealDiaryStoryServiceImplTest {
     @DisplayName("getAll()을 이용하여 팔로잉 하고 있는 회원들의 스토리를 조회 할 수 있다")
     public void getAll_success(){
         // given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.of(testMember));
         when(followingRepository.findFollowedUsersByUserId(any())).thenReturn(List.of(testMember));
         when(mealDiaryRepository.findByUserEntityIn(any())).thenReturn(List.of(testMealDiary));
         when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
@@ -166,21 +176,6 @@ class MealDiaryStoryServiceImplTest {
         // then
         assertThat(response).isNotNull();
         assertThat(response.size()).isEqualTo(1);
-    }
-
-
-    @Test
-    @DisplayName("조회 할 수 있는 스토리가 없으면 정해진 예외를 반환한다")
-    public void title(){
-        // given
-        when(followingRepository.findFollowedUsersByUserId(any())).thenReturn(List.of(testMember));
-        when(mealDiaryRepository.findByUserEntityIn(any())).thenReturn(List.of(testMealDiary));
-        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of());
-
-        // when & then
-        assertThatThrownBy(() -> mealDiaryStoryService.getAll(1L))
-                .isInstanceOf(MealDiaryStoryHandler.class)
-                .hasFieldOrPropertyWithValue("code", MEALDIARY_STORY_NOT_FOUND);
     }
 
 

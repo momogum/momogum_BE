@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.mealDiaryConverter.MealDiaryStoryConverter;
@@ -50,7 +51,11 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                 .build();
         mealDiaryStoryViewRepository.save(newMealDiaryView);
 
-        return MealDiaryStoryConverter.toMealDiaryStoryReadDTO(mealDiaryStory,imageLinks);
+        // 스토리를 작성한 회원의 프로필 이미지 입니다
+        String profileImageLink = mealDiaryStory.getMealDiary().getUserEntity().getProfileImage() != null ?
+                mealDiaryStory.getMealDiary().getUserEntity().getProfileImage().getImageLink() : null;
+
+        return MealDiaryStoryConverter.toMealDiaryStoryReadDTO(mealDiaryStory,imageLinks,profileImageLink);
     }
 
 
@@ -77,12 +82,16 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
             String imageLink = (mealDiaryImages != null && !mealDiaryImages.isEmpty()) ? mealDiaryImages.get(0).getImageLink() : null;
 
+            String profileImageLink = mealDiaryStory.getMealDiary().getUserEntity().getProfileImage() != null ?
+                    mealDiaryStory.getMealDiary().getUserEntity().getProfileImage().getImageLink() : null;
+
             return MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO.builder()
                     .mealDiaryStoryId(mealDiaryStory.getId())
                     .mealDiaryImageLinks(imageLink)
                     .nickname(name)
                     .isViewed(isViewed)
                     .createdAt(mealDiaryStory.getCreatedAt())
+                    .profileImageLink(profileImageLink)
                     .build();
         })
                 .sorted(
@@ -101,6 +110,10 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         UserEntity findUser = findUser(userId);
 
         List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
+
+        if (byUserEntity.isEmpty()) {
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND);
+        }
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
         MealDiaryStory mealDiaryStory = byMealDiaryIn != null && !byMealDiaryIn.isEmpty() ? byMealDiaryIn.get(0) : null;
 
@@ -110,7 +123,13 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
         boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
 
-        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed,mealDiaryStoryId);
+
+        assert mealDiaryStory != null;
+        String profileImageLink = mealDiaryStory.getMealDiary().getUserEntity().getProfileImage() != null ?
+                mealDiaryStory.getMealDiary().getUserEntity().getProfileImage().getImageLink() : null;
+
+
+        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed,mealDiaryStoryId,profileImageLink);
     }
 
 

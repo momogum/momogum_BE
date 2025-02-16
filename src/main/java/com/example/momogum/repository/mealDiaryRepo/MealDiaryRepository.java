@@ -10,10 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Optional;
 
 public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
 
     List<MealDiary> findByUserEntity(UserEntity userEntity);
+
     List<MealDiary> findByUserEntityIn(List<UserEntity> userEntity);
 
     @Query("SELECT m.id FROM MealDiary m WHERE m.isRevisit = :isRevisit AND m.userEntity.id!= :userId ORDER BY m.likesCount DESC")

@@ -11,13 +11,15 @@ import java.util.List;
 public class MealDiaryStoryConverter {
 
     public static MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO toMealDiaryStoryReadDTO(MealDiaryStory mealDiaryStory,
-                                                                                              List<String> imageLinks) {
+                                                                                              List<String> imageLinks,
+                                                                                              String profileImageLink) {
 
         return MealDiaryStoryReadDTO.MealDiaryStoryReadResponseDTO.builder()
                 .name(mealDiaryStory.getName())
                 .mealDiaryImageLinks(imageLinks)
                 .description(mealDiaryStory.getMealDiary().getDescription())
                 .location(mealDiaryStory.getMealDiary().getDescription())
+                .profileImageLink(profileImageLink)
                 .build();
     }
 
@@ -35,13 +37,15 @@ public class MealDiaryStoryConverter {
         }).toList();
     }
 
-    public static MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO toMyMealDiaryStoryReadDTO(UserEntity findUser, String imageLink, boolean isViewed,Long mealDiaryStoryId) {
+    public static MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO toMyMealDiaryStoryReadDTO(UserEntity findUser, String imageLink, boolean isViewed,Long mealDiaryStoryId,
+                                                                                                  String profileImageLink) {
 
         return MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO.builder()
                 .mealDiaryStoryId(mealDiaryStoryId)
                 .nickname(findUser.getNickname())
                 .mealDiaryImageLinks(imageLink)
                 .isViewed(isViewed)
+                .profileImageLink(profileImageLink)
                 .build();
     }
 

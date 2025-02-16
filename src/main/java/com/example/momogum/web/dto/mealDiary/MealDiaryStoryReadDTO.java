@@ -20,6 +20,9 @@ public class MealDiaryStoryReadDTO {
         @Schema(description = "이미지 링크입니다")
         List<String> mealDiaryImageLinks;
 
+        @Schema(description = "스토리를 작성한 회원의 프로필 이미지입니다")
+        String profileImageLink;
+
         @Schema(description = "식당이름 입니다")
         String location;
 
@@ -39,6 +42,9 @@ public class MealDiaryStoryReadDTO {
 
         @Schema(description = "스토리를 작성한 회원의 nickname입니다")
         String nickname;
+
+        @Schema(description = "스토리를 작성한 회원의 프로필 이미지입니다")
+        String profileImageLink;
 
         @Schema(description = "스토리 메인 이미지입니다")
         String mealDiaryImageLinks;
@@ -63,6 +69,9 @@ public class MealDiaryStoryReadDTO {
 
         @Schema(description = "회원의 nickname입니다")
         String nickname;
+
+        @Schema(description = "스토리를 작성한 회원의 프로필 이미지입니다")
+        String profileImageLink;
 
         @Schema(description = "스토리 메인 이미지입니다")
         String mealDiaryImageLinks;

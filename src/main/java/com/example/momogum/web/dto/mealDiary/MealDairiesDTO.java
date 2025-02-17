@@ -13,7 +13,10 @@ import java.util.List;
 
 public class MealDairiesDTO {
 
+    @Builder
     @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreateStoryRequestDTO {
 
         // 시큐리티 구현되는대로 수정하기 FIXME

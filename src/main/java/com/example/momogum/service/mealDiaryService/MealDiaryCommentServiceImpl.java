@@ -64,6 +64,13 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
     public void delete(MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request){
 
         MealDiaryComments comment = findComment(request.getMealDiaryCommentId());
+
+        MealDiary mealDiary = comment.getMealDiary();
+        if (mealDiary==null){
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND);
+        }
+        mealDiary.decreaseCommentCount();
+
         UserEntity user = findUser(request.getUserId());
 
         userValid(user, comment);

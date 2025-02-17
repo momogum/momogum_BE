@@ -16,6 +16,7 @@ import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentReadDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +84,14 @@ public class MealDiaryServiceImpl implements MealDiaryService {
                 .map(MealDiaryCommentConverter::toMealDiaryCommentReadDTO)
                 .toList();
 
-        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments);
+        String profileImageLink;
+        if (user.getProfileImage() == null){
+            profileImageLink = "default_image";
+        }else {
+            profileImageLink = user.getProfileImage().getImageLink();
+        }
+
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments,profileImageLink);
     }
 
     @Override
@@ -110,6 +118,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         mealDiaryRepository.delete(mealDiary);
     }
 
+
     @Override
     public MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request){
 
@@ -126,12 +135,33 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         return MealDiaryReportConverter.mealDiaryReportResponseDTO(mealDiary);
     }
 
+
     @Override
     public List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport(){
 
         List<MealDiaryReport> allReport = mealDiaryReportRepository.findAll();
 
         return MealDiaryReportConverter.toMealDiaryReportResponseDTOList(allReport);
+    }
+
+
+    @Override
+    public MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+
+        UserEntity findUser = findUser(request.getMemberId());
+        MealDiary findMealDiary = findMealDiary(request.getMealDiaryId());
+
+        valid(findUser.getId(),findMealDiary);
+
+        removeMealDiaryKeyword(findMealDiary);
+        updateKeyword(request,findMealDiary);
+
+        Long result = findMealDiary.update(request);
+        mealDiaryRepository.saveAndFlush(findMealDiary); // 즉시 반영
+
+        return MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO.builder()
+                .mealDiaryId(findMealDiary.getId())
+                .build();
     }
 
 
@@ -150,6 +180,36 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         }
     }
 
+    public void updateKeyword(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request, MealDiary newMealDiary) {
+
+        String[] keywords = request.getKeyword().split(","); // 쉼표로 분리
+
+        if (keywords.length > 5) {
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_KEYWORD_MAX);
+        }
+        for (String keywordName : keywords) {
+            String trimmedKeyword = keywordName.trim();
+
+            // 4-1. 기존에 존재하는 키워드인지 확인
+            Keyword keyword = keywordRepository.findByKeyword(trimmedKeyword)
+                    .orElseGet(() -> keywordRepository.save(Keyword.builder()
+                            .keyword(trimmedKeyword)
+                            .build()));
+
+            // 4-2. 매핑 테이블에 저장
+            MealDiaryKeyword mealDiaryKeyword = MealDiaryKeywordConverter.toMealDiaryKeyword(newMealDiary,keyword);
+
+            mealDiaryKeywordRepository.save(mealDiaryKeyword);
+        }
+    }
+
+
+    public void removeMealDiaryKeyword(MealDiary mealDiary){
+        mealDiary.removeMealDiaryKeywordAll();
+
+        mealDiaryKeywordRepository.deleteAllByMealDiary(mealDiary);
+    }
+
     private void validMealDiaryExist(UserEntity user, MealDiary mealDiary) {
         boolean isReport = mealDiaryReportRepository.existsByUserEntityAndMealDiary(user, mealDiary);
 
@@ -160,7 +220,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     // 밥일기 매핑 키워드 조회 메서드
-    private static List<String> getKeywords(MealDiary mealDiary) {
+    public List<String> getKeywords(MealDiary mealDiary) {
         List<MealDiaryKeyword> mealDiaryKeywords = mealDiary.getMealDiaryKeywords();
 
         List<Keyword> keywordsEntities = mealDiaryKeywords.stream()
@@ -174,7 +234,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     // 키워드 추출 메서드
-    private void extractedKeyword(MealDairiesDTO.CreateStoryRequestDTO request, MealDiary newMealDiary) {
+    public void extractedKeyword(MealDairiesDTO.CreateStoryRequestDTO request, MealDiary newMealDiary) {
 
         String[] keywords = request.getKeyword().split(","); // 쉼표로 분리
 

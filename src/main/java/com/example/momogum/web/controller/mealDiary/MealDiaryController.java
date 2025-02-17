@@ -4,6 +4,7 @@ import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,7 @@ public class MealDiaryController {
 
     }
 
+
     @Operation(summary = "밥일기 삭제 API")
     @DeleteMapping("/mealDiaryId/{mealDiaryId}/userId/{userId}")
     public ApiResponse<String> delete(
@@ -68,6 +70,7 @@ public class MealDiaryController {
         return ApiResponse.onSuccess("밥일기 삭제되었습니다");
     }
 
+
     @Operation(summary = "신고하기 API")
     @PostMapping("/report")
     public ApiResponse<MealDiaryReportDTO.MealDiaryReportResponseDTO> report(@RequestBody MealDiaryReportDTO.MealDiaryReportRequestDTO request){
@@ -77,6 +80,7 @@ public class MealDiaryController {
         return ApiResponse.onSuccess(result);
     }
 
+
     // 로직만 구현해놓고 기획안 나오는대로 리턴 값 FIXME
     @Operation(summary = "신고 게시글 조회 API", description = "기획에는 없지만 필요한 기능이라 생각되어 추가했습니다")
     @GetMapping("/report")
@@ -85,6 +89,15 @@ public class MealDiaryController {
         List<MealDiaryReportDTO.MealDiaryReportResponseDTO> result = mealDiaryService.getReport();
 
         return ApiResponse.onSuccess(result);
+    }
 
+
+    @Operation(summary = "밥일기 수정 API",
+    description = "키워드 필드를 제외하고는 모두 필드 업데이트 방식입니다 <br> " +
+            "키워드 필드는 아예 삭제하고 새로운 키워드를 저장하는 방식입니다")
+    @PatchMapping("/")
+    public ApiResponse<MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO> update(@RequestBody MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(request);
+        return ApiResponse.onSuccess(response);
     }
 }

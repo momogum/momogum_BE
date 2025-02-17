@@ -2,6 +2,7 @@ package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -19,4 +20,6 @@ public interface MealDiaryService {
     MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request);
 
     List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport();
+
+    MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request);
 }

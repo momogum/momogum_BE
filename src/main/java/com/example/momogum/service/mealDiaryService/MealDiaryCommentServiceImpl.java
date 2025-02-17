@@ -36,6 +36,7 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
         MealDiaryComments newComment = MealDiaryCommentConverter.toMealDiaryComments(request.getComment(), mealDiary,user);
 
         MealDiaryComments saveComment = mealDiaryCommentsRepository.save(newComment);
+        mealDiary.increaseCommentCount();
 
         return MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO.builder()
                 .mealDiaryCommentId(saveComment.getId())

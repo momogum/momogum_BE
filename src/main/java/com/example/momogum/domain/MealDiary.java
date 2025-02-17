@@ -77,8 +77,16 @@ public class MealDiary extends BaseEntity {
         this.likesCount++;
     }
 
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+
     public void setReport(){
         this.isReport = true;
+    }
+
+    public void addMealDiaryImage(MealDiaryImage mealDiaryImage) {
+        this.mealDiaryImages.add(mealDiaryImage);
     }
 
 

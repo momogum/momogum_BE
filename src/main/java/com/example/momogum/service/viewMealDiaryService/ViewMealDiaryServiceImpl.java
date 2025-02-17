@@ -33,7 +33,7 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
     private final RedisRepository redisRepository;
     private final MealDiaryRepository mealDiaryRepository;
 
-    private static final int TTL_MINUTES = 5;
+    private static final int TTL_MINUTES = 1;
 
     /**
      * 또 올래요 조회 로직

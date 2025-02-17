@@ -16,6 +16,7 @@ import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentReadDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,7 +145,24 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     }
 
 
-    // 밥일기 수정 기능
+    @Override
+    public MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+
+        UserEntity findUser = findUser(request.getMemberId());
+        MealDiary findMealDiary = findMealDiary(request.getMealDiaryId());
+
+        valid(findUser.getId(),findMealDiary);
+
+        removeMealDiaryKeyword(findMealDiary);
+        updateKeyword(request,findMealDiary);
+
+        Long result = findMealDiary.update(request);
+        mealDiaryRepository.saveAndFlush(findMealDiary); // 즉시 반영
+
+        return MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO.builder()
+                .mealDiaryId(findMealDiary.getId())
+                .build();
+    }
 
 
 
@@ -160,6 +178,36 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         if (!user.getId().equals(mealDiary.getUserEntity().getId())) {
             throw new UserEntityHandler(ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
         }
+    }
+
+    public void updateKeyword(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request, MealDiary newMealDiary) {
+
+        String[] keywords = request.getKeyword().split(","); // 쉼표로 분리
+
+        if (keywords.length > 5) {
+            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_KEYWORD_MAX);
+        }
+        for (String keywordName : keywords) {
+            String trimmedKeyword = keywordName.trim();
+
+            // 4-1. 기존에 존재하는 키워드인지 확인
+            Keyword keyword = keywordRepository.findByKeyword(trimmedKeyword)
+                    .orElseGet(() -> keywordRepository.save(Keyword.builder()
+                            .keyword(trimmedKeyword)
+                            .build()));
+
+            // 4-2. 매핑 테이블에 저장
+            MealDiaryKeyword mealDiaryKeyword = MealDiaryKeywordConverter.toMealDiaryKeyword(newMealDiary,keyword);
+
+            mealDiaryKeywordRepository.save(mealDiaryKeyword);
+        }
+    }
+
+
+    public void removeMealDiaryKeyword(MealDiary mealDiary){
+        mealDiary.removeMealDiaryKeywordAll();
+
+        mealDiaryKeywordRepository.deleteAllByMealDiary(mealDiary);
     }
 
     private void validMealDiaryExist(UserEntity user, MealDiary mealDiary) {

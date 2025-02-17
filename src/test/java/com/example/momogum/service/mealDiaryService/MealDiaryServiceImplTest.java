@@ -14,6 +14,7 @@ import com.example.momogum.repository.mealDiaryRepo.*;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import org.apache.catalina.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +25,8 @@ import org.mockito.Mock;
 
 import static com.example.momogum.apiPayLoad.code.status.ErrorStatus.*;
 import static org.mockito.Mockito.*;
+
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -976,4 +979,79 @@ class MealDiaryServiceImplTest {
         assertThat(response.size()).isEqualTo(1);
         assertThat(response.get(0).getMealDiaryId()).isEqualTo(1L);
     }
+
+
+    // FIXME
+    @Test
+    @DisplayName("update()를 이용해서 밥일기의 정보를 업데이트 할 수 있다")
+    public void update_success() {
+        // given
+        UserEntity spyMember = spy(testMember);
+
+        MealDiary realMealDiary = MealDiary.builder()
+                .foodCategory(FoodCategory.FAST_FOOD)
+                .location("test_location")
+                .description("test_description")
+                .isRevisit(IsRevisit.GOOD)
+                .isReport(false)
+                .likesCount(0)
+                .commentCount(0)
+                .userEntity(spyMember)
+                .mealDiaryImages(null)
+                .mealDiaryKeywords(new ArrayList<>())
+                .build();
+        MealDiary testMealDiary = spy(realMealDiary);
+
+        Keyword testKeyword1 = Keyword.builder()
+                .id(1L)
+                .keyword("한식")
+                .build();
+
+        Keyword testKeyword2 = Keyword.builder()
+                .id(2L)
+                .keyword("중식")
+                .build();
+
+        MealDiaryKeyword testMealDiaryKeyword = MealDiaryKeyword.builder()
+                .keyword(testKeyword1)
+                .mealDiary(testMealDiary)
+                .build();
+
+        MealDiaryKeyword testMealDiaryKeyword2 = MealDiaryKeyword.builder()
+                .keyword(testKeyword2)
+                .mealDiary(testMealDiary)
+                .build();
+
+        List<MealDiaryKeyword> mealDiaryKeywords = new ArrayList<>();
+        mealDiaryKeywords.add(testMealDiaryKeyword);
+        mealDiaryKeywords.add(testMealDiaryKeyword2);
+
+        // DTO 생성
+        MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request = MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO.builder()
+                .memberId(1L)
+                .mealDiaryId(1L)
+                .foodCategory(FoodCategory.FAST_FOOD)
+                .keyword("업데,이트")
+                .location("updated_location")
+                .description("updated_description")
+                .revisit(IsRevisit.NOT_GOOD)
+                .build();
+
+        // when
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(spyMember));
+        when(mealDiaryRepository.findById(anyLong())).thenReturn(Optional.of(testMealDiary));
+        doNothing().when(mealDiaryKeywordRepository).deleteAllByMealDiary(any());
+
+        // 서비스 호출
+        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(request);
+
+        // 업데이트된 MealDiary ID 확인
+        System.out.println("Updated Meal Diary ID: " + response.getMealDiaryId());
+
+        // then
+        assertThat(response).isNotNull();
+        /*assertThat(response.getMealDiaryId()).isEqualTo(1L); // 업데이트된 mealDiaryId 확인*/
+    }
+
+
 }

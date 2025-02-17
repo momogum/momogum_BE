@@ -4,6 +4,7 @@ import com.example.momogum.domain.common.BaseEntity;
 import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import com.example.momogum.domain.common.enums.Status;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.URL;
@@ -87,6 +88,19 @@ public class MealDiary extends BaseEntity {
 
     public void addMealDiaryImage(MealDiaryImage mealDiaryImage) {
         this.mealDiaryImages.add(mealDiaryImage);
+    }
+
+    public Long update(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+        this.foodCategory = request.getFoodCategory();
+        this.location = request.getLocation();
+        this.description = request.getDescription();
+        this.isRevisit = request.getRevisit();
+
+        return this.id;
+    }
+
+    public void removeMealDiaryKeywordAll() {
+        this.mealDiaryKeywords.clear();
     }
 
 

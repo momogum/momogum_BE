@@ -4,6 +4,7 @@ import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -85,6 +86,12 @@ public class MealDiaryController {
         List<MealDiaryReportDTO.MealDiaryReportResponseDTO> result = mealDiaryService.getReport();
 
         return ApiResponse.onSuccess(result);
+    }
 
+    @Operation(summary = "밥일기 수정 API")
+    @PatchMapping("/")
+    public ApiResponse<MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO> update(@RequestBody MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(request);
+        return ApiResponse.onSuccess(response);
     }
 }

@@ -9,6 +9,7 @@ import com.example.momogum.web.dto.user.KakaoResponseDTO;
 import com.example.momogum.web.dto.user.UserDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -219,6 +220,47 @@ public class AuthController {
         );
     }
 
+    @Operation(summary = "현재 로그인한 유저 정보 조회 API", description = "JWT를 이용하여 현재 로그인한 유저 정보를 반환합니다.")
+    @GetMapping("/me")
+    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo(HttpServletRequest request) {
+        // 요청에서 유저 ID 가져오기
+        Long userId = userService.getUserIdFromRequest(request);
+        log.info("현재 로그인한 유저 정보 요청 - 유저 ID: {}", userId);
 
+        UserEntity user = tokenService.findUserById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
+        // 프로필 이미지 URL 가져오기
+        String profileImageUrl = user.getProfileImage() != null ? user.getProfileImage().getImageLink() : null;
+
+        return ApiResponse.onSuccess(
+                UserDTO.UserResponseDTO.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .nickname(user.getNickname())
+                        .profileImage(profileImageUrl)
+                        .isNewUser(false)
+                        .build()
+        );
+    }
+
+    /**
+     * 회원 탈퇴 API
+     * 현재 로그인한 유저의 정보를 기반으로 회원 탈퇴를 수행합니다.
+     */
+    @Operation(summary = "회원 탈퇴 API", description = "현재 로그인한 유저를 삭제합니다.")
+    @DeleteMapping("/deleteID")
+    public ApiResponse<String> deleteCurrentUser(HttpServletRequest request) {
+        // 요청에서 유저 ID 가져오기
+        Long userId = userService.getUserIdFromRequest(request);
+        log.info("회원 탈퇴 요청 - 유저 ID: {}", userId);
+
+        // ✅ 유저 정보 삭제 (DB)
+        userService.deleteUser(userId);
+
+        // ✅ Redis에서 토큰 삭제
+        tokenService.deleteTokensByUserId(userId);
+
+        return ApiResponse.onSuccess("회원 탈퇴가 정상적으로 처리되었습니다.");
+    }
 }

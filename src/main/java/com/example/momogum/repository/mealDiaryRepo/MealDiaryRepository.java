@@ -2,6 +2,7 @@ package com.example.momogum.repository.mealDiaryRepo;
 
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.UserEntity;
+import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Slice;
@@ -18,11 +19,17 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
 
     List<MealDiary> findByUserEntityIn(List<UserEntity> userEntity);
 
-    @Query("SELECT m.id FROM MealDiary m WHERE m.isRevisit = :isRevisit AND m.userEntity.id!= :userId ORDER BY m.likesCount DESC")
-    List<Long> findAllByIsRevisit(@Param("isRevisit") IsRevisit isRevisit, @Param("userId")Long userId);
+    @Query("SELECT m.id FROM MealDiary m WHERE m.isRevisit = :isRevisit AND m.userEntity.id!= :userId and m.id not in :viewedIds ORDER BY m.likesCount DESC")
+    List<Long> findAllByIsRevisit(@Param("isRevisit") IsRevisit isRevisit,
+                                  @Param("userId")Long userId,
+                                  @Param("viewedIds") List<Long> viewedIds,
+                                  Pageable pageable);
 
-    @Query("SELECT m.id FROM MealDiary m WHERE m.foodCategory = :foodCategory AND m.userEntity.id != :userId ORDER BY m.likesCount DESC")
-    List<Long> findAllByFoodCategory(@Param("foodCategory") String foodCategory, @Param("userId")Long userId);
+    @Query("SELECT m.id FROM MealDiary m WHERE m.foodCategory = :foodCategory AND m.userEntity.id != :userId and  m.id not in :viewedIds ORDER BY m.likesCount DESC")
+    List<Long> findAllByFoodCategory(@Param("foodCategory") FoodCategory foodCategory,
+                                     @Param("userId")Long userId,
+                                     @Param("viewedIds") List<Long> viewedIds,
+                                     Pageable pageable);
 
 
     List<MealDiary> findByIdIn(List<Long> ids);

@@ -1,12 +1,15 @@
 package com.example.momogum.web.controller.viewMealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.service.viewMealDiaryService.ViewMealDiaryService;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +22,11 @@ public class ViewMealDiaryController {
     @Operation(summary = "메인 페이지 또 올래요 시 조회",
             description = "메인 페이지에서 또 올래요를 눌렀을 때 사용될 API입니다. ")
     @GetMapping("/revisit")
-    public ApiResponse<ViewMealDiaryDTO.ViewMealDiaryResponseListDTO> getMealDiaryIsRevisit(
-            @RequestParam Long userId) {
+    public ApiResponse<List<ViewMealDiaryDTO.MainViewMealDiaryResponse>> getMealDiaryIsRevisit(
+            @RequestParam Long userId,
+            @RequestParam Integer page) {
 
-        ViewMealDiaryDTO.ViewMealDiaryResponseListDTO response = viewMealDiaryService.getMealDiaryIsRevisitedByLikesCount(userId);
+        List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryIsRevisitedByLikesCount(userId, page);
 
         return ApiResponse.onSuccess(response);
 
@@ -31,14 +35,16 @@ public class ViewMealDiaryController {
     @Operation(summary = "메인 페이지 음식 카테고리 조회",
             description = "메인 페이지에서 각 카테고리를 눌렀을 때 사용되는 API입니다.<br>" +
                     " 각 카테고리 별로 RequestParam에 넣어서 주시면 해당 값을 반환합니다.<br>" +
-                    "KOREA(한식), CHINA(중식), JAPAN(일식), ASIAN(아시안), FASTFOOD(패스트푸드), CAFE(카페)<br>" +
-                    "해당 태그 맞춰서 넣어 주세요")
+                    "KOREAN(한식), CHINESE(중식), JAPANESE(일식), WESTERN(양식)" +
+                    ", ASIAN(아시안 푸드), FAST_FOOD(패스트 푸드), CAFE(카페), ETC(기타) 해당 태그 맞춰서 넣어 주세요")
     @GetMapping("/{foodCategory}")
-    public ApiResponse<ViewMealDiaryDTO.ViewMealDiaryResponseListDTO> getMealDiaryByFoodCategory(
+    public ApiResponse<List<ViewMealDiaryDTO.MainViewMealDiaryResponse>> getMealDiaryByFoodCategory(
             @RequestParam Long userId,
-            @PathVariable String foodCategory) {
+            @RequestParam Integer page,
+            @PathVariable FoodCategory foodCategory
+            ) {
 
-        ViewMealDiaryDTO.ViewMealDiaryResponseListDTO response = viewMealDiaryService.getMealDiaryByFoodCategory(userId, foodCategory);
+        List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryByFoodCategory(userId,page ,foodCategory);
 
         return ApiResponse.onSuccess(response);
 

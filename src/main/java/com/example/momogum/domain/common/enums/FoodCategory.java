@@ -9,7 +9,7 @@ public enum FoodCategory {
     KOREAN("한식"),
     CHINESE("중식"),
     JAPANESE("일식"),
-    AMERICAN("양식"),
+    WESTERN("양식"),
     ASIAN("아시안 푸드"),
     FAST_FOOD("패스트 푸드"),
     CAFE("카페"),

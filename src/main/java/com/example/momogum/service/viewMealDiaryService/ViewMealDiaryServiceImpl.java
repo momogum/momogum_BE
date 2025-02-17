@@ -3,18 +3,23 @@ package com.example.momogum.service.viewMealDiaryService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
+import com.example.momogum.converter.ViewMealDiaryConverter;
 import com.example.momogum.domain.MealDiary;
 import com.example.momogum.domain.MealDiaryImage;
 
+import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.redisRepository.RedisRepository;
-import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
+
+import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO.MainViewMealDiaryResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,74 +39,61 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
      * 또 올래요 조회 로직
      */
     @Override
-    public ViewMealDiaryDTO.ViewMealDiaryResponseListDTO getMealDiaryIsRevisitedByLikesCount(Long userId) {
+    public List<MainViewMealDiaryResponse> getMealDiaryIsRevisitedByLikesCount(Long userId, Integer page) {
 
-        // "또 올래요" 표시된 밥일기 ID 리스트 가져오기 (좋아요 개수 순)
-        List<Long> isRevisitMealDiaryIds = mealDiaryRepository.findAllByIsRevisit(IsRevisit.GOOD, userId);
+        Pageable pageable = PageRequest.of(page, 6);
 
-        // 공통 로직 호출
-        List<ViewMealDiaryDTO.ViewMealDiaryResponse> responseList =
-                getUnViewedMealDiaries(userId, isRevisitMealDiaryIds);
+        String redisKey = userId.toString();
+        Set<Long> viewedPosts = redisRepository.getViewedPosts(redisKey);
 
-        // 결과 반환
-        return new ViewMealDiaryDTO.ViewMealDiaryResponseListDTO(responseList);
+        List<Long> isRevisitMealDiaryIds = mealDiaryRepository.findAllByIsRevisit(IsRevisit.GOOD, userId, new ArrayList<>(viewedPosts), pageable);
+
+        return getUnViewedMealDiaries(userId, isRevisitMealDiaryIds);
+
     }
 
     /**
      * 음식 카테고리에 따른 조회 로직
      */
     @Override
-    public ViewMealDiaryDTO.ViewMealDiaryResponseListDTO getMealDiaryByFoodCategory(Long userId, String foodCategory) {
+    public List<MainViewMealDiaryResponse> getMealDiaryByFoodCategory(Long userId, Integer page, FoodCategory foodCategory) {
 
-        // 1. 특정 카테고리의 밥일기 ID 리스트 가져오기 (좋아요 개수 순)
-        List<Long> mealDiaryIdsByFoodCategory = mealDiaryRepository.findAllByFoodCategory(foodCategory, userId);
+        Pageable pageable = PageRequest.of(page, 6);
 
-        // 2. 공통 로직 호출
-        List<ViewMealDiaryDTO.ViewMealDiaryResponse> responseList =
-                getUnViewedMealDiaries(userId, mealDiaryIdsByFoodCategory);
-
-        // 3. 결과 반환
-        return new ViewMealDiaryDTO.ViewMealDiaryResponseListDTO(responseList);
-    }
-
-    /**
-     * 공통 로직 ( 특정 조건에 맞는 mealdiary id 값들의 리스트에서 redis(이미 조회)에 있는 id값들을 빼는 로직
-     */
-    private List<ViewMealDiaryDTO.ViewMealDiaryResponse> getUnViewedMealDiaries(
-            Long userId,
-            List<Long> allMealDiaryIds) {
-
-        // redis에서 이미 본 mealdiary id 가져오기
         String redisKey = userId.toString();
         Set<Long> viewedPosts = redisRepository.getViewedPosts(redisKey);
 
-        // redis와 비교하여 중복 제거 + 6개 가져오기
-        List<Long> unViewedPostIds = allMealDiaryIds.stream()
-                .filter(id -> !viewedPosts.contains(id))
-                .sorted(Comparator.comparingLong(allMealDiaryIds::indexOf))
-                .toList();
+        List<Long> foodCategoryMealDiaryIds = mealDiaryRepository.findAllByFoodCategory(foodCategory, userId, new ArrayList<>(viewedPosts), pageable);
 
-        // 필터링된 Id로 MealDiary 엔티티 조회
-        List<MealDiary> unViewedPosts = mealDiaryRepository.findByIdIn(unViewedPostIds);
-        unViewedPosts.sort(Comparator.comparingLong(mealDiary -> unViewedPostIds.indexOf(mealDiary.getId())));
+        return getUnViewedMealDiaries(userId, foodCategoryMealDiaryIds);
+    }
+
+    /**
+     * 공통 로직 (반환될 mealDiaryId는 redis에 추가 / converter로 dto 변환 후 List 형태로 반환)
+     */
+    private List<MainViewMealDiaryResponse> getUnViewedMealDiaries(
+            Long userId,
+            List<Long> mealDiaryIds) {
+
+        if (mealDiaryIds.isEmpty()) {
+            return List.of(); // 조회할 데이터가 없는 경우 빈 리스트 반환
+        }
+
+        // MealDiary 엔티티 조회
+        List<MealDiary> unViewedPosts = mealDiaryRepository.findByIdIn(mealDiaryIds);
+        unViewedPosts.sort(Comparator.comparingLong(mealDiary -> mealDiaryIds.indexOf(mealDiary.getId())));
 
         // MealDiary 엔티티를 DTO로 변환
-        List<ViewMealDiaryDTO.ViewMealDiaryResponse> responseList = unViewedPosts.stream()
-                .map(post -> ViewMealDiaryDTO.ViewMealDiaryResponse.builder()
-                        .mealDiaryId(post.getId())
-                        .foodImageURLs(getFoodImageURLs(post))
-                        .userImageURL(getUserProfileImage(post))
-                        .foodCategory(post.getFoodCategory())
-                        .keyWord(getKeywords(post))
-                        .isRevisit(post.getIsRevisit())
-                        .build())
+        List<MainViewMealDiaryResponse> responseList = unViewedPosts.stream()
+                .map(ViewMealDiaryConverter::toMainViewMealDiaryResponse)
                 .toList();
 
-        // redis에 반환된 Post ID 저장
+        // Redis에 반환된 Post ID 저장
+        String redisKey = userId.toString();
         responseList.forEach(response ->
                 redisRepository.addViewedPost(redisKey, response.getMealDiaryId().toString()));
 
-        // redis TTL 설정
+        // Redis TTL 설정
         redisRepository.setSessionTimeout(redisKey, TTL_MINUTES);
 
         return responseList;

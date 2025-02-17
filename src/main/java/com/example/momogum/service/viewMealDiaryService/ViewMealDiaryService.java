@@ -1,12 +1,15 @@
 package com.example.momogum.service.viewMealDiaryService;
 
-import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
+import com.example.momogum.domain.common.enums.FoodCategory;
+import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO.MainViewMealDiaryResponse;
+
+import java.util.List;
 
 public interface ViewMealDiaryService {
 
-    ViewMealDiaryDTO.ViewMealDiaryResponseListDTO getMealDiaryIsRevisitedByLikesCount(Long userId);
+    List<MainViewMealDiaryResponse> getMealDiaryIsRevisitedByLikesCount(Long userId, Integer page);
 
-    ViewMealDiaryDTO.ViewMealDiaryResponseListDTO getMealDiaryByFoodCategory(Long userId, String foodCategory);
+    List<MainViewMealDiaryResponse> getMealDiaryByFoodCategory(Long userId, Integer page ,FoodCategory foodCategory);
 
 
 }

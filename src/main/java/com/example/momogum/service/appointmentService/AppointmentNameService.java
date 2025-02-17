@@ -21,11 +21,11 @@ public class AppointmentNameService {
      * @param request CreateMealPlanNameDTO
      * @return appointmentId
      */
-    public Long creatAppointmentName(AppointmentNameRequestDTO request) {
+    public void saveAppointmentName(AppointmentNameRequestDTO request) {
 
         AppointmentName appointmentName = converter.convert(request);
 
-        return repository.save(appointmentName).getId();
+        repository.save(appointmentName);
     }
 
 

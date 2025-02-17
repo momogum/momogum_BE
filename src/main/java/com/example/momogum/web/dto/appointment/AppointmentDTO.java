@@ -66,4 +66,5 @@ public class AppointmentDTO {
         List<UserResponseDTO> users;
 
     }
+
 }

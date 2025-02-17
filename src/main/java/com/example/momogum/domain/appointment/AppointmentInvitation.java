@@ -21,9 +21,10 @@ public class AppointmentInvitation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 초대된 약속의 ID
-    @Column(name = "appointment_id", nullable = false)
-    private Long appointmentId;
+    @Setter
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = false)
+    private Appointment appointment;
 
     // 초대 상태
     @Enumerated(EnumType.STRING)

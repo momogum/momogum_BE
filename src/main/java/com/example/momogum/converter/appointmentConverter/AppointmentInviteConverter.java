@@ -1,6 +1,8 @@
 package com.example.momogum.converter.appointmentConverter;
 
 import com.example.momogum.domain.UserEntity;
+import com.example.momogum.domain.appointment.Appointment;
+import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import org.springframework.stereotype.Component;

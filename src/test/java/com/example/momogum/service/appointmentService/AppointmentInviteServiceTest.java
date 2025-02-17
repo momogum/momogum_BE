@@ -5,11 +5,12 @@ import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentInviteConverter;
 import com.example.momogum.domain.Follower;
 import com.example.momogum.domain.UserEntity;
-import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
+import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +53,9 @@ class AppointmentInviteServiceTest {
     private AppointmentInviteRepository appointmentInviteRepository;
 
     @Mock
+    private AppointmentRepository appointmentRepository;
+
+    @Mock
     private AppointmentInviteConverter converter;
 
     @Mock
@@ -62,9 +67,20 @@ class AppointmentInviteServiceTest {
     private AppointmentInviteRequestDTO request;
     private UserEntity user1;
     private UserEntity user2;
+    private Appointment appointment;
+
 
     @BeforeEach
     void setUp() {
+
+        appointment = Appointment.builder()
+                .id(1L)
+                .name("테스트 약속")
+                .date(LocalDateTime.now().plusDays(1))
+                .location("강남역")
+                .build();
+
+        when(appointmentRepository.findById(anyLong())).thenReturn(Optional.of(appointment));
 
         // 테스트 요청 객체 생성 (appointmentId와 초대할 사용자 닉네임 목록)
         request = AppointmentInviteRequestDTO.builder()
@@ -141,36 +157,36 @@ class AppointmentInviteServiceTest {
     @Test
     void inviteFriends_SuccessTest() {
         // given - user1, user2 둘 다 초대가 되어있지 않은 상태
-        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user1))
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(appointment.getId(), user1))
                 .thenReturn(false);
-        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user2))
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(appointment.getId(), user2))
                 .thenReturn(false);
 
-        //when
+        // when
         List<AppointmentInviteResponseDTO> result = appointmentInviteService.inviteFriends(request);
 
-        //then
+        // then
         assertEquals(2, result.size());
         assertEquals("user1", result.get(0).getNickname());
         assertEquals("user2", result.get(1).getNickname());
 
-        //Batch Insert -> saveAll()이 1번 호출되어야 함
+        // Batch Insert -> saveAll()이 1번 호출되어야 함
         verify(appointmentInviteRepository, times(1)).saveAll(anyList());
     }
 
     @DisplayName("inviteFriends 테스트 - 이미 초대된 사용자는 제외")
     @Test
     void inviteFriends_DuplicateTest() {
-        //given - user1은 초대 X, user2은 초대 O
-        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user1))
+        // given - user1은 초대 X, user2은 초대 O
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(appointment.getId(), user1))
                 .thenReturn(false);
-        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user2))
+        when(appointmentInviteRepository.existsByAppointmentIdAndUserEntity(appointment.getId(), user2))
                 .thenReturn(true);
 
-        //when
+        // when
         List<AppointmentInviteResponseDTO> result = appointmentInviteService.inviteFriends(request);
 
-        //then
+        // then
         assertEquals(1, result.size());
         assertEquals("user1", result.get(0).getNickname());
 

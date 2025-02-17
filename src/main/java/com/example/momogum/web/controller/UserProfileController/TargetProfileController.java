@@ -55,12 +55,12 @@ public class TargetProfileController {
    * 상대 유저의 밥일기 목록 조회 API
    */
   @Operation(summary = "상대가 작성한 밥일기 목록 조회 API", description = "상대 유저가 작성한 밥일기 목록을 조회합니다.")
-  @GetMapping("/{targetUserId}/meal-diaries")
+  @GetMapping("/{userId}/target/{targetUserId}/meal-diaries")
   public ApiResponse<List<ViewMealDiaryResponse>> getTargetMealDiaries(
-      @RequestHeader("X-User-Id") Long currentUserId,
+      @PathVariable Long userId,
       @PathVariable Long targetUserId
   ) {
-    List<ViewMealDiaryResponse> mealDiaries = targetProfileServiceImpl.getTargetMealDiaries(currentUserId, targetUserId);
+    List<ViewMealDiaryResponse> mealDiaries = targetProfileServiceImpl.getTargetMealDiaries(userId, targetUserId);
     return ApiResponse.onSuccess(mealDiaries);
   }
 
@@ -68,15 +68,14 @@ public class TargetProfileController {
    * 상대 유저가 저장한 밥일기 목록 조회 API
    */
   @Operation(summary = "상대방이 저장한 밥일기 목록 조회 API", description = "상대 유저가 북마크한 밥일기 목록을 조회합니다.")
-  @GetMapping("/{targetUserId}/bookmarked-meal-diaries")
+  @GetMapping("/{userId}/target/{targetUserId}/bookmarked")
   public ApiResponse<List<ViewMealDiaryResponse>> getTargetBookmarkedMealDiaries(
-      @RequestHeader("X-User-Id") Long currentUserId,
+      @PathVariable Long userId,
       @PathVariable Long targetUserId
   ) {
-    List<ViewMealDiaryResponse> bookmarkedMealDiaries = targetProfileServiceImpl.getTargetBookmarkedMealDiaries(currentUserId, targetUserId);
+    List<ViewMealDiaryResponse> bookmarkedMealDiaries = targetProfileServiceImpl.getTargetBookmarkedMealDiaries(userId, targetUserId);
     return ApiResponse.onSuccess(bookmarkedMealDiaries);
   }
-
   /**
    * 상대 유저의 팔로잉 목록 조회 API
    */

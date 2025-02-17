@@ -57,13 +57,18 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
   }
 
+  // 유저 검증
+  private UserEntity findUserById(Long userId) {
+    return userEntityRepository.findById(userId)
+        .orElseThrow(()->new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+  }
 
   // 유저 닉네임, 실명, 프로필 이미지 조회 FIXME 이미지 할당
   @Override
   @Transactional(readOnly = true)
   public UserDTO.UserResponseDTO getUserProfile(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
+    UserEntity user = findUserById(userId);
 
     return UserDTO.UserResponseDTO.builder()
         .id(user.getId())
@@ -71,7 +76,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         .name(user.getName())
         .profileImage(user.getProfileImage() != null
             ? user.getProfileImage().getImageLink()
-            : "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png")
+            : "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/basic_profile/DEFAULT_IMAGE.webp")
         .about(user.getAbout())
         .build();
   }
@@ -81,8 +86,7 @@ public class UserProfileServiceImpl implements UserProfileService {
   @Override
   @Transactional
   public UserDTO.UserEditDTO updateUserProfile(Long userId, UserDTO.UserEditDTO request) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus._BAD_REQUEST));
+    UserEntity user = findUserById(userId);
 
     updateFieldIfValid(request.getNickname(), user.getNickname(),
         userProfileValidator::validateNickname, user::setNickname);
@@ -105,8 +109,7 @@ public class UserProfileServiceImpl implements UserProfileService {
   @Override
   @Transactional(readOnly = true)
   public List<ViewMealDiaryResponse> getUserMealDiaries(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    UserEntity user = findUserById(userId);
 
     List<MealDiary> mealDiaries = mealDiaryRepository.findByUserEntity(user);
 
@@ -119,8 +122,7 @@ public class UserProfileServiceImpl implements UserProfileService {
   @Override
   @Transactional(readOnly = true)
   public List<ViewMealDiaryResponse> getBookmarkedMealDiaries(Long userId) {
-    UserEntity user = userEntityRepository.findById(userId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    UserEntity user = findUserById(userId);
 
     List<MealDiaryBookmark> bookmarks = mealDiaryBookmarkRepository.findByUserEntity(user);
 

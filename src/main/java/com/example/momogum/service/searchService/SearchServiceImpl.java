@@ -3,13 +3,11 @@ package com.example.momogum.service.searchService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.SearchHandler;
 import com.example.momogum.converter.searchConverter.SearchConverter;
-import com.example.momogum.domain.Follower;
-import com.example.momogum.domain.Following;
-import com.example.momogum.domain.MealDiary;
-import com.example.momogum.domain.UserEntity;
+import com.example.momogum.domain.*;
 import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
+import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.search.FollowStatusDTO;
 import com.example.momogum.web.dto.search.SearchDTO;
@@ -32,6 +30,7 @@ public class SearchServiceImpl implements SearchService {
     private final UserEntityRepository userEntityRepository;
     private final MealDiaryRepository mealDiaryRepository;
     private final FollowerRepository followerRepository;
+    private final MealDiaryStoryRepository mealDiaryStoryRepository;
 
 
     @Override
@@ -63,6 +62,9 @@ public class SearchServiceImpl implements SearchService {
                         Collectors.mapping(FollowStatusDTO::getFollowerName, Collectors.toList())
                 ));
 
+        List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(users);
+        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
+
         return users.stream()
                 .map(user -> {
                     List<String> commonFollowNames = commonFollowMap.getOrDefault(user.getId(), Collections.emptyList());
@@ -70,6 +72,8 @@ public class SearchServiceImpl implements SearchService {
                             user,
                             commonFollowNames,
                             commonFollowNames.size(),
+                            Boolean.TRUE,
+                            Boolean.FALSE
 
                     );
                 })

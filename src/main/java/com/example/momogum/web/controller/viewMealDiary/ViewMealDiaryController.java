@@ -23,10 +23,9 @@ public class ViewMealDiaryController {
             description = "메인 페이지에서 또 올래요를 눌렀을 때 사용될 API입니다. ")
     @GetMapping("/revisit")
     public ApiResponse<List<ViewMealDiaryDTO.MainViewMealDiaryResponse>> getMealDiaryIsRevisit(
-            @RequestParam Long userId,
-            @RequestParam Integer page) {
+            @RequestParam Long userId) {
 
-        List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryIsRevisitedByLikesCount(userId, page);
+        List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryIsRevisitedByLikesCount(userId);
 
         return ApiResponse.onSuccess(response);
 
@@ -40,11 +39,10 @@ public class ViewMealDiaryController {
     @GetMapping("/{foodCategory}")
     public ApiResponse<List<ViewMealDiaryDTO.MainViewMealDiaryResponse>> getMealDiaryByFoodCategory(
             @RequestParam Long userId,
-            @RequestParam Integer page,
             @PathVariable FoodCategory foodCategory
             ) {
 
-        List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryByFoodCategory(userId,page ,foodCategory);
+        List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryByFoodCategory(userId,foodCategory);
 
         return ApiResponse.onSuccess(response);
 

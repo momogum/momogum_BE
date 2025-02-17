@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -118,30 +119,36 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
 
     @Override
-    public MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO getMine(Long userId){
+    public List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> getMine(Long userId){
 
         UserEntity findUser = findUser(userId);
 
+//        List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
+//        if (byUserEntity.isEmpty()) {
+//            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+//        }
+//
+//        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
+//        if (byMealDiaryIn.isEmpty()) {
+//            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+//        }
+//
+//        MealDiaryStory mealDiaryStory = byMealDiaryIn.get(0);
+//        if (mealDiaryStory == null) {
+//            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+//        }
+
+        // FIXME (새벽에 기쁨님 수정사항 맞춰서 LIST 형태 반환 도와드렸습니다(내 스토리도 여러개 올라갈수있는 부분). 확인후 리팩터링 해주세요 !)
         List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
         if (byUserEntity.isEmpty()) {
-            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+            return List.of();
         }
 
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
         if (byMealDiaryIn.isEmpty()) {
-            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+            return List.of();
         }
 
-        MealDiaryStory mealDiaryStory = byMealDiaryIn.get(0);
-        if (mealDiaryStory == null) {
-            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
-        }
-
-        Long mealDiaryStoryId = mealDiaryStory.getId();
-        String imageLink = mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink();
-
-        MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
-        boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
 
 
         // 기본이미지 로직이 구현되면 이 검증은 에러를 날리도록 수정될 예정 FIXME
@@ -153,7 +160,21 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         }
 
 
-        return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed,mealDiaryStoryId,profileImageLink);
+        return byMealDiaryIn.stream()
+                .map(mealDiaryStory -> {
+                    Long mealDiaryStoryId = mealDiaryStory.getId();
+
+                    String imageLink = mealDiaryStory.getMealDiary().getMealDiaryImages().isEmpty() ?
+                            null : mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink();
+
+                    MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
+                    boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
+
+                    return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(
+                            findUser, imageLink, isViewed, mealDiaryStoryId, profileImageLink
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
 

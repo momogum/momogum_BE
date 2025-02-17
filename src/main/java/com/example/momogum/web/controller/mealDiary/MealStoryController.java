@@ -68,10 +68,10 @@ public class MealStoryController {
 
     @Operation(summary = "본인의 스토리 조회 API")
     @GetMapping("/myStories/memberId/{memberId}")
-    public ApiResponse<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> getMyStories(
+    public ApiResponse<List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO>> getMyStories(
             @Parameter(name = "memberId", description = "추후 토큰으로 변경 될 수 있습니다")
             @PathVariable Long memberId) {
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(memberId);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(memberId);
 
         return ApiResponse.onSuccess(response);
     }

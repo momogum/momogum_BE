@@ -1,5 +1,6 @@
 package com.example.momogum.domain.appointment;
 
+import com.example.momogum.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,10 @@ public class Appointment {
     private LocalDateTime date;
     private String location;
     private String notes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false) // 🔥 약속을 만든 사람 추가
+    private UserEntity creator;  // ✅ 약속 생성자
 
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentInvitation> invitations = new ArrayList<>();

@@ -1,7 +1,12 @@
 package com.example.momogum.converter.appointmentConverter;
 
 import com.example.momogum.domain.appointment.Appointment;
+import com.example.momogum.domain.appointment.AppointmentCard;
+import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
+import com.example.momogum.web.dto.appointment.AppointmentDTO;
+import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
+import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentInfoDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
@@ -34,6 +39,10 @@ public class AppointmentConverter {
                 .build();
     }
 
+
+    /**
+     * 오케스트레이터에서 사용되는 응답 DTO 변환
+     */
     public AppointmentOrchestratorResponseDTO toResponseDTO(
             Appointment appointment, List<AppointmentCardResponseDTO> selectedCards) {
 
@@ -54,6 +63,47 @@ public class AppointmentConverter {
                 .appointmentId(appointment.getId())
                 .invitedFriends(invitedFriends)
                 .selectedCards(selectedCards)
+                .build();
+    }
+
+    /**
+     * 초대장 조회를 위한 DTO 변환
+     */
+    public AppointmentDetailsDTO toDetailsDTO(Appointment appointment, List<AppointmentInvitation> invitations, AppointmentCard selectedCard) {
+
+        // 1. 약속 정보 변환
+        AppointmentInfoDTO appointmentInfoDTO = AppointmentInfoDTO.builder()
+                .name(appointment.getName())
+                .menu(appointment.getMenu())
+                .date(appointment.getDate())
+                .location(appointment.getLocation())
+                .notes(appointment.getNotes())
+                .build();
+
+        // 2. 초대된 친구 목록 변환
+        List<AppointmentInviteResponseDTO> invitedFriends = invitations.stream()
+                .map(invite -> AppointmentInviteResponseDTO.builder()
+                        .nickname(invite.getUserEntity().getNickname())
+                        .name(invite.getUserEntity().getName())
+                        .profileImage(invite.getUserEntity().getProfileImage() != null
+                                ? invite.getUserEntity().getProfileImage().getImageLink()
+                                : null)
+                        .status(invite.getStatus())
+                        .build()
+                ).toList();
+
+        // 3. 선택된 카드 변환
+        AppointmentCardResponseDTO selectedCardDTO = AppointmentCardResponseDTO.builder()
+                .category(selectedCard.getCategory().getCategory())
+                .imageUrl(selectedCard.getImageUrl())
+                .build();
+
+        // 4. 최종 DTO 반환
+        return AppointmentDetailsDTO.builder()
+                .appointmentId(appointment.getId())
+                .appointmentInfo(appointmentInfoDTO)
+                .selectedCard(selectedCardDTO)
+                .invitedFriends(invitedFriends)
                 .build();
     }
 }

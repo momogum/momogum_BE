@@ -158,6 +158,29 @@ class MealDiaryStoryServiceImplTest {
 
 
     @Test
+    @DisplayName("이미 조회 엔티티가 있는 스토리의 경우, 더 생성하지 않는다")
+    public void get_notSave_mealDiaryStoryView(){
+        //given
+        MealDiaryStoryView mealDiaryStoryView = MealDiaryStoryView.builder()
+                .id(1L)
+                .isViewed(true)
+                .mealDiaryStory(testMealDiaryStory)
+                .userEntity(testMember)
+                .build();
+
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.ofNullable(testMealDiaryStory));
+        when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(any(),any())).thenReturn(mealDiaryStoryView);
+
+        // when
+        mealDiaryStoryService.get(1L, 1L);
+
+        //then
+        verify(mealDiaryStoryViewRepository, times(0)).save(any());
+    }
+
+
+    @Test
     @DisplayName("존재하지 않는 회원이 스토리를 조회하면 정해진 예외를 반환한다")
     public void get_fail_memberNotFound(){
         //given
@@ -455,5 +478,168 @@ class MealDiaryStoryServiceImplTest {
         assertThat(response.size()).isEqualTo(2);
         assertThat(response.get(0).getMealDiaryStoryId()).isEqualTo(1L);
         assertThat(response.get(1).getMealDiaryStoryId()).isEqualTo(2L);
+    }
+
+
+    @Test
+    @DisplayName("getMine()을 이용하여 자신의 스토리를 조회 할 수 있다")
+    public void getMine_success(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
+
+
+        //when
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getMealDiaryStoryId()).isEqualTo(1L);
+        assertThat(response.getNickname()).isEqualTo("test_nickname");
+        assertThat(response.getMealDiaryImageLinks()).isEqualTo("test_image_link");
+    }
+
+
+    // 기본 이미지 로직이 완성되면 예외를 반환하도록 수정 FIXME
+    @Test
+    @DisplayName("회원의 프로필 이미지가 존재하지 않으면 기본 이미지를 반환한다")
+    public void getMine_success_default_profileImage(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
+
+
+        //when
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getProfileImageLink()).isEqualTo("default-image");
+    }
+
+
+    @Test
+    @DisplayName("회원의 프로필 이미지가 존재하면 같이 반환한다")
+    public void getMine_success_profileImage(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
+
+        ProfileImage testProfileImage = ProfileImage.builder()
+                .id(1L)
+                .user(testMember)
+                .imageLink("test_image_link")
+                .fileName("test_file_name")
+                .imageName("test_image_name")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        testMember.setProfileImage(testProfileImage);
+
+
+        //when
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getProfileImageLink()).isEqualTo("test_image_link");
+    }
+
+
+    @Test
+    @DisplayName("존재하지 않는 회원이면 정해진 예외를 반환한다")
+    public void getMine_fail_memberNotFound(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> mealDiaryStoryService.getAll(2L))
+                .isInstanceOf(UserEntityHandler.class)
+                .hasFieldOrPropertyWithValue("code", MEMBER_NOT_FOUND);
+    }
+
+
+    @Test
+    @DisplayName("회원의 밥일기가 존재하지 않으면 빈 객체를 반환한다")
+    public void getMine_fail_mealDiaryNotFound(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of());
+
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getMealDiaryStoryId()).isEqualTo(null);
+        assertThat(response.getNickname()).isEqualTo(null);
+        assertThat(response.getMealDiaryImageLinks()).isEqualTo(null);
+    }
+
+
+    @Test
+    @DisplayName("밥일기 스토리가 존재하지 않으면 빈 객체를 반환한다" +
+            "밥일기가 존재하더라도 3일이 지나 스토리가 삭제된 상태 일 수 있음")
+    public void getMine_fail_mealDiaryStoryNotFound(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of());
+
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getMealDiaryStoryId()).isEqualTo(null);
+        assertThat(response.getNickname()).isEqualTo(null);
+        assertThat(response.getMealDiaryImageLinks()).isEqualTo(null);
+    }
+
+
+    @Test
+    @DisplayName("본인의 스토리를 조회한 상태면 isViewed가 true를 반환한다")
+    public void getMine_success_viewed_true(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
+
+        MealDiaryStoryView mealDiaryStoryView = MealDiaryStoryView.builder()
+                .id(1L)
+                .isViewed(true)
+                .mealDiaryStory(testMealDiaryStory)
+                .userEntity(testMember)
+                .build();
+
+        lenient().when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(testMember, testMealDiaryStory))
+                .thenReturn(mealDiaryStoryView);
+
+        //when
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.isViewed()).isTrue();
+    }
+
+
+    @Test
+    @DisplayName("조회한 상태가 아니라면 isViewed가 false를 반환한다")
+    public void getMine_success_viewed_false(){
+        //given
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory));
+
+
+        //when
+        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.isViewed()).isFalse();
     }
 }

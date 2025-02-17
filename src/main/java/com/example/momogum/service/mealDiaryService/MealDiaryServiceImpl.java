@@ -83,7 +83,14 @@ public class MealDiaryServiceImpl implements MealDiaryService {
                 .map(MealDiaryCommentConverter::toMealDiaryCommentReadDTO)
                 .toList();
 
-        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments);
+        String profileImageLink;
+        if (user.getProfileImage() == null){
+            profileImageLink = "default_image";
+        }else {
+            profileImageLink = user.getProfileImage().getImageLink();
+        }
+
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments,profileImageLink);
     }
 
     @Override
@@ -165,7 +172,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     // 밥일기 매핑 키워드 조회 메서드
-    private static List<String> getKeywords(MealDiary mealDiary) {
+    public List<String> getKeywords(MealDiary mealDiary) {
         List<MealDiaryKeyword> mealDiaryKeywords = mealDiary.getMealDiaryKeywords();
 
         List<Keyword> keywordsEntities = mealDiaryKeywords.stream()
@@ -179,7 +186,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     // 키워드 추출 메서드
-    private void extractedKeyword(MealDairiesDTO.CreateStoryRequestDTO request, MealDiary newMealDiary) {
+    public void extractedKeyword(MealDairiesDTO.CreateStoryRequestDTO request, MealDiary newMealDiary) {
 
         String[] keywords = request.getKeyword().split(","); // 쉼표로 분리
 

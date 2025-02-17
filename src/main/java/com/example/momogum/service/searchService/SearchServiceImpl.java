@@ -18,6 +18,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -81,11 +82,12 @@ public class SearchServiceImpl implements SearchService {
 
         String requestWithoutSpaces = request.replaceAll("\\s+", "");
         String partialRequest = "%" + request + "%";
+        List<String> splitKeywords = Arrays.asList(request.split("\\s+"));
 
 
         // 검색 및 슬라이스 반환
         Slice<MealDiary> mealDiaries = mealDiaryRepository.searchByKeyword(
-                request, requestWithoutSpaces, partialRequest
+                request, requestWithoutSpaces, partialRequest, splitKeywords
         );
 
         if (mealDiaries.isEmpty()) {
@@ -93,7 +95,7 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return mealDiaries.getContent().stream()
-                .map(SearchConverter::toPostSearchResponseDTO)
+                .map(mealDiary -> SearchConverter.toPostSearchResponseDTO(mealDiary, request, splitKeywords))
                 .collect(Collectors.toList());
     }
 

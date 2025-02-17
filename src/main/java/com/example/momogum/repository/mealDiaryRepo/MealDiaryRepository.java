@@ -41,14 +41,13 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
             "WHERE LOWER(k.keyword) = LOWER(:fullKeyword) " +
             "   OR LOWER(k.keyword) = LOWER(:noSpaceKeyword) " +
             "   OR LOWER(k.keyword) LIKE LOWER(:partialKeyword) " +
-            "ORDER BY CASE " +
-            "WHEN LOWER(k.keyword) = LOWER(:fullKeyword) THEN 1 " +
-            "WHEN LOWER(k.keyword) = LOWER(:noSpaceKeyword) THEN 2 " +
-            "ELSE 3 END")
-    Slice<Object[]> searchByKeyword(
+            "   OR k.keyword IN (:splitKeywords) " +
+            "ORDER BY mk.id ASC")
+    Slice<MealDiary> searchByKeyword(
             @Param("fullKeyword") String fullKeyword,
             @Param("noSpaceKeyword") String noSpaceKeyword,
-            @Param("partialKeyword") String partialKeyword
+            @Param("partialKeyword") String partialKeyword,
+            @Param("splitKeywords") List<String> splitKeywords
     );
 
 

@@ -82,6 +82,10 @@ public class MealDiary extends BaseEntity {
         this.commentCount++;
     }
 
+    public void decreaseCommentCount() {
+        this.commentCount--;
+    }
+
     public void setReport(){
         this.isReport = true;
     }

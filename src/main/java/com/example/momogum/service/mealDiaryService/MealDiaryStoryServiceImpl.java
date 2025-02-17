@@ -113,7 +113,7 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                         // viewed가 false인 스토리를 우선적으로 조회
                         Comparator.comparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::isViewed)
                                 // 스토리를 createdAt을 기준으로 최신순으로 조회
-                                .thenComparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::getCreatedAt, Comparator.naturalOrder())
+                                .thenComparing(MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO::getCreatedAt, Comparator.reverseOrder())
                 )
                 .toList();
     }

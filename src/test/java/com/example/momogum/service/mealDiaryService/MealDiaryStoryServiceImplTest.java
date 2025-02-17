@@ -337,14 +337,20 @@ class MealDiaryStoryServiceImplTest {
     @DisplayName("스토리는 isViewed가 false인 것부터 조회된다")
     public void getAll_success_isViewed_true(){
         //given
+        MealDiaryStory testMealDiaryStory1 = MealDiaryStory.builder()
+                .id(1L)
+                .name(testMember.getNickname())
+                .mealDiary(testMealDiary)
+                .build();
+
         MealDiaryStory testMealDiaryStory2 = MealDiaryStory.builder()
                 .id(2L)
                 .name(testMember.getNickname())
                 .mealDiary(testMealDiary)
                 .build();
 
+        testMealDiaryStory1.setCreatedAt(LocalDateTime.now());
         testMealDiaryStory2.setCreatedAt(LocalDateTime.now());
-        testMealDiaryStory.setCreatedAt(LocalDateTime.now());
 
         MealDiaryStoryView mealDiaryStoryView = MealDiaryStoryView.builder()
                 .id(1L)
@@ -353,11 +359,17 @@ class MealDiaryStoryServiceImplTest {
                 .userEntity(testMember)
                 .build();
 
-        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember2));
+        System.out.println("1번 생성일자: "+testMealDiaryStory1.getCreatedAt()+" / 2번 생성일자: "+testMealDiaryStory2.getCreatedAt());
+
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
         when(followingRepository.findFollowedUsersByUserId(any())).thenReturn(List.of(testMember));
         when(mealDiaryRepository.findByUserEntityIn(any())).thenReturn(List.of(testMealDiary));
-        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory,testMealDiaryStory2));
-        when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(any(),any())).thenReturn(mealDiaryStoryView);
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory1,testMealDiaryStory2));
+
+        lenient().when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(testMember, testMealDiaryStory1))
+                .thenReturn(null);
+        lenient().when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(testMember, testMealDiaryStory2))
+                .thenReturn(mealDiaryStoryView);
 
         //when
         List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> response = mealDiaryStoryService.getAll(2L);
@@ -379,11 +391,11 @@ class MealDiaryStoryServiceImplTest {
                 .mealDiary(testMealDiary)
                 .build();
 
-        testMealDiaryStory2.setCreatedAt(LocalDateTime.now());
-        testMealDiaryStory.setCreatedAt(LocalDateTime.now().minusDays(1));
+        testMealDiaryStory.setCreatedAt(LocalDateTime.now());
+        testMealDiaryStory2.setCreatedAt(LocalDateTime.now().minusDays(1));
         System.out.println(testMealDiaryStory.getCreatedAt()+"   "+testMealDiaryStory2.getCreatedAt());
 
-        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember2));
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
         when(followingRepository.findFollowedUsersByUserId(any())).thenReturn(List.of(testMember));
         when(mealDiaryRepository.findByUserEntityIn(any())).thenReturn(List.of(testMealDiary));
         when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory,testMealDiaryStory2));
@@ -400,7 +412,14 @@ class MealDiaryStoryServiceImplTest {
 
     @Test
     @DisplayName("작성일시보다, 조회 여부가 우선시 조회된다")
-    public void title(){
+    public void getAll_success_createdAt_viewed(){
+        //given
+        testMealDiaryStory = MealDiaryStory.builder()
+                .id(1L)
+                .name(testMember.getNickname())
+                .mealDiary(testMealDiary)
+                .build();
+
         MealDiaryStory testMealDiaryStory2 = MealDiaryStory.builder()
                 .id(2L)
                 .name(testMember.getNickname())
@@ -409,12 +428,25 @@ class MealDiaryStoryServiceImplTest {
 
         testMealDiaryStory2.setCreatedAt(LocalDateTime.now().minusDays(1));
         testMealDiaryStory.setCreatedAt(LocalDateTime.now());
+
+        MealDiaryStoryView mealDiaryStoryView = MealDiaryStoryView.builder()
+                .id(1L)
+                .isViewed(true)
+                .mealDiaryStory(testMealDiaryStory2)
+                .userEntity(testMember)
+                .build();
+
         System.out.println(testMealDiaryStory.getCreatedAt()+"   "+testMealDiaryStory2.getCreatedAt());
 
         when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember2));
         when(followingRepository.findFollowedUsersByUserId(any())).thenReturn(List.of(testMember));
         when(mealDiaryRepository.findByUserEntityIn(any())).thenReturn(List.of(testMealDiary));
         when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory,testMealDiaryStory2));
+
+        lenient().when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(testMember, testMealDiaryStory2))
+                .thenReturn(mealDiaryStoryView);
+        lenient().when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(testMember, testMealDiaryStory))
+                .thenReturn(null);
 
         //when
         List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> response = mealDiaryStoryService.getAll(2L);

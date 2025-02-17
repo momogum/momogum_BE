@@ -19,7 +19,7 @@ public class ViewMealDiaryConverter {
 //        .toList()) 밥일기 이미지 구현되면 수정하겠습니다.
                 .userImageURL(mealDiary.getUserEntity().getProfileImage() != null
                         ? mealDiary.getUserEntity().getProfileImage().getImageLink()
-                        : "default-profile.jpg")
+                        : "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/basic_profile/DEFAULT_IMAGE.webp")
                 .foodCategory(mealDiary.getFoodCategory())
                 .keyWord(mealDiary.getMealDiaryKeywords().stream()
                         .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())
@@ -36,7 +36,7 @@ public class ViewMealDiaryConverter {
 //        .toList())
                 .userImageURL(bookmark.getMealDiary().getUserEntity().getProfileImage() != null
                         ? bookmark.getMealDiary().getUserEntity().getProfileImage().getImageLink()
-                        : "default-profile.jpg")
+                        : "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/basic_profile/DEFAULT_IMAGE.webp")
                 .foodCategory(bookmark.getMealDiary().getFoodCategory())
                 .keyWord(bookmark.getMealDiary().getMealDiaryKeywords().stream()
                         .map(mealDiaryKeyword -> mealDiaryKeyword.getKeyword().getKeyword())

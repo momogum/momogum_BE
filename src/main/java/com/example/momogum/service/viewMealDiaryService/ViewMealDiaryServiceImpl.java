@@ -33,15 +33,15 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
     private final RedisRepository redisRepository;
     private final MealDiaryRepository mealDiaryRepository;
 
-    private static final int TTL_MINUTES = 5;
+    private static final int TTL_MINUTES = 1;
 
     /**
      * 또 올래요 조회 로직
      */
     @Override
-    public List<MainViewMealDiaryResponse> getMealDiaryIsRevisitedByLikesCount(Long userId, Integer page) {
+    public List<MainViewMealDiaryResponse> getMealDiaryIsRevisitedByLikesCount(Long userId) {
 
-        Pageable pageable = PageRequest.of(page, 6);
+        Pageable pageable = PageRequest.of(0, 6);
 
         String redisKey = userId.toString();
         Set<Long> viewedPosts = redisRepository.getViewedPosts(redisKey);
@@ -56,9 +56,9 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
      * 음식 카테고리에 따른 조회 로직
      */
     @Override
-    public List<MainViewMealDiaryResponse> getMealDiaryByFoodCategory(Long userId, Integer page, FoodCategory foodCategory) {
+    public List<MainViewMealDiaryResponse> getMealDiaryByFoodCategory(Long userId, FoodCategory foodCategory) {
 
-        Pageable pageable = PageRequest.of(page, 6);
+        Pageable pageable = PageRequest.of(0, 6);
 
         String redisKey = userId.toString();
         Set<Long> viewedPosts = redisRepository.getViewedPosts(redisKey);

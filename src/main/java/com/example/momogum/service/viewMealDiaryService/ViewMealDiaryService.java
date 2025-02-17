@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ViewMealDiaryService {
 
-    List<MainViewMealDiaryResponse> getMealDiaryIsRevisitedByLikesCount(Long userId, Integer page);
+    List<MainViewMealDiaryResponse> getMealDiaryIsRevisitedByLikesCount(Long userId);
 
-    List<MainViewMealDiaryResponse> getMealDiaryByFoodCategory(Long userId, Integer page ,FoodCategory foodCategory);
+    List<MainViewMealDiaryResponse> getMealDiaryByFoodCategory(Long userId ,FoodCategory foodCategory);
 
 
 }

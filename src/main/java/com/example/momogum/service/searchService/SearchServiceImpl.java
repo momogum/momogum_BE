@@ -110,7 +110,7 @@ public class SearchServiceImpl implements SearchService {
 
 
         // 검색 및 슬라이스 반환
-        Slice<MealDiary> mealDiaries = mealDiaryRepository.searchByKeyword(
+        Slice<Object[]> mealDiaries = mealDiaryRepository.searchByKeyword(
                 request, requestWithoutSpaces, partialRequest, splitKeywords
         );
 
@@ -119,7 +119,21 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return mealDiaries.getContent().stream()
-                .map(mealDiary -> SearchConverter.toPostSearchResponseDTO(mealDiary, request, splitKeywords))
+                .map(mealDiary -> {
+                    MealDiary findMealDiary = (MealDiary) mealDiary[0];
+                    String selectedKeyword = (String) mealDiary[1];
+
+                    return SearchDTO.PostSearchResponseDTO.builder()
+                            .mealDiaryId(findMealDiary.getId())
+                            .foodImageURL(findMealDiary.getMealDiaryImages().stream()
+                                    .findFirst()
+                                    .map(MealDiaryImage::getImageLink)
+                                    .orElse(null))
+                            .userImageURL(findMealDiary.getUserEntity().getProfileImage().getImageLink())
+                            .foodName(selectedKeyword)  // 가장 적합한 키워드 반환
+                            .isRevisit(findMealDiary.getIsRevisit())
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
 

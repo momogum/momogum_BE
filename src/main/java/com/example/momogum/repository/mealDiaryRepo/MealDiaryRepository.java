@@ -35,15 +35,21 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
     List<MealDiary> findByIdIn(List<Long> ids);
 
 
-    @Query("SELECT DISTINCT md FROM MealDiary md " +
+    @Query("SELECT md, k.keyword FROM MealDiary md " +
             "JOIN md.mealDiaryKeywords mk " +
             "JOIN mk.keyword k " +
             "WHERE LOWER(k.keyword) = LOWER(:fullKeyword) " +
             "   OR LOWER(k.keyword) = LOWER(:noSpaceKeyword) " +
             "   OR LOWER(k.keyword) LIKE LOWER(:partialKeyword) " +
             "   OR k.keyword IN (:splitKeywords) " +
-            "ORDER BY mk.id ASC")
-    Slice<MealDiary> searchByKeyword(
+            "AND mk.id = (SELECT MIN(mk2.id) FROM MealDiaryKeyword mk2 WHERE mk2.mealDiary = md) " +
+            "ORDER BY CASE " +
+            "   WHEN LOWER(k.keyword) = LOWER(:fullKeyword) THEN 1 " +
+            "   WHEN LOWER(k.keyword) = LOWER(:noSpaceKeyword) THEN 2 " +
+            "   WHEN LOWER(k.keyword) LIKE LOWER(:partialKeyword) THEN 3 " +
+            "   ELSE 4 " +
+            "END")
+    Slice<Object[]> searchByKeyword(
             @Param("fullKeyword") String fullKeyword,
             @Param("noSpaceKeyword") String noSpaceKeyword,
             @Param("partialKeyword") String partialKeyword,

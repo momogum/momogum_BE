@@ -2,6 +2,7 @@ package com.example.momogum.service;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -41,12 +43,20 @@ public class UserService {
         }
 
         // 2️⃣ Redis에서 userId 가져오기 (성능 최적화)
-        String redisUserId = (String) redisTemplate.opsForValue().get(token);
-        if (redisUserId != null) {
-            return Long.parseLong(redisUserId);
+        Object redisUserIdObj = redisTemplate.opsForValue().get(token);
+        if (redisUserIdObj != null) {
+            return Long.parseLong(String.valueOf(redisUserIdObj)); // 안전한 형변환 방식으로 수정
         }
 
         // 3️⃣ Redis에 없으면, JWT에서 userId 추출
         return jwtUtil.getUserIdFromToken(token);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        UserEntity user = userEntityRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+
+        userEntityRepository.delete(user); // ✅ 유저 정보 삭제
     }
 }

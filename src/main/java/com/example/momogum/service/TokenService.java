@@ -99,7 +99,7 @@ public class TokenService {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + kakaoAccessToken);
-
+        log.info("카카오 액세스 토큰: {}", kakaoAccessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
@@ -111,6 +111,8 @@ public class TokenService {
             );
 
             log.info("카카오 API 호출 성공 - 상태 코드: {}", response.getStatusCode());
+            log.info("카카오 API 응답: {}", response.getBody());  // 응답 전체 로그 출력
+
             return response.getBody();
         } catch (HttpClientErrorException e) {
             log.error("카카오 API 호출 실패 - 상태 코드: {}", e.getStatusCode());
@@ -158,5 +160,18 @@ public class TokenService {
     // 유저 ID로 유저 조회
     public Optional<UserEntity> findUserById(Long userId) {
         return userEntityRepository.findById(userId);
+    }
+
+    // 유저 ID 기반 토큰 삭제
+    public void deleteTokensByUserId(Long userId) {
+        String accessToken = (String) redisTemplate.opsForValue().get("access:" + userId);
+        String refreshToken = (String) redisTemplate.opsForValue().get("refresh:" + userId);
+
+        if (accessToken != null) {
+            redisTemplate.delete(accessToken);
+        }
+        if (refreshToken != null) {
+            redisTemplate.delete("refresh:" + userId);
+        }
     }
 }

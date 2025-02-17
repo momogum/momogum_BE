@@ -36,7 +36,7 @@ public class FollowController {
 
   @Operation(summary = "팔로우 추가 토글 API", description = "팔로우 등록 API 입니다.<br>"
       +"경로 변수(`userId`, `targetUserId`)를 통해 요청하시면 됩니다.<br>"
-      +"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우")
+      +"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우됩니다.")
   @PostMapping("{userId}/follow/{targetUserId}/toggle")
   public ApiResponse<String> toggleFollow(
       @PathVariable Long userId, @PathVariable Long targetUserId // 팔로우 대상
@@ -50,7 +50,9 @@ public class FollowController {
    */
   //FIXME : 헤더보다 PathVariable 사용
 
-  @Operation(summary = "팔로워 삭제 토글 API", description = "팔로워 삭제 API입니다. 헤더에 현재 로그인한 사용자 ID를 담아서 요청하시면 됩니다.<br>"
+  @Operation(summary = "팔로워 삭제 토글 API", description = "팔로워 삭제 API 입니다.<br>\"\n"
+      + "      +\"경로 변수(`userId`, `followerId`)를 통해 요청하시면 됩니다.<br>\"\n"
+      + "      +\"클릭 시에 팔로워를 삭제합니다."
     +"바디에 삭제할 팔로워 ID를 넣어서 요청하시면 됩니다.")
   @DeleteMapping("{userId}/delete/{followerId}/toggle")
   public ApiResponse<String> removeFollower(

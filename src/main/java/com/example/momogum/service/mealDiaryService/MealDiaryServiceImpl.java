@@ -56,7 +56,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         extractedKeyword(request, newMealDiary);
 
         MealDiaryStory newMealDiaryStory = MealDiaryStory.builder()
-                .name(byId.getName())
+                .name(byId.getNickname())
                 .mealDiary(mealDiary)
                 .build();
 

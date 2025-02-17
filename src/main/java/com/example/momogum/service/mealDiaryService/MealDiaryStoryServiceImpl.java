@@ -66,13 +66,22 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
     @Override
     public List<MealDiaryStoryReadDTO.MealDiaryStoryReadAllResponseDTO> getAll(Long userId){
 
-        // 회원을 찾고
         UserEntity findUser = findUser(userId);
 
-        // 회원이 팔로우하는 회원이 작성한 스토리를 조회한다
         List<UserEntity> followedUsersByUserId = followingRepository.findFollowedUsersByUserId(userId);
+        if (followedUsersByUserId.isEmpty()) {
+            return List.of();
+        }
+
         List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(followedUsersByUserId);
+        if (findMealDiaries.isEmpty()) {
+            return List.of();
+        }
+
         List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
+        if (byMealDiaryIn.isEmpty()) {
+            return List.of();
+        }
 
         return byMealDiaryIn.stream().map(mealDiaryStory -> {
             // 스토리들을 하나씩 조회하며 DTO를 만들고 반환한다
@@ -114,23 +123,34 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
         UserEntity findUser = findUser(userId);
 
         List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
-
         if (byUserEntity.isEmpty()) {
-            throw new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND);
+            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
         }
-        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
-        MealDiaryStory mealDiaryStory = byMealDiaryIn != null && !byMealDiaryIn.isEmpty() ? byMealDiaryIn.get(0) : null;
 
-        Long mealDiaryStoryId = mealDiaryStory != null ? mealDiaryStory.getId() : null;
-        String imageLink = mealDiaryStory != null ? mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink() : null;
+        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
+        if (byMealDiaryIn.isEmpty()) {
+            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+        }
+
+        MealDiaryStory mealDiaryStory = byMealDiaryIn.get(0);
+        if (mealDiaryStory == null) {
+            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
+        }
+
+        Long mealDiaryStoryId = mealDiaryStory.getId();
+        String imageLink = mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink();
 
         MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
         boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
 
 
-        assert mealDiaryStory != null;
-        String profileImageLink = mealDiaryStory.getMealDiary().getUserEntity().getProfileImage() != null ?
-                mealDiaryStory.getMealDiary().getUserEntity().getProfileImage().getImageLink() : null;
+        // 기본이미지 로직이 구현되면 이 검증은 에러를 날리도록 수정될 예정 FIXME
+        String profileImageLink;
+        if (findUser.getProfileImage() == null){
+            profileImageLink = "default-image";
+        }else {
+            profileImageLink = findUser.getProfileImage().getImageLink();
+        }
 
 
         return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(findUser,imageLink,isViewed,mealDiaryStoryId,profileImageLink);

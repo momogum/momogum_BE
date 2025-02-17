@@ -1,8 +1,6 @@
 package com.example.momogum.web.dto.search;
 
-import com.example.momogum.domain.common.enums.FoodCategory;
 import com.example.momogum.domain.common.enums.IsRevisit;
-import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +34,12 @@ public class SearchDTO {
 
         @Schema(description = "검색 결과 중 사용자가 팔로우한 사람아 검색결과 대상을 팔로우 한 수")
         private Integer searchFollowCount;
+
+        @Schema(description = "해당 사람 스토리 여부")
+        private Boolean hasStory;
+
+        @Schema(description = "스토리 확인 여부")
+        private Boolean hasViewedStory;
 
     }
 

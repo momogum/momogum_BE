@@ -32,7 +32,7 @@ public class SearchServiceImpl implements SearchService {
     private final UserEntityRepository userEntityRepository;
     private final MealDiaryRepository mealDiaryRepository;
     private final FollowerRepository followerRepository;
-    private final FollowingRepository followingRepository;
+
 
     @Override
     public List<SearchDTO.AccountSearchResponseDTO> getAccountSearch(String request, Long currentUserId) {
@@ -69,7 +69,8 @@ public class SearchServiceImpl implements SearchService {
                     return SearchConverter.toAccountSearchResponseDTO(
                             user,
                             commonFollowNames,
-                            commonFollowNames.size()
+                            commonFollowNames.size(),
+
                     );
                 })
                 .collect(Collectors.toList());

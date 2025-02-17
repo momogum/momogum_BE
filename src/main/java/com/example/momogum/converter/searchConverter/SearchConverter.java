@@ -5,6 +5,7 @@ import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.domain.*;
 import com.example.momogum.web.dto.search.SearchDTO;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class SearchConverter {
                 .build();
     }
 
-    public static SearchDTO.AccountSearchResponseDTO toAccountSearchResponseDTO(UserEntity user, List<String> followNames, Integer count) {
+    public static SearchDTO.AccountSearchResponseDTO toAccountSearchResponseDTO(UserEntity user, List<String> followNames, Integer count, Boolean hasStory, Boolean hasViewedStory) {
 
         return SearchDTO.AccountSearchResponseDTO.builder()
                 .userId(user.getId())
@@ -42,6 +43,8 @@ public class SearchConverter {
                         .orElseThrow(() -> new ImageHandler(ErrorStatus.PROFILE_IMAGE_NOT_FOUND)))
                 .searchFollowName(followNames)
                 .searchFollowCount(count)
+                .hasStory(hasStory)
+                .hasViewedStory(hasViewedStory)
                 .build();
     }
 

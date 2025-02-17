@@ -6,6 +6,7 @@ import com.example.momogum.converter.appointmentConverter.AppointmentInviteConve
 import com.example.momogum.domain.Follower;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
+import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
@@ -173,6 +174,33 @@ class AppointmentInviteServiceTest {
         // Batch Insert -> saveAll()이 1번 호출되어야 함
         verify(appointmentInviteRepository, times(1)).saveAll(anyList());
     }
+
+    /**
+     * 초대 상태 업데이트 테스트
+     */
+    @DisplayName("초대 상태 업데이트 테스트 (PENDING → ACCEPTED)")
+    @Test
+    void updateInvitationStatus_SuccessTest() {
+
+        //Given - 기존 초대 목록을 'PENDING' 상태로 설정
+        List<AppointmentInvitation> invitations = List.of(
+                AppointmentInvitation.builder().appointment(appointment).userEntity(user1).status(InvitationStatus.PENDING).build(),
+                AppointmentInvitation.builder().appointment(appointment).userEntity(user1).status(InvitationStatus.PENDING).build()
+        );
+
+        when(appointmentInviteRepository.findByAppointmentId(anyLong())).thenReturn(invitations);
+
+        //When
+        appointmentInviteService.updateInvitationStatus(appointment.getId(), InvitationStatus.ACCEPTED);
+
+        //Then
+        invitations.forEach(invite -> assertEquals(InvitationStatus.ACCEPTED, invite.getStatus()));
+
+        //검증
+        verify(appointmentInviteRepository, times(1)).saveAll(invitations);
+
+    }
+
 
     @DisplayName("inviteFriends 테스트 - 이미 초대된 사용자는 제외")
     @Test

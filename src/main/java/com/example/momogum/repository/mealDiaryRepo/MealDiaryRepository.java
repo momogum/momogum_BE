@@ -45,7 +45,7 @@ public interface MealDiaryRepository extends JpaRepository<MealDiary,Long> {
             "WHEN LOWER(k.keyword) = LOWER(:fullKeyword) THEN 1 " +
             "WHEN LOWER(k.keyword) = LOWER(:noSpaceKeyword) THEN 2 " +
             "ELSE 3 END")
-    Slice<MealDiary> searchByKeyword(
+    Slice<Object[]> searchByKeyword(
             @Param("fullKeyword") String fullKeyword,
             @Param("noSpaceKeyword") String noSpaceKeyword,
             @Param("partialKeyword") String partialKeyword

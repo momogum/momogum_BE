@@ -45,12 +45,9 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   @Override
   @Transactional(readOnly = true)
   public UserDTO.FullProfileDTO getTargetProfile(Long currentUserId, Long targetUserId) {
-    UserEntity currentUser = getCurrentUser(currentUserId);
     UserEntity targetUser = getTargetUser(targetUserId);
 
-    boolean isFollowing = followService.isMutualFollow(currentUser, targetUser);
-
-    return TargetProfileConverter.toFullProfileDTO(targetUser, getTargetMealDiaries(currentUserId, targetUserId), isFollowing);
+    return TargetProfileConverter.toFullProfileDTO(targetUser, getTargetMealDiaries(currentUserId, targetUserId));
   }
 
   /**
@@ -89,15 +86,10 @@ public class TargetProfileServiceImpl implements TargetProfileService {
    */
   @Override
   @Transactional(readOnly = true)
-  public List<FollowDTO.FollowingResponseDTO> getTargetFollowings(Long currentUserId, Long targetUserId) {
+  public List<FollowDTO.FollowingResponseDTO> getTargetFollowings(Long targetUserId) {
     UserEntity targetUser = getTargetUser(targetUserId);
-    UserEntity currentUser = getCurrentUser(currentUserId);
-
     return followingRepository.findByUserId(targetUserId).stream()
-        .map(following -> TargetFollowConverter.toFollowingResponseDTO(
-            following.getFollowing(),
-            followService.isMutualFollow(currentUser, following.getFollowing())
-        ))
+        .map(following -> TargetFollowConverter.toFollowingResponseDTO(following.getFollowing()))
         .collect(Collectors.toList());
   }
 
@@ -106,15 +98,10 @@ public class TargetProfileServiceImpl implements TargetProfileService {
    */
   @Override
   @Transactional(readOnly = true)
-  public List<FollowDTO.FollowerResponseDTO> getTargetFollowers(Long currentUserId, Long targetUserId) {
+  public List<FollowDTO.FollowerResponseDTO> getTargetFollowers(Long targetUserId) {
     UserEntity targetUser = getTargetUser(targetUserId);
-    UserEntity currentUser = getCurrentUser(currentUserId);
-
     return followerRepository.findByUserId(targetUserId).stream()
-        .map(follower -> TargetFollowConverter.toFollowerResponseDTO(
-            follower.getFollower(),
-            followService.isMutualFollow(currentUser, follower.getFollower())
-        ))
+        .map(follower -> TargetFollowConverter.toFollowerResponseDTO(follower.getFollower()))
         .collect(Collectors.toList());
   }
 

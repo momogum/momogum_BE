@@ -86,7 +86,7 @@ public class TargetProfileController {
       @RequestHeader("X-User-Id") Long currentUserId,
       @PathVariable Long targetUserId
   ) {
-    List<FollowDTO.FollowingResponseDTO> followingList = targetProfileServiceImpl.getTargetFollowings(currentUserId, targetUserId);
+    List<FollowDTO.FollowingResponseDTO> followingList = targetProfileServiceImpl.getTargetFollowings(targetUserId);
     return ApiResponse.onSuccess(followingList);
   }
 
@@ -99,7 +99,7 @@ public class TargetProfileController {
       @RequestHeader("X-User-Id") Long currentUserId,
       @PathVariable Long targetUserId
   ) {
-    List<FollowDTO.FollowerResponseDTO> followerList = targetProfileServiceImpl.getTargetFollowers(currentUserId, targetUserId);
+    List<FollowDTO.FollowerResponseDTO> followerList = targetProfileServiceImpl.getTargetFollowers(targetUserId);
     return ApiResponse.onSuccess(followerList);
   }
 

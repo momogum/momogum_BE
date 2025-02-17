@@ -34,14 +34,14 @@ public class FollowController {
    */
   //FIXME : Header보다 PathVariable 사용해서 작성
 
-  @Operation(summary = "팔로우 추가 토글 API", description = "팔로우 등록 API 입니다. 헤더에 현재 로그인한 사용자 ID를 담아서 요청하시면 됩니다.<br>"
-      +"바디에 팔로우할 대상 ID를 넣어서 요청하시면 됩니다.<br>"+"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우")
-  @PostMapping("/FollowToggle")
+  @Operation(summary = "팔로우 추가 토글 API", description = "팔로우 등록 API 입니다.<br>"
+      +"경로 변수(`userId`, `targetUserId`)를 통해 요청하시면 됩니다.<br>"
+      +"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우")
+  @PostMapping("{userId}/follow/{targetUserId}/toggle")
   public ApiResponse<String> toggleFollow(
-      @RequestHeader("X-User-Id") Long currentUserId, // 현재 로그인한 사용자 ID
-      @RequestBody FollowDTO.ToggleFollowRequest request // 팔로우 대상 ID를 포함한 요청 바디
+      @PathVariable Long userId, @PathVariable Long targetUserId // 팔로우 대상
   ) {
-    followService.toggleFollowUser(currentUserId, request.getTargetUserId());
+    followService.toggleFollowUser(userId, targetUserId);
     return ApiResponse.onSuccess("팔로우 상태가 변경되었습니다.");
   }
 
@@ -52,12 +52,11 @@ public class FollowController {
 
   @Operation(summary = "팔로워 삭제 토글 API", description = "팔로워 삭제 API입니다. 헤더에 현재 로그인한 사용자 ID를 담아서 요청하시면 됩니다.<br>"
     +"바디에 삭제할 팔로워 ID를 넣어서 요청하시면 됩니다.")
-  @DeleteMapping("/FollowingToggle")
+  @DeleteMapping("{userId}/delete/{followerId}/toggle")
   public ApiResponse<String> removeFollower(
-      @RequestHeader("X-User-Id") Long currentUserId,
-      @RequestBody FollowDTO.removeFollower request
+      @PathVariable Long userId, @PathVariable Long followerId // 삭제할 팔로워
   ){
-    followService.removeFollower(currentUserId, request.getFollowUserId());
+    followService.removeFollower(userId, followerId);
     return ApiResponse.onSuccess("팔로워가 성공적으로 삭제되었습니다.");
   }
 

@@ -5,8 +5,10 @@ import com.example.momogum.domain.UserEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface FollowingRepository extends JpaRepository<Following, Long> {
 
@@ -29,4 +31,10 @@ public interface FollowingRepository extends JpaRepository<Following, Long> {
   @Query("SELECT f FROM Following f WHERE f.user.id = :userId AND (LOWER(f.following.nickname) LIKE LOWER(CONCAT('%', :query, '%')) " +
       "OR LOWER(f.following.name) LIKE LOWER(CONCAT('%', :query, '%')))")
   List<Following> searchFollowingsByQuery(@Param("userId") Long userId, @Param("query") String query);
+
+  // 팔로우 관계 삭제
+  @Transactional
+  @Modifying
+  @Query("DELETE FROM Following f WHERE f.user = :user AND f.following = :following")
+  void deleteByUserAndFollowing(@Param("user") UserEntity user, @Param("following") UserEntity following);
 }

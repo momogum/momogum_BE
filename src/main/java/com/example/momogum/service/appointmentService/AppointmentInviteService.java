@@ -146,4 +146,13 @@ public class AppointmentInviteService {
             throw new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST);
         }
     }
+
+    public void updateInvitationStatus(Long appointmentId, InvitationStatus updateStatus) {
+
+        List<AppointmentInvitation> invitations = appointmentInviteRepository.findByAppointmentId(appointmentId);
+
+        invitations.forEach(invitation -> invitation.updateStatus(updateStatus));
+
+        appointmentInviteRepository.saveAll(invitations);
+    }
 }

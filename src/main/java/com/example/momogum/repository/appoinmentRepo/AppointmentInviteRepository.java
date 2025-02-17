@@ -14,4 +14,5 @@ public interface AppointmentInviteRepository extends JpaRepository<AppointmentIn
 
     List<AppointmentInvitation> findByAppointmentId(Long appointmentId);
 
+
 }

@@ -49,4 +49,7 @@ public class AppointmentInvitation extends BaseEntity {
     }
 
 
+    public void updateStatus(InvitationStatus updateStatus) {
+        this.status = updateStatus;
+    }
 }

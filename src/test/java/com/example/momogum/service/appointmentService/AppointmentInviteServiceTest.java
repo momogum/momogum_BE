@@ -185,7 +185,7 @@ class AppointmentInviteServiceTest {
         //Given - 기존 초대 목록을 'PENDING' 상태로 설정
         List<AppointmentInvitation> invitations = List.of(
                 AppointmentInvitation.builder().appointment(appointment).userEntity(user1).status(InvitationStatus.PENDING).build(),
-                AppointmentInvitation.builder().appointment(appointment).userEntity(user1).status(InvitationStatus.PENDING).build()
+                AppointmentInvitation.builder().appointment(appointment).userEntity(user2).status(InvitationStatus.PENDING).build()
         );
 
         when(appointmentInviteRepository.findByAppointmentId(anyLong())).thenReturn(invitations);

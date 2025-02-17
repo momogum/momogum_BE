@@ -2,32 +2,33 @@ package com.example.momogum.converter.followConverter;
 
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.FollowDTO;
+import java.util.function.Function;
 
 public class FollowConverter {
 
   /**
    * 팔로우한 유저 정보를 FollowResponseDTO로 변환
    */
-  public static FollowDTO.FollowingResponseDTO toFollowingResponseDTO(UserEntity userEntity, Boolean isMutualFollow) {
+  public static FollowDTO.FollowingResponseDTO toFollowingResponseDTO(UserEntity userEntity) {
     return FollowDTO.FollowingResponseDTO.builder()
         .userId(userEntity.getId())
         .name(userEntity.getName())
         .nickname(userEntity.getNickname())
         .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
-        .isMutualFollow(isMutualFollow ? true : null)
         .build();
   }
 
   /**
-   * 팔로워 유저 정보를 FollowerResponseDTO로 변환
+   * 팔로워 유저 정보 FollowingResponseDTO로 변환
    */
-  public static FollowDTO.FollowerResponseDTO toFollowerResponseDTO(UserEntity userEntity, Boolean isMutualFollow) {
-    return FollowDTO.FollowerResponseDTO.builder()
-        .userId(userEntity.getId())
-        .name(userEntity.getName())
-        .nickname(userEntity.getNickname())
-        .profileImage(userEntity.getProfileImage() != null ? userEntity.getProfileImage().getImageLink() : null)
-        .isMutualFollow(isMutualFollow ? true : null)
-        .build();
-  }
+    public static FollowDTO.FollowerResponseDTO toFollowerResponseDTO(UserEntity userEntity) {
+      return  FollowDTO.FollowerResponseDTO.builder()
+          .userId(userEntity.getId())
+          .name(userEntity.getName())
+          .nickname(userEntity.getNickname())
+          .profileImage(userEntity.getProfileImage()!=null?userEntity.getProfileImage().getImageLink():null)
+          .build();
+      }
+
 }
+

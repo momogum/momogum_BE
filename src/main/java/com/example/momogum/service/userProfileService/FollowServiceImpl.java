@@ -149,8 +149,7 @@ public class FollowServiceImpl implements FollowService {
 
     return followingRepository.findByUserId(userId).stream()
         .map(following -> FollowConverter.toFollowingResponseDTO(
-            following.getFollowing(),
-            isMutualFollow(user, following.getFollowing())
+            following.getFollowing()
         ))
         .collect(Collectors.toList());
   }
@@ -165,8 +164,7 @@ public class FollowServiceImpl implements FollowService {
 
     return followerRepository.findByUserId(userId).stream()
         .map(follower -> FollowConverter.toFollowerResponseDTO(
-            follower.getFollower(),
-            isMutualFollow(user, follower.getFollower())
+            follower.getFollower()
         ))
         .collect(Collectors.toList());
   }
@@ -190,8 +188,7 @@ public class FollowServiceImpl implements FollowService {
     return followingRepository.searchFollowingsByQuery(userId, query)
         .stream()
         .map(following -> FollowConverter.toFollowingResponseDTO(
-            following.getFollowing(),
-            isMutualFollow(user, following.getFollowing())
+            following.getFollowing()
         ))
         .collect(Collectors.toList());
   }
@@ -206,8 +203,7 @@ public class FollowServiceImpl implements FollowService {
     return followerRepository.searchFollowersByQuery(userId, query)
         .stream()
         .map(follower -> FollowConverter.toFollowerResponseDTO(
-            follower.getFollower(),
-            isMutualFollow(user, follower.getFollower())
+            follower.getFollower()
         ))
         .collect(Collectors.toList());
   }

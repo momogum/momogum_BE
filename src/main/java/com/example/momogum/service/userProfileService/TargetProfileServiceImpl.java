@@ -45,11 +45,8 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   @Override
   @Transactional(readOnly = true)
   public UserDTO.FullProfileDTO getTargetProfile(Long currentUserId, Long targetUserId) {
-    UserEntity currentUser = userEntityRepository.findById(currentUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
-    UserEntity targetUser = userEntityRepository.findById(targetUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
+    UserEntity currentUser = getCurrentUser(currentUserId);
+    UserEntity targetUser = getTargetUser(targetUserId);
 
     boolean isFollowing = followService.isMutualFollow(currentUser, targetUser);
 
@@ -62,11 +59,9 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   @Override
   @Transactional(readOnly = true)
   public List<ViewMealDiaryResponse> getTargetMealDiaries(Long currentUserId, Long targetUserId) {
-    UserEntity targetUser = userEntityRepository.findById(targetUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
-
-    UserEntity currentUser = userEntityRepository.findById(currentUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    // 대상 사용자와 현재 사용자 조회 (필요 시 현재 사용자 정보가 사용되므로)
+    UserEntity targetUser = getTargetUser(targetUserId);
+    getCurrentUser(currentUserId);
 
     return mealDiaryRepository.findByUserEntity(targetUser).stream()
         .map(ViewMealDiaryConverter::toViewMealDiaryResponse)
@@ -79,11 +74,8 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   @Override
   @Transactional(readOnly = true)
   public List<ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long currentUserId, Long targetUserId) {
-    UserEntity targetUser = userEntityRepository.findById(targetUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
-
-    UserEntity currentUser = userEntityRepository.findById(currentUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    UserEntity targetUser = getTargetUser(targetUserId);
+    getCurrentUser(currentUserId);
 
     List<MealDiaryBookmark> bookmarks = mealDiaryBookmarkRepository.findByUserEntity(targetUser);
 
@@ -98,11 +90,8 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   @Override
   @Transactional(readOnly = true)
   public List<FollowDTO.FollowingResponseDTO> getTargetFollowings(Long currentUserId, Long targetUserId) {
-    UserEntity targetUser = userEntityRepository.findById(targetUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
-
-    UserEntity currentUser = userEntityRepository.findById(currentUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    UserEntity targetUser = getTargetUser(targetUserId);
+    UserEntity currentUser = getCurrentUser(currentUserId);
 
     return followingRepository.findByUserId(targetUserId).stream()
         .map(following -> TargetFollowConverter.toFollowingResponseDTO(
@@ -112,18 +101,14 @@ public class TargetProfileServiceImpl implements TargetProfileService {
         .collect(Collectors.toList());
   }
 
-
   /**
    * 상대 유저의 팔로워 목록 조회 (상대를 팔로우하는 사람들)
    */
   @Override
   @Transactional(readOnly = true)
   public List<FollowDTO.FollowerResponseDTO> getTargetFollowers(Long currentUserId, Long targetUserId) {
-    UserEntity targetUser = userEntityRepository.findById(targetUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
-
-    UserEntity currentUser = userEntityRepository.findById(currentUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    UserEntity targetUser = getTargetUser(targetUserId);
+    UserEntity currentUser = getCurrentUser(currentUserId);
 
     return followerRepository.findByUserId(targetUserId).stream()
         .map(follower -> TargetFollowConverter.toFollowerResponseDTO(
@@ -134,23 +119,13 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   }
 
   /**
-   * 맞팔 여부 확인 메서드
-   */
-  public Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
-    return followerRepository.existsByUserAndFollower(targetUser, currentUser)
-        && followerRepository.existsByUserAndFollower(currentUser, targetUser);
-  }
-
-  /**
    * 상대 유저 신고하기 메서드
    */
-
   @Override
   @Transactional
   public UserReportDTO.UserReportResponseDTO report(Long reporterId, UserReportDTO.UserReportRequestDTO request) {
-
-    UserEntity reporter = findReporter(reporterId);
-    UserEntity reportedUser = findUser(request.getReportedUserId());
+    UserEntity reporter = getCurrentUser(reporterId); // 신고자 조회
+    UserEntity reportedUser = getCurrentUser(request.getReportedUserId()); // 신고 대상 조회 (필요에 따라 대상용 헬퍼 메서드를 사용해도 됩니다)
 
     Report newReport = UserReportConverter.toUserReport(reporter, reportedUser);
 
@@ -159,15 +134,16 @@ public class TargetProfileServiceImpl implements TargetProfileService {
     return UserReportConverter.toUserReportResponseDTO(reportedUser);
   }
 
-  // 회원 검색 메서드
-  private UserEntity findUser(Long userId) {
+  // 대상 사용자 조회 (프로필 조회 시 대상 사용자에 대해 별도의 에러 메시지 사용)
+  private UserEntity getTargetUser(Long userId) {
     return userEntityRepository.findById(userId)
-        .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        .orElseThrow(() -> new GeneralException(ErrorStatus.USER_PROFILE_NOT_FOUND));
   }
-  // 신고 회원 검색 메서드
-  private UserEntity findReporter(Long userId) {
+
+  // 현재 사용자 조회 (로그인 등 현재 사용자에 대한 에러 메시지)
+  private UserEntity getCurrentUser(Long userId) {
     return userEntityRepository.findById(userId)
-        .orElseThrow(()->new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
   }
 
 }

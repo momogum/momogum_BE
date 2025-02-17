@@ -110,6 +110,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         mealDiaryRepository.delete(mealDiary);
     }
 
+
     @Override
     public MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request){
 
@@ -126,6 +127,7 @@ public class MealDiaryServiceImpl implements MealDiaryService {
         return MealDiaryReportConverter.mealDiaryReportResponseDTO(mealDiary);
     }
 
+
     @Override
     public List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport(){
 
@@ -133,6 +135,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
         return MealDiaryReportConverter.toMealDiaryReportResponseDTOList(allReport);
     }
+
+
+    // 밥일기 수정 기능
 
 
 

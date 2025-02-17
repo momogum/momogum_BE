@@ -38,7 +38,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
   private final ProfileImageRepository profileImageRepository;
 
   private static final String DEFAULT_PROFILE_IMAGE_URL
-      = "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/user-profile-images/%E1%84%86%E1%85%A5%E1%84%86%E1%85%A5%E1%84%80%E1%85%B3%E1%86%B7.png";
+      = "https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/basic_profile/DEFAULT_IMAGE.webp";
 
   /**
    * 유저 생성시 프로필 이미지 기본 이미지로 추가 메서드

@@ -19,10 +19,4 @@ public interface FollowService {
 
   FollowDTO.FollowStatsDTO getFollowStats(Long userId);
 
-  Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser);
-
-  List<FollowDTO.FollowingResponseDTO> searchFollowingsByQuery(Long userId, String query);
-
-  List<FollowDTO.FollowerResponseDTO> searchFollowersByQuery(Long userId, String query);
-
 }

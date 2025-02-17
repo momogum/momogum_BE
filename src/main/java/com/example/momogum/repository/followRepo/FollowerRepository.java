@@ -7,8 +7,10 @@ import java.util.List;
 import com.example.momogum.web.dto.search.FollowStatusDTO;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface FollowerRepository extends JpaRepository<Follower, Long> {
 
@@ -42,5 +44,12 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
 
   @Query("SELECT f.follower.id FROM Follower f WHERE f.user.id = :currentUserId")
   List<Long> findFollowerIdsByUserId(@Param("currentUserId") Long currentUserId);
+
+
+  //팔로워 삭제
+  @Transactional
+  @Modifying
+  @Query("DELETE FROM Follower f WHERE f.user = :user AND f.follower = :follower")
+  void deleteByUserAndFollower(@Param("user") UserEntity user, @Param("follower") UserEntity follower);
 
 }

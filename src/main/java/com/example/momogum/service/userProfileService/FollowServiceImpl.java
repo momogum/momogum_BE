@@ -16,8 +16,10 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
@@ -25,83 +27,6 @@ public class FollowServiceImpl implements FollowService {
   private final FollowingRepository followingRepository;
   private final FollowerRepository followerRepository;
   private final UserEntityRepository userEntityRepository;
-
-  /**
-   * 팔로우(언팔로우) 토글 구현
-   */
-
-  @Override
-  @Transactional
-  public FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId) {
-    UserEntity follower = findUserById(currentUserId);
-    UserEntity target = findUserById(targetUserId);
-
-    boolean isFollowing = followingRepository.existsByUserAndFollowing(follower, target);
-
-    if (isFollowing) {
-      Following following = followingRepository.findByUserAndFollowing(follower, target)
-          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-      // 팔로잉 삭제
-      followingRepository.delete(following);
-
-      Follower followerEntity = followerRepository.findByUserAndFollower(target, follower)
-          .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-      // 팔로우 삭제
-      followerRepository.delete(followerEntity);
-    } else {
-      Following newFollowing = Following.builder()
-          .user(follower)
-          .following(target)
-          .build();
-      // 팔로잉 시작
-      followingRepository.save(newFollowing);
-
-      Follower newFollower = Follower.builder()
-          .user(target)
-          .follower(follower)
-          .build();
-      // 유저에 팔로우 저장
-      followerRepository.save(newFollower);
-    }
-
-    return getFollowStats(currentUserId);
-  }
-
-  /**
-   * 내 팔로워에서 삭제 토글 구현
-   */
-
-  @Override
-  @Transactional
-  public void removeFollower(Long currentUserId, Long followerId) {
-    UserEntity currentUser = userEntityRepository.findById(currentUserId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
-    UserEntity follower = userEntityRepository.findById(followerId)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
-    // 나의 팔로워 목록에서 특정 사용자가 존재하는지 확인
-    boolean isFollower = followerRepository.existsByUserAndFollower(currentUser, follower);
-
-    if (!isFollower) {
-      throw new GeneralException(ErrorStatus.TARGET_NOT_FOUND);
-    }
-
-    // 팔로워 삭제 (나의 팔로워 목록에서 제거)
-    Follower followerEntity = followerRepository.findByUserAndFollower(currentUser, follower)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-    followerRepository.delete(followerEntity);
-
-    // 상대방의 팔로잉 목록에서 나를 제거
-    Following followingEntity = followingRepository.findByUserAndFollowing(follower, currentUser)
-        .orElseThrow(() -> new GeneralException(ErrorStatus.TARGET_NOT_FOUND));
-    followingRepository.delete(followingEntity);
-
-    // 팔로워/팔로잉 수 감소
-    currentUser.minusFollowerCount();
-    follower.minusFollowingCount();
-  }
-
 
   /**
    * 현재 사용자가 특정 사용자를 팔로우하고 있는지 여부 반환
@@ -131,12 +56,86 @@ public class FollowServiceImpl implements FollowService {
   }
 
   /**
-   *  맞팔로우 확인 메서드
+   * 유저 조회 (userId 기반)
+   */
+  private UserEntity findUserById(Long userId) {
+    return userEntityRepository.findById(userId).orElseThrow(
+        () -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND)
+    );
+  }
+
+  /**
+   * 팔로워 관계 삭제 메서드
+   */
+  private void deleteFollowRelationship(UserEntity user, UserEntity target) {
+    if (followingRepository.existsByUserAndFollowing(user, target)) {
+      followingRepository.deleteByUserAndFollowing(user, target);
+      user.minusFollowingCount();
+    }
+
+    if (followerRepository.existsByUserAndFollower(target, user)) {
+      followerRepository.deleteByUserAndFollower(target, user);
+      target.minusFollowerCount();
+    }
+  }
+
+  /**
+   * 팔로우(언팔로우) 토글 구현
    */
 
-  public Boolean isMutualFollow(UserEntity currentUser, UserEntity targetUser) {
-    return followerRepository.existsByUserAndFollower(targetUser, currentUser)
-        && followerRepository.existsByUserAndFollower(currentUser, targetUser);
+  @Override
+  @Transactional
+  public FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId) {
+    UserEntity follower = findUserById(currentUserId);
+    UserEntity target = findUserById(targetUserId);
+
+    boolean isFollowing = followingRepository.existsByUserAndFollowing(follower, target);
+
+    if (isFollowing) {
+      // 언팔로우
+      followingRepository.deleteByUserAndFollowing(follower, target);
+      followerRepository.deleteByUserAndFollower(target, follower);
+
+      // 카운트 감소
+      follower.minusFollowingCount();
+      target.minusFollowerCount();
+    } else {
+      // 팔로우
+      if (!followingRepository.existsByUserAndFollowing(follower, target)) {
+        followingRepository.save(Following.builder().user(follower).following(target).build());
+        follower.addFollowingCount();
+      }
+
+      if (!followerRepository.existsByUserAndFollower(target, follower)) {
+        followerRepository.save(Follower.builder().user(target).follower(follower).build());
+        target.addFollowerCount();
+      }
+    }
+
+    return getFollowStats(currentUserId);
+  }
+
+  /**
+   * 내 팔로워에서 삭제 토글 구현
+   */
+
+  @Override
+  @Transactional
+  public void removeFollower(Long currentUserId, Long followerId) {
+    UserEntity currentUser = findUserById(currentUserId);
+    UserEntity follower = findUserById(followerId);
+
+    if (!followerRepository.existsByUserAndFollower(currentUser, follower)) {
+      throw new GeneralException(ErrorStatus.TARGET_NOT_FOUND);
+    }
+
+    // 팔로워 삭제
+    followerRepository.deleteByUserAndFollower(currentUser, follower);
+    followingRepository.deleteByUserAndFollowing(follower, currentUser);
+
+    // 카운트 감소
+    currentUser.minusFollowerCount();
+    follower.minusFollowingCount();
   }
 
   /**
@@ -163,45 +162,6 @@ public class FollowServiceImpl implements FollowService {
     UserEntity user = findUserById(userId);
 
     return followerRepository.findByUserId(userId).stream()
-        .map(follower -> FollowConverter.toFollowerResponseDTO(
-            follower.getFollower()
-        ))
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * 유저 조회 (userId 기반)
-   */
-  private UserEntity findUserById(Long userId) {
-    return userEntityRepository.findById(userId).orElseThrow(
-        () -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND)
-    );
-  }
-
-  /**
-   * 내가 팔로잉하는 유저 중에서 검색 (닉네임 또는 이름)
-   */
-  @Override
-  public List<FollowDTO.FollowingResponseDTO> searchFollowingsByQuery(Long userId, String query) {
-    UserEntity user = findUserById(userId);
-
-    return followingRepository.searchFollowingsByQuery(userId, query)
-        .stream()
-        .map(following -> FollowConverter.toFollowingResponseDTO(
-            following.getFollowing()
-        ))
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * 나를 팔로우한 유저 중에서 검색 (닉네임 또는 이름)
-   */
-  @Override
-  public List<FollowDTO.FollowerResponseDTO> searchFollowersByQuery(Long userId, String query) {
-    UserEntity user = findUserById(userId);
-
-    return followerRepository.searchFollowersByQuery(userId, query)
-        .stream()
         .map(follower -> FollowConverter.toFollowerResponseDTO(
             follower.getFollower()
         ))

@@ -15,9 +15,9 @@ public interface TargetProfileService {
 
   List<ViewMealDiaryResponse> getTargetBookmarkedMealDiaries(Long currentUserId, Long targetUserId);
 
-  List<FollowDTO.FollowingResponseDTO> getTargetFollowings(Long currentUserId, Long targetUserId);
+  List<FollowDTO.FollowingResponseDTO> getTargetFollowings(Long targetUserId);
 
-  List<FollowDTO.FollowerResponseDTO> getTargetFollowers(Long currentUserId, Long targetUserId);
+  List<FollowDTO.FollowerResponseDTO> getTargetFollowers(Long targetUserId);
 
   UserReportDTO.UserReportResponseDTO report(Long reporterId, UserReportDTO.UserReportRequestDTO request);
 }

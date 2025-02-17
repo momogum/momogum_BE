@@ -2,12 +2,13 @@ package com.example.momogum.service.searchService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.handler.SearchHandler;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.converter.searchConverter.SearchConverter;
 import com.example.momogum.domain.*;
 import com.example.momogum.repository.followRepo.FollowerRepository;
-import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryRepository;
+import com.example.momogum.repository.mealDiaryRepo.MealDiaryStoryViewRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.search.FollowStatusDTO;
 import com.example.momogum.web.dto.search.SearchDTO;
@@ -31,11 +32,13 @@ public class SearchServiceImpl implements SearchService {
     private final MealDiaryRepository mealDiaryRepository;
     private final FollowerRepository followerRepository;
     private final MealDiaryStoryRepository mealDiaryStoryRepository;
+    private final MealDiaryStoryViewRepository mealDiaryStoryViewRepository;
 
 
     @Override
     public List<SearchDTO.AccountSearchResponseDTO> getAccountSearch(String request, Long currentUserId) {
 
+        UserEntity currentUser = findUser(currentUserId);
         validateSearchRequest(request);
 
         String requestWithoutSpaces = request.replaceAll("\\s+", "");
@@ -62,20 +65,36 @@ public class SearchServiceImpl implements SearchService {
                         Collectors.mapping(FollowStatusDTO::getFollowerName, Collectors.toList())
                 ));
 
-        List<MealDiary> findMealDiaries = mealDiaryRepository.findByUserEntityIn(users);
-        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(findMealDiaries);
 
         return users.stream()
                 .map(user -> {
                     List<String> commonFollowNames = commonFollowMap.getOrDefault(user.getId(), Collections.emptyList());
+
+                    // 밥일기 검색
+                    List<MealDiary> userMealDiary = mealDiaryRepository.findByUserEntity(user);
+
+                    // 해당 밥일기 스토리 있는지 검색
+                    List<MealDiaryStory> userStory = mealDiaryStoryRepository.findByMealDiaryIn(userMealDiary);
+
+                    boolean hasStory = !userStory.isEmpty();
+
+                    List<MealDiaryStoryView> isViewedList = userStory.stream()
+                            .map(mealDiaryStory -> mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(currentUser,mealDiaryStory))
+                            .toList();
+
+                    boolean hasViewedStory = isViewedList.stream()
+                            .anyMatch(view -> view ==null || !view.isViewed());
+
+
                     return SearchConverter.toAccountSearchResponseDTO(
                             user,
                             commonFollowNames,
                             commonFollowNames.size(),
-                            Boolean.TRUE,
-                            Boolean.FALSE
+                            hasStory,
+                            hasViewedStory
 
                     );
+
                 })
                 .collect(Collectors.toList());
     }
@@ -134,8 +153,8 @@ public class SearchServiceImpl implements SearchService {
 
         // DTO 변환 및 반환
         return matchedUsers.stream()
-            .map(SearchConverter::toFollowerSearchResponseDTO)
-            .collect(Collectors.toList());
+                .map(SearchConverter::toFollowerSearchResponseDTO)
+                .collect(Collectors.toList());
     }
 
     // 팔로잉 목록 중 유저 검색 기능
@@ -160,8 +179,13 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return matchedUsers.stream()
-            .map(SearchConverter::toFollowingSearchResponseDTO)
-            .collect(Collectors.toList());
+                .map(SearchConverter::toFollowingSearchResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserEntity findUser(Long memberId) {
+        return userEntityRepository.findById(memberId)
+                .orElseThrow(() -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
 

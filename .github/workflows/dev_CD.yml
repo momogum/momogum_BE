@@ -32,8 +32,8 @@ jobs:
 
       - name: Make firebase_service_key.json
         run: |
-          cd ./src/main/resources/firebase
-          echo "${{ secrets.FIREBASE_SERVICE_KEY }}" > ./firebase_service_key.json
+          mkdir -p ./src/main/resources/firebase
+          echo '${{ secrets.FIREBASE_SERVICE_KEY }}' > ./src/main/resources/firebase/firebase_service_key.json
 
       - name: Build with Gradle
         run: |

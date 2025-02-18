@@ -93,6 +93,10 @@ public class FirebaseCloudMessageService {
     private String getAccessToken() throws IOException {
         String firebaseConfigPath = "firebase/firebase_service_key.json";
 
+        ClassPathResource resource = new ClassPathResource(firebaseConfigPath);
+        log.info("Firebase 설정 파일 존재 여부: " + resource.exists());
+        log.info("Firebase 설정 파일 경로: " + resource.getPath());
+
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));

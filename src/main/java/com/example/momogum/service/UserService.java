@@ -32,24 +32,10 @@ public class UserService {
         return exists;
     }
 
-    /**
-     * 요청에서 userId 가져오기 (Redis → 없으면 JWT 검증)
-     */
-    public Long getUserIdFromRequest(HttpServletRequest request) {
-        // 1️⃣ JWT 토큰을 HTTP 헤더에서 가져오기
-        String token = jwtUtil.resolveToken(request);
-        if (token == null) {
-            throw new GeneralException(ErrorStatus._UNAUTHORIZED);
-        }
-
-        // 2️⃣ Redis에서 userId 가져오기 (성능 최적화)
-        Object redisUserIdObj = redisTemplate.opsForValue().get(token);
-        if (redisUserIdObj != null) {
-            return Long.parseLong(String.valueOf(redisUserIdObj)); // 안전한 형변환 방식으로 수정
-        }
-
-        // 3️⃣ Redis에 없으면, JWT에서 userId 추출
-        return jwtUtil.getUserIdFromToken(token);
+    public Long validateUserId(Long userId) {
+        return userEntityRepository.findById(userId)
+                .map(UserEntity::getId)  // Optional 내부에서 ID 추출
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
     }
 
     @Transactional
@@ -57,6 +43,6 @@ public class UserService {
         UserEntity user = userEntityRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
-        userEntityRepository.delete(user); // ✅ 유저 정보 삭제
+        userEntityRepository.delete(user);
     }
 }

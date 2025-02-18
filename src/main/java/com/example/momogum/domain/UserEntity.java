@@ -60,6 +60,9 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String providerId; // SNS에서 발급한 고유 ID
 
+    // FCM 토큰
+    private String fcmToken;
+
     //유저와 팔로워,팔로우 관계 설정하기 위해서 추가하였습니다.
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Following> followings = new ArrayList<>(); // 내가 팔로우한 사람들

@@ -32,9 +32,10 @@ public class UserService {
         return exists;
     }
 
-    public Long getUserIdFromUserEntity(Long userId) {
+    public Long validateUserId(Long userId) {
         return userEntityRepository.findById(userId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND)).getId();
+                .map(UserEntity::getId)  // Optional 내부에서 ID 추출
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
     }
 
     @Transactional
@@ -42,6 +43,6 @@ public class UserService {
         UserEntity user = userEntityRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
-        userEntityRepository.delete(user); // ✅ 유저 정보 삭제
+        userEntityRepository.delete(user);
     }
 }

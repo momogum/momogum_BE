@@ -39,13 +39,12 @@ public class AppointmentInviteController {
     )
     @GetMapping("/{appointmentId}/invites")
     public ResponseEntity<List<AppointmentInviteResponseDTO>> getFriendsForInvitations(
-            @PathVariable Long appointmentId, @RequestParam Long userId
+            @PathVariable Long appointmentId,
+            @RequestParam Long userId
     ) {
-        Long findUserId = userService.getUserIdFromUserEntity(userId);
-        List<AppointmentInviteResponseDTO> invitations = appointmentInviteService.getFriendsForInvitation(appointmentId, findUserId);
-
+        Long validUserId = userService.validateUserId(userId);
+        List<AppointmentInviteResponseDTO> invitations = appointmentInviteService.getFriendsForInvitation(appointmentId, validUserId);
         return ResponseEntity.ok(invitations);
-
     }
 
     /**

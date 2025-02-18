@@ -5,6 +5,7 @@ import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -28,8 +29,7 @@ import java.util.List;
 @Slf4j
 public class FirebaseCloudMessageService {
 
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/" +
-            "momogum-d9bfb/messages:send";
+    private final String API_URL = "https://fcm.googleapis.com/v1/projects/momogum-d9bfb/messages:send";
     private final ObjectMapper objectMapper;
     private final UserEntityRepository userEntityRepository;
 
@@ -76,28 +76,19 @@ public class FirebaseCloudMessageService {
             System.out.println("FCM Success Response: " + responseBody);  // 성공 응답 로깅
         }
     }
-    private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
+    private String makeMessage(String token, String title, String body) throws JsonParseException, JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
-                .validateOnly(false)
                 .message(FcmMessage.Message.builder()
-                        .token(targetToken)
+                        .token(token)
                         .notification(FcmMessage.Notification.builder()
                                 .title(title)
                                 .body(body)
-                                .image(null)
-                                .build())
-                        .build())
-                .build();
+                                .build()
+                        ).build()).validateOnly(false).build();
 
-        // ObjectMapper 설정 추가
-        ObjectMapper mapper = new ObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        String jsonMessage = mapper.writeValueAsString(fcmMessage);
-        System.out.println("Generated FCM message: " + jsonMessage);  // 디버깅용
-        return jsonMessage;
+        return objectMapper.writeValueAsString(fcmMessage);
     }
+
 
     private String getAccessToken() throws IOException {
         String firebaseConfigPath = "firebase/firebase_service_key.json";

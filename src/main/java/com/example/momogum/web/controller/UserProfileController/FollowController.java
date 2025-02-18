@@ -98,7 +98,9 @@ public class FollowController {
   /**
    * 닉네임 또는 이름으로 팔로잉하는 유저 검색
    */
-  @Operation(summary = "닉네임 또는 이름으로 팔로잉 검색", description = "나를 팔로잉하는 유저의 닉네임 or 이름 검색")
+  @Operation(summary = "닉네임 또는 이름으로 팔로잉 검색", description = "팔로잉 검색 API 입니다.<br>"
+      +"경로 변수 `userId`와 RequestParam `query`를 통해 요청하시면 됩니다.<br>"
+      +"쿼리에는 검색할 사용자 name or nickname을 입력하시면 됩니다.")
   @GetMapping("/{userId}/search/followings/name")
   public ApiResponse<List<SearchDTO.FollowingSearchResponseDTO>> getFollowigsSearch(
       //현재 사용자 아이디
@@ -113,7 +115,9 @@ public class FollowController {
   /**
    * 닉네임 또는 이름으로 나를 팔로우한 유저 검색
    */
-  @Operation(summary = "닉네임 또는 이름으로 팔로워 검색", description = "내가 팔로우하는 유저의 닉네임 or 이름 검색")
+  @Operation(summary = "닉네임 또는 이름으로 팔로워 검색", description = "팔로워 검색 API 입니다.<br>"
+      +"경로 변수 `userId`와 RequestParam `query`를 통해 요청하시면 됩니다.<br>"
+      +"쿼리에는 검색할 사용자 name or nickname을 입력하시면 됩니다.")
   @GetMapping("/{userId}/search/followers/name")
   public ApiResponse<List<SearchDTO.FollowerSearchResponseDTO>> getFollowersSearch(
       @PathVariable Long userId,

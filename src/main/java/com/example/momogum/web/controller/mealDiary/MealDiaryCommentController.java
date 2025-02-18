@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/meal-diaries/comments")
 @Tag(name = "밥일기 댓글 API")
@@ -22,7 +24,7 @@ public class MealDiaryCommentController {
     @Operation(summary = "밥일기 댓글 생성 API")
     @PostMapping("")
     public ApiResponse<MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO> create(
-            @RequestBody MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request){
+            @RequestBody MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException {
 
         MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO result = mealDiaryCommentService.create(request);
 

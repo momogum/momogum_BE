@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,7 @@ public class MealDiaryLikeController {
     public ApiResponse<String> toggle(
             @PathVariable Long userId,
             @PathVariable Long mealDiaryId
-    ){
+    ) throws IOException {
 
         mealDiaryLikeService.toggle(userId,mealDiaryId);
 

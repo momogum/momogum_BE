@@ -10,9 +10,12 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowerResponseDTO;
 import jakarta.transaction.Transactional;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ public class FollowServiceImpl implements FollowService {
   private final FollowingRepository followingRepository;
   private final FollowerRepository followerRepository;
   private final UserEntityRepository userEntityRepository;
+  private final FirebaseCloudMessageUtil firebaseCloudMessageUtil;
 
   /**
    * 현재 사용자가 특정 사용자를 팔로우하고 있는지 여부 반환
@@ -85,7 +89,7 @@ public class FollowServiceImpl implements FollowService {
 
   @Override
   @Transactional
-  public FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId) {
+  public FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId) throws IOException {
     UserEntity follower = findUserById(currentUserId);
     UserEntity target = findUserById(targetUserId);
 
@@ -111,6 +115,10 @@ public class FollowServiceImpl implements FollowService {
         target.addFollowerCount();
       }
     }
+
+    String title = target.getNickname();
+    String body = follower.getName()+("(@")+follower.getNickname()+(")")+"님이 회원님을 팔로우하기 시작했습니다.";
+    firebaseCloudMessageUtil.sendMessageTo(targetUserId,title,body);
 
     return getFollowStats(currentUserId);
   }

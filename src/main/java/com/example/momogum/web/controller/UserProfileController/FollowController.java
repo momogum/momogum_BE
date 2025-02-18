@@ -8,6 +8,8 @@ import com.example.momogum.web.dto.FollowDTO.FollowingResponseDTO;
 import com.example.momogum.web.dto.search.SearchDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +42,7 @@ public class FollowController {
   @PostMapping("{userId}/follow/{targetUserId}/toggle")
   public ApiResponse<String> toggleFollow(
       @PathVariable Long userId, @PathVariable Long targetUserId // 팔로우 대상
-  ) {
+  ) throws IOException {
     followService.toggleFollowUser(userId, targetUserId);
     return ApiResponse.onSuccess("팔로우 상태가 변경되었습니다.");
   }

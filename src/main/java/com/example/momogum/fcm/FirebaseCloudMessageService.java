@@ -44,7 +44,11 @@ public class FirebaseCloudMessageService {
             throw new IllegalStateException("FCM 토큰이 없습니다.");
         }
 
+        log.info("토큰을 발견했습니다: " + byId.getFcmToken());
+
         String message = makeMessage(byId.getFcmToken(), title, body);
+
+        log.info("FCM에 전송할 메세지를 만들었습니다 :" + message);
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(
@@ -52,12 +56,16 @@ public class FirebaseCloudMessageService {
                 message
         );
 
+        log.info("requestBody를 제작하였습니다: " + requestBody);
+
         Request request = new Request.Builder()
                 .url(API_URL)
                 .post(requestBody)
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .build();
+
+        log.info("AccessToken 입니다: " + getAccessToken());
 
         try (Response response = client.newCall(request).execute()) {
             String responseBody = response.body().string();
@@ -92,7 +100,7 @@ public class FirebaseCloudMessageService {
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/firebase_service_key.json.json";
+        String firebaseConfigPath = "firebase/firebase_service_key.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())

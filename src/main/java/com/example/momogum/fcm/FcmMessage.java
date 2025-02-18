@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor  // 이 부분 추가
 @Getter
 public class FcmMessage {
     private boolean validateOnly;
@@ -15,6 +16,7 @@ public class FcmMessage {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor  // 이 부분 추가
     @Getter
     public static class Message {
         private Notification notification;
@@ -23,6 +25,7 @@ public class FcmMessage {
 
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor  // 이 부분 추가
     @Getter
     public static class Notification {
         private String title;

@@ -119,42 +119,23 @@ public class AppointmentDTO {
     /**
      * 초대 상태 PENDING DTO
      */
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class PendingInvitationDTO {
 
-        private Long appointmentId;
+    public static interface PendingInvitationDTO {
 
-        private LocalDateTime date;
-
-        @Schema(description = "약속 이름")
-        private String appointmentName;
-
-        @Schema(description = "초대자 이름")
-        private String inviterNickname;
+        Long getAppointmentId();
+        LocalDateTime getDate();
+        String getName();
+        String getCreatorNickname();
     }
 
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AcceptedInvitationDTO {
+    public interface AcceptedInvitationDTO {
 
-        private Long appointmentId;
-
-        private LocalDateTime date;
-
-        @Schema(description = "약속 장소")
-        private String location;
-
-        @Schema(description = "약속 이름")
-        private String appointmentName;
-
-        @Schema(description = "약속 메뉴")
-        private String menu;
+        Long getAppointmentId();
+        LocalDateTime getDate();
+        String getLocation();
+        String getAppointmentName();
+        String getMenu();
     }
 
 }

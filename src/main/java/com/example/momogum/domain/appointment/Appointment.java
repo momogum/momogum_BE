@@ -28,8 +28,8 @@ public class Appointment {
     private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false) // 🔥 약속을 만든 사람 추가
-    private UserEntity creator;  // ✅ 약속 생성자
+    @JoinColumn(name = "creator_id", nullable = false)
+    private UserEntity creator;
 
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentInvitation> invitations = new ArrayList<>();

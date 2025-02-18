@@ -17,7 +17,7 @@ public interface AppointmentInviteRepository extends JpaRepository<AppointmentIn
 
     List<AppointmentInvitation> findByAppointmentId(Long appointmentId);
 
-    @Query("SELECT new com.example.momogum.web.dto.appointment.AppointmentDTO.PendingInvitationDTO(a.id, a.date, a.name, creator.nickname) " +
+    @Query("SELECT a.id as appointmentId, a.date as date, a.name as name, creator.nickname as creatorNickname " +
             "FROM AppointmentInvitation ai " +
             "JOIN ai.appointment a " +
             "JOIN ai.userEntity invitedUser " +
@@ -27,7 +27,8 @@ public interface AppointmentInviteRepository extends JpaRepository<AppointmentIn
     )
     List<PendingInvitationDTO> findPendingInvitations(Long userId);
 
-    @Query("SELECT new com.example.momogum.web.dto.appointment.AppointmentDTO.AcceptedInvitationDTO(a.id, a.date, a.location, a.name, a.menu) " +
+
+    @Query("SELECT a.id as appointmentId, a.date as date, a.location as location, a.name as appointmentName, a.menu as menu " +
             "FROM AppointmentInvitation ai " +
             "JOIN ai.appointment a " +
             "WHERE ai.userEntity.id = :userId " +

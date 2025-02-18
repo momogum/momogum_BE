@@ -1,43 +1,78 @@
 package com.example.momogum.fcm;
 
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.service.UserService;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.auth.oauth2.GoogleCredentials;
 import lombok.RequiredArgsConstructor;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FirebaseCloudMessageService {
 
+    private final String API_URL = "https://fcm.googleapis.com/v1/projects/" +
+            "momogum-d9bfb/messages:send";
+    private final ObjectMapper objectMapper;
     private final UserEntityRepository userEntityRepository;
 
-    public String sendMessage(FcmMessageRequestDto requestDto) {
-        // 사용자의 Firebase 토큰 값을 조회
-        UserEntity findUser = userEntityRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("회원을 찾지 못했습니다"));
+    public void sendMessageTo(Long userId, String title, String body) throws IOException {
 
-        String fcmToken = findUser.getFcmToken();
+        UserEntity byId = userEntityRepository.findById(userId)
+                .orElseThrow(()-> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // 메시지 구성
-        Message message = Message.builder()
-                .putData("title", requestDto.getTitle())
-                .putData("content", requestDto.getBody())
-                .setToken(fcmToken) // 조회한 토큰 값을 사용
+        String message = makeMessage(byId.getFcmToken(), title, body);
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(message,
+                MediaType.get("application/json; charset=utf-8"));
+        Request request = new Request.Builder()
+                .url(API_URL)
+                .post(requestBody)
+                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
+                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
                 .build();
 
-        try {
-            // 메시지 전송
-            String response = FirebaseMessaging.getInstance().send(message);
-            return "메세지 전송에 성공하였습니다: " + response;
-        } catch (FirebaseMessagingException e) {
-            e.printStackTrace();
-            return "메세지 전송에 실패하였습니다";
-        }
+        Response response = client.newCall(request).execute();
+
+        System.out.println(response.body().string());
+    }
+
+    private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
+        FcmMessage fcmMessage = FcmMessage.builder()
+                .message(FcmMessage.Message.builder()
+                        .token(targetToken)
+                        .notification(FcmMessage.Notification.builder()
+                                .title(title)
+                                .body(body)
+                                .image(null)
+                                .build()
+                        ).build()).validateOnly(false).build();
+
+        return objectMapper.writeValueAsString(fcmMessage);
+    }
+
+    private String getAccessToken() throws IOException {
+        String firebaseConfigPath = "firebase/firebase_service_key.json";
+
+        GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
+                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+        googleCredentials.refreshIfExpired();
+        return googleCredentials.getAccessToken().getTokenValue();
     }
 }

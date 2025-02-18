@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     compileOnly 'org.projectlombok:lombok'
@@ -37,7 +38,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Spring Validation
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
@@ -58,6 +59,13 @@ dependencies {
     // Firebase Admin SDK
     implementation 'com.google.firebase:firebase-admin:7.3.0'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+    implementation 'com.squareup.okio:okio:3.2.0'
+
+    // `okhttp`에서 자동으로 `okio:2.2.2`를 가져오는 경우 제외
+    implementation ('com.squareup.okhttp3:okhttp:4.2.2') {
+        exclude group: 'com.squareup.okio', module: 'okio'
+    }
+
 }
 
 

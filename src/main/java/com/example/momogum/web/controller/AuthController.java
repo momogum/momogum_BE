@@ -223,15 +223,12 @@ public class AuthController {
 
     @Operation(summary = "현재 로그인한 유저 정보 조회 API", description = "JWT를 이용하여 현재 로그인한 유저 정보를 반환합니다.")
     @GetMapping("/me")
-    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo(@RequestParam Long userId) {
-        // 요청에서 유저 ID 가져오기
-        Long resultUserId = userService.validateUserId(userId);
-        log.info("현재 로그인한 유저 정보 요청 - 유저 ID: {}", resultUserId);
+    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo() {
+        Long userId = userService.getCurrentUserId();
 
-        UserEntity user = tokenService.findUserById(resultUserId)
+        UserEntity user = tokenService.findUserById(userId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
-        // 프로필 이미지 URL 가져오기
         String profileImageUrl = user.getProfileImage() != null ? user.getProfileImage().getImageLink() : null;
 
         return ApiResponse.onSuccess(
@@ -251,16 +248,16 @@ public class AuthController {
      */
     @Operation(summary = "회원 탈퇴 API", description = "현재 로그인한 유저를 삭제합니다.")
     @DeleteMapping("/deleteID")
-    public ApiResponse<String> deleteCurrentUser(@RequestParam Long userId) {
-        // 요청에서 유저 ID 가져오기
-        Long resultUserId = userService.validateUserId(userId);
-        log.info("회원 탈퇴 요청 - 유저 ID: {}", userId);
+    public ApiResponse<String> deleteCurrentUser() {
+        // 🔹 현재 로그인한 유저의 ID 가져오기
+        Long currentUserId = userService.getCurrentUserId();
+        log.info("회원 탈퇴 요청 - 유저 ID: {}", currentUserId);
 
         // ✅ 유저 정보 삭제 (DB)
-        userService.deleteUser(resultUserId);
+        userService.deleteUser(currentUserId);
 
         // ✅ Redis에서 토큰 삭제
-        tokenService.deleteTokensByUserId(resultUserId);
+        tokenService.deleteTokensByUserId(currentUserId);
 
         return ApiResponse.onSuccess("회원 탈퇴가 정상적으로 처리되었습니다.");
     }

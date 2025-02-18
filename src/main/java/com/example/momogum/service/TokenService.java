@@ -6,6 +6,7 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.common.enums.LoginType;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.security.JwtTokenProvider;
 import com.example.momogum.web.dto.user.KakaoResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +31,25 @@ public class TokenService {
 
     private final UserEntityRepository userEntityRepository;
     private final RedisTemplate<String, String> redisTemplate;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // JWT Access Token 생성
     public String createAccessToken(String userId) {
-        return jwtUtil.generateAccessToken(userId);
+        return jwtTokenProvider.createAccessToken(userId);
     }
 
     // JWT Refresh Token 생성
     public String createRefreshToken(String userId) {
-        return jwtUtil.generateRefreshToken(userId);
+        return jwtTokenProvider.createRefreshToken(userId);
     }
 
+    public boolean validateToken(String token) {
+        return jwtTokenProvider.validateToken(token);
+    }
+
+    public String getUserIdFromToken(String token) {
+        return jwtTokenProvider.getUserIdFromToken(token);
+    }
     // 기존 유저 로그인 처리
     @Transactional
     public UserEntity processExistingUserLoginByProviderId(String providerId) {

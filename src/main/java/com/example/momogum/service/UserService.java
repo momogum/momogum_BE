@@ -1,14 +1,15 @@
 package com.example.momogum.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,20 @@ public class UserService {
                 .map(UserEntity::getId)  // Optional 내부에서 ID 추출
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
     }
+
+    // 현재 로그인한 사용자의 ID 가져오기
+    public Long getCurrentUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); // 인증된 사용자 정보
+
+        if (principal instanceof UserDetails) {
+            return Long.parseLong(((UserDetails) principal).getUsername()); // ID를 username으로 저장한 경우
+        } else if (principal instanceof String) {
+            return Long.parseLong((String) principal);
+        } else {
+            throw new RuntimeException("인증된 사용자를 찾을 수 없습니다.");
+        }
+    }
+
 
     @Transactional
     public void deleteUser(Long userId) {

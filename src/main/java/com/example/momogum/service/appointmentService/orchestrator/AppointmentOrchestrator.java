@@ -2,6 +2,7 @@ package com.example.momogum.service.appointmentService.orchestrator;
 
 import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
 import com.example.momogum.domain.appointment.Appointment;
+import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
@@ -44,6 +45,9 @@ public class AppointmentOrchestrator {
 
         // 5. DB에 저장
         appointment = appointmentService.save(appointment);
+
+        // 6. 초대 상황 변경
+        inviteService.updateInvitationStatus(appointment.getId(), InvitationStatus.ACCEPTED);
 
         return appointmentConverter.toResponseDTO(appointment, cardService.getCards(request.getCardCategory()));
 

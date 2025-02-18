@@ -55,7 +55,9 @@ public enum ErrorStatus implements BaseErrorCode {
     NO_RESULT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", "검색 결과가 없습니다."),
 
 
-    APPOINTMENT_NOT_EXIST(HttpStatus.NOT_FOUND,"APPOINTMENT4001","약속을 찾을 수 없습니다");
+    APPOINTMENT_NOT_EXIST(HttpStatus.NOT_FOUND,"APPOINTMENT4001","약속을 찾을 수 없습니다"),
+
+    CARD_NOT_EXIST(HttpStatus.NOT_FOUND, "CARD4001", "카드를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;

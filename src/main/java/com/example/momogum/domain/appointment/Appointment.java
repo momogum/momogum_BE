@@ -1,7 +1,6 @@
 package com.example.momogum.domain.appointment;
 
-import com.example.momogum.web.dto.appointment.AppointmentNameDTO;
-import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
+import com.example.momogum.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,19 +27,14 @@ public class Appointment {
     private String location;
     private String notes;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false) // 🔥 약속을 만든 사람 추가
+    private UserEntity creator;  // ✅ 약속 생성자
+
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentInvitation> invitations = new ArrayList<>();
 
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentCard> selectedCards = new ArrayList<>();
-
-    // Appointment 업데이트 메서드
-    public void updateAppointmentDetails(AppointmentNameRequestDTO request) {
-        this.name = request.getName();
-        this.menu = request.getMenu();
-        this.date = request.getDate();
-        this.location = request.getLocation();
-        this.notes = request.getNotes();
-    }
 
 }

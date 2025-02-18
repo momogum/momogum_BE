@@ -30,15 +30,15 @@ public class FirebaseCloudMessageService {
     private final UserEntityRepository userEntityRepository;
 
     public void sendMessageTo(Long userId, String title, String body) throws IOException {
-
         UserEntity byId = userEntityRepository.findById(userId)
-                .orElseThrow(()-> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         String message = makeMessage(byId.getFcmToken(), title, body);
 
         OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(message,
-                MediaType.get("application/json; charset=utf-8"));
+        RequestBody requestBody = RequestBody.create(
+                MediaType.get("application/json; charset=utf-8"),
+                message);  // 순서 수정
         Request request = new Request.Builder()
                 .url(API_URL)
                 .post(requestBody)
@@ -46,21 +46,27 @@ public class FirebaseCloudMessageService {
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
                 .build();
 
-        Response response = client.newCall(request).execute();
-
-        System.out.println(response.body().string());
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("FCM 메시지 전송 실패: " + response.body().string());
+            }
+            String responseBody = response.body().string();
+            System.out.println("FCM Response: " + responseBody);
+        }
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
+                .validateOnly(false)
                 .message(FcmMessage.Message.builder()
                         .token(targetToken)
                         .notification(FcmMessage.Notification.builder()
                                 .title(title)
                                 .body(body)
                                 .image(null)
-                                .build()
-                        ).build()).validateOnly(false).build();
+                                .build())
+                        .build())
+                .build();
 
         return objectMapper.writeValueAsString(fcmMessage);
     }

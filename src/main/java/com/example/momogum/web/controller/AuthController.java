@@ -250,16 +250,16 @@ public class AuthController {
      */
     @Operation(summary = "회원 탈퇴 API", description = "현재 로그인한 유저를 삭제합니다.")
     @DeleteMapping("/deleteID")
-    public ApiResponse<String> deleteCurrentUser(HttpServletRequest request) {
+    public ApiResponse<String> deleteCurrentUser(@RequestParam Long userId) {
         // 요청에서 유저 ID 가져오기
-        Long userId = userService.getUserIdFromRequest(request);
+        Long resultUserId = userService.validateUserId(userId);
         log.info("회원 탈퇴 요청 - 유저 ID: {}", userId);
 
         // ✅ 유저 정보 삭제 (DB)
-        userService.deleteUser(userId);
+        userService.deleteUser(resultUserId);
 
         // ✅ Redis에서 토큰 삭제
-        tokenService.deleteTokensByUserId(userId);
+        tokenService.deleteTokensByUserId(resultUserId);
 
         return ApiResponse.onSuccess("회원 탈퇴가 정상적으로 처리되었습니다.");
     }

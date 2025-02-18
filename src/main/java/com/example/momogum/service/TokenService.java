@@ -52,7 +52,7 @@ public class TokenService {
 
     // 신규 유저 로그인 처리
     @Transactional
-    public UserEntity processNewUserLogin(String providerId, String nameInput, String nicknameInput, String profileImageUrl) {
+    public UserEntity processNewUserLogin(String providerId, String nameInput, String nicknameInput, String profileImageUrl, String fcmToken) {
         // providerId 중복 여부 확인
         if (userEntityRepository.findByProviderAndProviderId(LoginType.KAKAO, providerId).isPresent()) {
             throw new DuplicateUserException("이미 등록된 providerId입니다: " + providerId);
@@ -64,6 +64,7 @@ public class TokenService {
                 .providerId(providerId)
                 .name(nameInput)
                 .nickname(nicknameInput)
+                .fcmToken(fcmToken)
                 .build();
 
         // 프로필 이미지가 존재하면 ProfileImage 엔티티 생성 및 연관 관계 설정

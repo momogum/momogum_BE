@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
@@ -123,22 +124,6 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
 
         UserEntity findUser = findUser(userId);
 
-//        List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
-//        if (byUserEntity.isEmpty()) {
-//            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
-//        }
-//
-//        List<MealDiaryStory> byMealDiaryIn = mealDiaryStoryRepository.findByMealDiaryIn(byUserEntity);
-//        if (byMealDiaryIn.isEmpty()) {
-//            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
-//        }
-//
-//        MealDiaryStory mealDiaryStory = byMealDiaryIn.get(0);
-//        if (mealDiaryStory == null) {
-//            return new MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO();
-//        }
-
-        // FIXME (새벽에 기쁨님 수정사항 맞춰서 LIST 형태 반환 도와드렸습니다(내 스토리도 여러개 올라갈수있는 부분). 확인후 리팩터링 해주세요 !)
         List<MealDiary> byUserEntity = mealDiaryRepository.findByUserEntity(findUser);
         if (byUserEntity.isEmpty()) {
             return List.of();
@@ -149,8 +134,6 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
             return List.of();
         }
 
-
-
         // 기본이미지 로직이 구현되면 이 검증은 에러를 날리도록 수정될 예정 FIXME
         String profileImageLink;
         if (findUser.getProfileImage() == null){
@@ -159,19 +142,26 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
             profileImageLink = findUser.getProfileImage().getImageLink();
         }
 
-
         return byMealDiaryIn.stream()
                 .map(mealDiaryStory -> {
                     Long mealDiaryStoryId = mealDiaryStory.getId();
 
-                    String imageLink = mealDiaryStory.getMealDiary().getMealDiaryImages().isEmpty() ?
-                            null : mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink();
+                    String mealDiaryImageLink;
+
+                    // 밥일기에 대한 이미지가 없을 수가 없음 -> 예외 던지기로 반환
+                    if (mealDiaryStory.getMealDiary().getMealDiaryImages() == null ||
+                            mealDiaryStory.getMealDiary().getMealDiaryImages().isEmpty()) {
+                        throw new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND);
+                    } else {
+                        mealDiaryImageLink = mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink();
+                    }
+
 
                     MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
                     boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();
 
                     return MealDiaryStoryConverter.toMyMealDiaryStoryReadDTO(
-                            findUser, imageLink, isViewed, mealDiaryStoryId, profileImageLink
+                            findUser, mealDiaryImageLink, isViewed, mealDiaryStoryId, profileImageLink
                     );
                 })
                 .collect(Collectors.toList());

@@ -58,6 +58,10 @@ public class AuthDTO {
 
         @Schema(description = "사용자가 입력한 닉네임", example = "길동이")
         private String nickname;
+
+
+        // FCM 토큰 받기
+        private String fcmToken;
     }
 
 }

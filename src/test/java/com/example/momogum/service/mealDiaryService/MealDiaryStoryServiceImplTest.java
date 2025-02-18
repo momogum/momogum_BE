@@ -1,6 +1,6 @@
 package com.example.momogum.service.mealDiaryService;
 
-import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.domain.*;
@@ -491,13 +491,10 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
-        assertThat(response).isNotNull();
-        assertThat(response.getMealDiaryStoryId()).isEqualTo(1L);
-        assertThat(response.getNickname()).isEqualTo("test_nickname");
-        assertThat(response.getMealDiaryImageLinks()).isEqualTo("test_image_link");
+        assertThat(response.size()).isEqualTo(1);
     }
 
 
@@ -512,11 +509,41 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getProfileImageLink()).isEqualTo("default-image");
+        assertThat(response.get(0).getProfileImageLink()).isEqualTo("default-image");
+    }
+
+
+    @Test
+    @DisplayName("밥일기의 사진이 존재하지 않으면 정해진 예외를 반환한다")
+    public void getMine_success_mealDiary_default_profileImage(){
+        //given
+        MealDiary testMealDiary2 = MealDiary.builder()
+                .id(2L)
+                .foodCategory(FoodCategory.FAST_FOOD)
+                .location("test_location")
+                .userEntity(testMember)
+                .mealDiaryImages(List.of())
+                .build();
+
+        MealDiaryStory testMealDiaryStory2 = MealDiaryStory.builder()
+                .id(2L)
+                .name(testMember.getNickname())
+                .mealDiary(testMealDiary2)
+                .build();
+
+
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary2));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory2));
+
+        //when & then
+        assertThatThrownBy(() -> mealDiaryStoryService.getMine(1L))
+                .isInstanceOf(ImageHandler.class)
+                .hasFieldOrPropertyWithValue("code", IMAGE_NOT_FOUND);
     }
 
 
@@ -542,11 +569,11 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getProfileImageLink()).isEqualTo("test_image_link");
+        assertThat(response.get(0).getProfileImageLink()).isEqualTo("test_image_link");
     }
 
 
@@ -570,13 +597,11 @@ class MealDiaryStoryServiceImplTest {
         when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
         when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of());
 
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getMealDiaryStoryId()).isEqualTo(null);
-        assertThat(response.getNickname()).isEqualTo(null);
-        assertThat(response.getMealDiaryImageLinks()).isEqualTo(null);
+        assertThat(response).isEqualTo(List.of());
     }
 
 
@@ -589,13 +614,11 @@ class MealDiaryStoryServiceImplTest {
         when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
         when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of());
 
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getMealDiaryStoryId()).isEqualTo(null);
-        assertThat(response.getNickname()).isEqualTo(null);
-        assertThat(response.getMealDiaryImageLinks()).isEqualTo(null);
+        assertThat(response).isEqualTo(List.of());
     }
 
 
@@ -618,11 +641,11 @@ class MealDiaryStoryServiceImplTest {
                 .thenReturn(mealDiaryStoryView);
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
-        assertThat(response).isNotNull();
-        assertThat(response.isViewed()).isTrue();
+        assertThat(response.get(0)).isNotNull();
+        assertThat(response.get(0).isViewed()).isTrue();
     }
 
 
@@ -636,10 +659,10 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.isViewed()).isFalse();
+        assertThat(response.get(0).isViewed()).isFalse();
     }
 }

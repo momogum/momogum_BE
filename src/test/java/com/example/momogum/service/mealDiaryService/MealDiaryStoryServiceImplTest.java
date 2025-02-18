@@ -491,13 +491,10 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
-        assertThat(response).isNotNull();
-        assertThat(response.getMealDiaryStoryId()).isEqualTo(1L);
-        assertThat(response.getNickname()).isEqualTo("test_nickname");
-        assertThat(response.getMealDiaryImageLinks()).isEqualTo("test_image_link");
+        assertThat(response.size()).isEqualTo(1);
     }
 
 
@@ -512,11 +509,11 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getProfileImageLink()).isEqualTo("default-image");
+        assertThat(response.get(0).getProfileImageLink()).isEqualTo("default-image");
     }
 
 
@@ -542,11 +539,11 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getProfileImageLink()).isEqualTo("test_image_link");
+        assertThat(response.get(0).getProfileImageLink()).isEqualTo("test_image_link");
     }
 
 
@@ -570,13 +567,11 @@ class MealDiaryStoryServiceImplTest {
         when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
         when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of());
 
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getMealDiaryStoryId()).isEqualTo(null);
-        assertThat(response.getNickname()).isEqualTo(null);
-        assertThat(response.getMealDiaryImageLinks()).isEqualTo(null);
+        assertThat(response).isEqualTo(List.of());
     }
 
 
@@ -589,13 +584,11 @@ class MealDiaryStoryServiceImplTest {
         when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary));
         when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of());
 
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getMealDiaryStoryId()).isEqualTo(null);
-        assertThat(response.getNickname()).isEqualTo(null);
-        assertThat(response.getMealDiaryImageLinks()).isEqualTo(null);
+        assertThat(response).isEqualTo(List.of());
     }
 
 
@@ -618,11 +611,11 @@ class MealDiaryStoryServiceImplTest {
                 .thenReturn(mealDiaryStoryView);
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
-        assertThat(response).isNotNull();
-        assertThat(response.isViewed()).isTrue();
+        assertThat(response.get(0)).isNotNull();
+        assertThat(response.get(0).isViewed()).isTrue();
     }
 
 
@@ -636,10 +629,10 @@ class MealDiaryStoryServiceImplTest {
 
 
         //when
-        MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO response = mealDiaryStoryService.getMine(1L);
+        List<MealDiaryStoryReadDTO.MyMealDiaryStoryReadResponseDTO> response = mealDiaryStoryService.getMine(1L);
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.isViewed()).isFalse();
+        assertThat(response.get(0).isViewed()).isFalse();
     }
 }

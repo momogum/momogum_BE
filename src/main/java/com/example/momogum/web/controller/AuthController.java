@@ -104,8 +104,8 @@ public class AuthController {
                 providerId,                 // 카카오에서 추출한 providerId
                 request.getName(),          // 입력된 이름
                 request.getNickname(),      // 입력된 닉네임
-                request.getFcmToken(),
-                kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url() // 프로필 이미지
+                kakaoResponseDTO.getKakao_account().getProfile().getProfile_image_url(),
+                request.getFcmToken()// 프로필 이미지
         );
 
         // JWT 토큰 생성

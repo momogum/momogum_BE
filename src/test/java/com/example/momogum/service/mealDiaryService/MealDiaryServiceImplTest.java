@@ -981,14 +981,15 @@ class MealDiaryServiceImplTest {
     }
 
 
-    // FIXME
     @Test
     @DisplayName("update()를 이용해서 밥일기의 정보를 업데이트 할 수 있다")
     public void update_success() {
         // given
         UserEntity spyMember = spy(testMember);
+        when(spyMember.getId()).thenReturn(1L);
 
         MealDiary realMealDiary = MealDiary.builder()
+                .id(1L)
                 .foodCategory(FoodCategory.FAST_FOOD)
                 .location("test_location")
                 .description("test_description")
@@ -1002,31 +1003,16 @@ class MealDiaryServiceImplTest {
                 .build();
         MealDiary testMealDiary = spy(realMealDiary);
 
-        Keyword testKeyword1 = Keyword.builder()
-                .id(1L)
-                .keyword("한식")
+        Keyword updatedKeyword1 = Keyword.builder()
+                .id(3L)
+                .keyword("업데")
                 .build();
 
-        Keyword testKeyword2 = Keyword.builder()
-                .id(2L)
-                .keyword("중식")
+        Keyword updatedKeyword2 = Keyword.builder()
+                .id(4L)
+                .keyword("이트")
                 .build();
 
-        MealDiaryKeyword testMealDiaryKeyword = MealDiaryKeyword.builder()
-                .keyword(testKeyword1)
-                .mealDiary(testMealDiary)
-                .build();
-
-        MealDiaryKeyword testMealDiaryKeyword2 = MealDiaryKeyword.builder()
-                .keyword(testKeyword2)
-                .mealDiary(testMealDiary)
-                .build();
-
-        List<MealDiaryKeyword> mealDiaryKeywords = new ArrayList<>();
-        mealDiaryKeywords.add(testMealDiaryKeyword);
-        mealDiaryKeywords.add(testMealDiaryKeyword2);
-
-        // DTO 생성
         MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request = MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO.builder()
                 .memberId(1L)
                 .mealDiaryId(1L)
@@ -1038,19 +1024,25 @@ class MealDiaryServiceImplTest {
                 .build();
 
         // when
-        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(spyMember));
-        when(mealDiaryRepository.findById(anyLong())).thenReturn(Optional.of(testMealDiary));
+        when(userEntityRepository.findById(1L)).thenReturn(Optional.of(spyMember));
+        when(mealDiaryRepository.findById(1L)).thenReturn(Optional.of(testMealDiary));
+        when(keywordRepository.findByKeyword("업데")).thenReturn(Optional.of(updatedKeyword1));
+        when(keywordRepository.findByKeyword("이트")).thenReturn(Optional.of(updatedKeyword2));
         doNothing().when(mealDiaryKeywordRepository).deleteAllByMealDiary(any());
 
-        // 서비스 호출
-        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(request);
+        when(mealDiaryKeywordRepository.save(any())).thenAnswer(invocation -> {
+            MealDiaryKeyword mdk = invocation.getArgument(0);
+            return mdk;
+        });
 
-        // 업데이트된 MealDiary ID 확인
-        System.out.println("Updated Meal Diary ID: " + response.getMealDiaryId());
+        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(request);
 
         // then
         assertThat(response).isNotNull();
-        /*assertThat(response.getMealDiaryId()).isEqualTo(1L); // 업데이트된 mealDiaryId 확인*/
+        assertThat(response.getMealDiaryId()).isEqualTo(1L);
+
+        verify(mealDiaryKeywordRepository).deleteAllByMealDiary(testMealDiary);
+        verify(mealDiaryRepository).saveAndFlush(testMealDiary);
     }
 
 

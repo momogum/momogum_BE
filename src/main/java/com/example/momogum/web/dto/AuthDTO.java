@@ -61,6 +61,7 @@ public class AuthDTO {
 
 
         // FCM 토큰 받기
+        @Schema(description = "FCM 액세스 토큰", example = "your-fcm-token")
         private String fcmToken;
     }
 

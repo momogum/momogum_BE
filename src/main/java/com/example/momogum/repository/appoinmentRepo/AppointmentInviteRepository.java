@@ -34,4 +34,5 @@ public interface AppointmentInviteRepository extends JpaRepository<AppointmentIn
             "AND ai.status = 'ACCEPTED' " +
             "ORDER BY a.date ASC")
     List<AcceptedInvitationDTO> findAcceptedAppointments(Long userId);
+
 }

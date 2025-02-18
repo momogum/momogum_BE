@@ -44,5 +44,4 @@ public class AppointmentController {
         return ApiResponse.onSuccess(appointmentService.getAcceptedAppointments(userId));
     }
 
-
 }

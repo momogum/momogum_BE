@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
@@ -44,7 +45,6 @@ public class AppointmentService {
     /**
      * ID로 Appointment 조회
      */
-    @Transactional(readOnly = true)
     public Appointment findById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
@@ -63,7 +63,6 @@ public class AppointmentService {
      * @param appointmentId
      * @return AppointmentDetailsDTO 객체
      */
-    @Transactional(readOnly = true)
     public AppointmentDetailsDTO getAppointmentDetails(Long appointmentId) {
 
         //약속 조회

@@ -1,5 +1,6 @@
 package com.example.momogum.fcm;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,15 +9,16 @@ import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor  // 이 부분 추가
+@NoArgsConstructor
 @Getter
 public class FcmMessage {
+    @JsonProperty("validate_only")  // snake_case로 변경
     private boolean validateOnly;
     private Message message;
 
     @Builder
     @AllArgsConstructor
-    @NoArgsConstructor  // 이 부분 추가
+    @NoArgsConstructor
     @Getter
     public static class Message {
         private Notification notification;
@@ -25,7 +27,7 @@ public class FcmMessage {
 
     @Builder
     @AllArgsConstructor
-    @NoArgsConstructor  // 이 부분 추가
+    @NoArgsConstructor
     @Getter
     public static class Notification {
         private String title;

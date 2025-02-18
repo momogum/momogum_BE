@@ -39,4 +39,4 @@ out/
 ### yml ###
 src/main/resources/application-dev.yml
 src/test/resources/application-test.yml
-src/main/resources/firebase/momogum-e046b-firebase-adminsdk-fbsvc-6d88d86a1b.json
+src/main/resources/firebase/firebase_service_key.json

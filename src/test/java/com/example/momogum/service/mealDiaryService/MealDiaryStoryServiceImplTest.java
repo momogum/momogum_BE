@@ -1,6 +1,6 @@
 package com.example.momogum.service.mealDiaryService;
 
-import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.domain.*;
@@ -514,6 +514,36 @@ class MealDiaryStoryServiceImplTest {
         //then
         assertThat(response).isNotNull();
         assertThat(response.get(0).getProfileImageLink()).isEqualTo("default-image");
+    }
+
+
+    @Test
+    @DisplayName("밥일기의 사진이 존재하지 않으면 정해진 예외를 반환한다")
+    public void getMine_success_mealDiary_default_profileImage(){
+        //given
+        MealDiary testMealDiary2 = MealDiary.builder()
+                .id(2L)
+                .foodCategory(FoodCategory.FAST_FOOD)
+                .location("test_location")
+                .userEntity(testMember)
+                .mealDiaryImages(List.of())
+                .build();
+
+        MealDiaryStory testMealDiaryStory2 = MealDiaryStory.builder()
+                .id(2L)
+                .name(testMember.getNickname())
+                .mealDiary(testMealDiary2)
+                .build();
+
+
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryRepository.findByUserEntity(any())).thenReturn(List.of(testMealDiary2));
+        when(mealDiaryStoryRepository.findByMealDiaryIn(any())).thenReturn(List.of(testMealDiaryStory2));
+
+        //when & then
+        assertThatThrownBy(() -> mealDiaryStoryService.getMine(1L))
+                .isInstanceOf(ImageHandler.class)
+                .hasFieldOrPropertyWithValue("code", IMAGE_NOT_FOUND);
     }
 
 

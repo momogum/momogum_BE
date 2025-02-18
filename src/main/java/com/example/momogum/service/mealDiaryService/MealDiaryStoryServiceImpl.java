@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.ImageHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryStoryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
@@ -148,11 +149,13 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                     String mealDiaryImageLink;
 
                     // 밥일기에 대한 이미지가 없을 수가 없음 -> 예외 던지기로 반환
-                    if (mealDiaryStory.getMealDiary().getMealDiaryImages() == null){
-                        mealDiaryImageLink = null;
-                    }else {
+                    if (mealDiaryStory.getMealDiary().getMealDiaryImages() == null ||
+                            mealDiaryStory.getMealDiary().getMealDiaryImages().isEmpty()) {
+                        throw new ImageHandler(ErrorStatus.IMAGE_NOT_FOUND);
+                    } else {
                         mealDiaryImageLink = mealDiaryStory.getMealDiary().getMealDiaryImages().get(0).getImageLink();
                     }
+
 
                     MealDiaryStoryView isViewedEntity = mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(findUser, mealDiaryStory);
                     boolean isViewed = isViewedEntity != null && isViewedEntity.isViewed();

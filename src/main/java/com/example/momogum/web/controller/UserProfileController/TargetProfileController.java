@@ -32,22 +32,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "TargetProfile API",description = "타겟 프로필 API")
 public class TargetProfileController {
 
-  private final UserProfileServiceImpl userProfileServiceImpl;
-  private final UserEntityRepository userEntityRepository;
   private final TargetProfileServiceImpl targetProfileServiceImpl;
-  private final FollowServiceImpl followService;
 
   /**
    * 상대 유저의 기본 프로필 정보 조회 API
    */
   @Operation(summary = "상대 프로필 조회 API", description = "특정 사용자의 프로필 정보를 조회합니다.")
-  @GetMapping("/{targetUserId}/profile")
+  @GetMapping("{userId}/target/{targetUserId}/profile")
   public ApiResponse<UserDTO.FullProfileDTO> getTargetProfile(
-      @PathVariable Long targetUserId,
-      // X-User-Id로 현재 로그인한 사용자의 ID를 서버에 전달
-      @RequestHeader("X-User-Id") Long currentUserId
+      @PathVariable Long userId,
+      @PathVariable Long targetUserId
   ) {
-    UserDTO.FullProfileDTO targetProfile = targetProfileServiceImpl.getTargetProfile(currentUserId, targetUserId);
+    UserDTO.FullProfileDTO targetProfile = targetProfileServiceImpl.getTargetProfile(userId, targetUserId);
     return ApiResponse.onSuccess(targetProfile);
   }
 
@@ -80,9 +76,9 @@ public class TargetProfileController {
    * 상대 유저의 팔로잉 목록 조회 API
    */
   @Operation(summary = "상대방의 팔로잉 목록 조회 API", description = "상대 유저가 팔로우하고 있는 사람 목록을 조회합니다.")
-  @GetMapping("/{targetUserId}/following")
+  @GetMapping("{userId}/target/{targetUserId}/following")
   public ApiResponse<List<FollowDTO.FollowingResponseDTO>> getTargetFollowings(
-      @RequestHeader("X-User-Id") Long currentUserId,
+      @PathVariable Long userId,
       @PathVariable Long targetUserId
   ) {
     List<FollowDTO.FollowingResponseDTO> followingList = targetProfileServiceImpl.getTargetFollowings(targetUserId);
@@ -93,9 +89,9 @@ public class TargetProfileController {
    * 상대 유저의 팔로워 목록 조회 API
    */
   @Operation(summary = "상대방의 팔로워 목록 조회 API", description = "상대 유저를 팔로우하고 있는 사람 목록을 조회합니다.")
-  @GetMapping("/{targetUserId}/followers")
+  @GetMapping("{userId}/target/{targetUserId}/followers")
   public ApiResponse<List<FollowDTO.FollowerResponseDTO>> getTargetFollowers(
-      @RequestHeader("X-User-Id") Long currentUserId,
+      @PathVariable Long userId,
       @PathVariable Long targetUserId
   ) {
     List<FollowDTO.FollowerResponseDTO> followerList = targetProfileServiceImpl.getTargetFollowers(targetUserId);
@@ -106,12 +102,12 @@ public class TargetProfileController {
    * 상대 유저 신고하기 API
    */
   @Operation(summary = "상대 유저 신고하기 API", description = "부적절한 상대 유저를 신고합니다.")
-  @PostMapping("/report")
+  @PostMapping("{userId}/target/report")
   public ApiResponse<UserReportDTO.UserReportResponseDTO> report(
-      @RequestHeader("X-User-Id") Long reporterId,
+      @PathVariable Long userId,
       @RequestBody UserReportDTO.UserReportRequestDTO request) {
 
-    UserReportDTO.UserReportResponseDTO result = targetProfileServiceImpl.report(reporterId,request);
+    UserReportDTO.UserReportResponseDTO result = targetProfileServiceImpl.report(userId,request);
     return ApiResponse.onSuccess(result);
   }
 

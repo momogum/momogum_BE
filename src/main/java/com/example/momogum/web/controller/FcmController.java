@@ -1,6 +1,8 @@
-package com.example.momogum.fcm;
+package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
+import com.example.momogum.web.dto.FCMRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +17,11 @@ import java.io.IOException;
 @Tag(name = "FCM 테스트 컨트롤러")
 public class FcmController {
 
-    private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final FirebaseCloudMessageUtil firebaseCloudMessageService;
 
     @Operation(summary = "FCM 테스트 API")
     @PostMapping("/api/fcm")
-    public ApiResponse<String> pushMessage(@RequestBody RequestDTO requestDTO) throws IOException {
-
+    public ApiResponse<String> pushMessage(@RequestBody FCMRequestDTO requestDTO) throws IOException {
 
         firebaseCloudMessageService.sendMessageTo(
                 requestDTO.getUserId(),

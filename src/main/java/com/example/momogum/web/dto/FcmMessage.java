@@ -1,7 +1,5 @@
-package com.example.momogum.fcm;
+package com.example.momogum.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -222,12 +222,12 @@ public class AuthController {
 
     @Operation(summary = "현재 로그인한 유저 정보 조회 API", description = "JWT를 이용하여 현재 로그인한 유저 정보를 반환합니다.")
     @GetMapping("/me")
-    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo(HttpServletRequest request) {
+    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo(@RequestParam Long userId) {
         // 요청에서 유저 ID 가져오기
-        Long userId = userService.getUserIdFromRequest(request);
-        log.info("현재 로그인한 유저 정보 요청 - 유저 ID: {}", userId);
+        Long resultUserId = userService.validateUserId(userId);
+        log.info("현재 로그인한 유저 정보 요청 - 유저 ID: {}", resultUserId);
 
-        UserEntity user = tokenService.findUserById(userId)
+        UserEntity user = tokenService.findUserById(resultUserId)
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
         // 프로필 이미지 URL 가져오기

@@ -32,6 +32,8 @@ public class AppointmentDTO {
     }
 
 
+
+
     /**
      * 약속 잡기 DTO
      */

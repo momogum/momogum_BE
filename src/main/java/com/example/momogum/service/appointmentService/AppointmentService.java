@@ -3,6 +3,7 @@ package com.example.momogum.service.appointmentService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
@@ -10,6 +11,7 @@ import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentCardRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
+import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO;
@@ -32,16 +34,22 @@ public class AppointmentService {
     private final AppointmentConverter appointmentConverter;
     private final AppointmentInviteRepository appointmentInviteRepository;
     private final AppointmentCardRepository appointmentCardRepository;
+    private final UserEntityRepository userEntityRepository;
 
     /**
      * 빈 Appointment 객체를 생성하고, ID를 반환
      */
     @Transactional
     public Appointment createEmptyAppointment() {
-        // 1️⃣ 빈 Appointment 객체 생성 (아직 데이터 없음)
+        // 1. 빈 Appointment 객체 생성 (아직 데이터 없음)
         Appointment appointment = appointmentConverter.toEmptyEntity();
 
-        // 2️⃣ DB에 저장 (ID를 생성하기 위해)
+        // 더미 데이터 이용
+        UserEntity defaultUser = userEntityRepository.findById(1L)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
+        appointment.setCreator(defaultUser);
+
+        // 2. DB에 저장 (ID를 생성하기 위해)
         appointment = appointmentRepository.save(appointment);
 
         return appointment;

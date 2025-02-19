@@ -77,13 +77,20 @@ public class SearchServiceImpl implements SearchService {
                     List<MealDiaryStory> userStory = mealDiaryStoryRepository.findByMealDiaryIn(userMealDiary);
 
                     boolean hasStory = !userStory.isEmpty();
+                    System.out.println("Has story: " + hasStory);
 
                     List<MealDiaryStoryView> isViewedList = userStory.stream()
                             .map(mealDiaryStory -> mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(currentUser,mealDiaryStory))
                             .toList();
 
+                    System.out.println("Is viewed list: " + isViewedList);
+
                     boolean hasViewedStory = isViewedList.stream()
-                            .allMatch(view -> view ==null || !view.isViewed());
+                            .allMatch(view -> view != null && view.isViewed());
+
+
+                    System.out.println("Has viewed story: " + hasViewedStory);
+
 
 
                     return SearchConverter.toAccountSearchResponseDTO(

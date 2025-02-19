@@ -1,6 +1,7 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.searchService.SearchServiceImpl;
 import com.example.momogum.service.userProfileService.FollowService;
 import com.example.momogum.web.dto.FollowDTO;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,13 +41,16 @@ public class FollowController {
   @Operation(summary = "팔로우 추가 토글 API", description = "팔로우 등록 API 입니다.<br>"
       +"경로 변수(`userId`, `targetUserId`)를 통해 요청하시면 됩니다.<br>"
       +"한 번 클릭하면 팔로우, 두 번 클릭하면 언팔로우됩니다.")
-  @PostMapping("{userId}/follow/{targetUserId}/toggle")
+  @PostMapping("/follow/{targetUserId}/toggle")
   public ApiResponse<String> toggleFollow(
-      @PathVariable Long userId, @PathVariable Long targetUserId // 팔로우 대상
-  ) throws IOException {
-    followService.toggleFollowUser(userId, targetUserId);
+          @AuthenticationPrincipal CustomUserDetails userDetails, //Principal 사용 방식으로 수정
+          @PathVariable Long targetUserId) throws IOException {
+
+    Long currentUserId = userDetails.getId();
+    followService.toggleFollowUser(currentUserId, targetUserId);
     return ApiResponse.onSuccess("팔로우 상태가 변경되었습니다.");
   }
+
 
   /**
    * 팔로워 삭제 토글
@@ -56,11 +61,13 @@ public class FollowController {
       + "      +\"경로 변수(`userId`, `followerId`)를 통해 요청하시면 됩니다.<br>\"\n"
       + "      +\"클릭 시에 팔로워를 삭제합니다."
     +"바디에 삭제할 팔로워 ID를 넣어서 요청하시면 됩니다.")
-  @DeleteMapping("{userId}/delete/{followerId}/toggle")
+  @DeleteMapping("/delete/{followerId}/toggle")
   public ApiResponse<String> removeFollower(
-      @PathVariable Long userId, @PathVariable Long followerId // 삭제할 팔로워
-  ){
-    followService.removeFollower(userId, followerId);
+          @AuthenticationPrincipal CustomUserDetails userDetails,
+          @PathVariable Long followerId) {
+
+    Long currentUserId = userDetails.getId();
+    followService.removeFollower(currentUserId, followerId);
     return ApiResponse.onSuccess("팔로워가 성공적으로 삭제되었습니다.");
   }
 
@@ -69,9 +76,10 @@ public class FollowController {
    */
 
   @Operation(summary = "팔로워/팔로잉 수 조회 API", description = "특정 유저의 팔로워 및 팔로잉 수를 조회합니다.")
-  @GetMapping("/{userId}/followCount")
-  public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@PathVariable Long userId) {
-    return ApiResponse.onSuccess(followService.getFollowStats(userId));
+  @GetMapping("/followCount")
+  public ApiResponse<FollowDTO.FollowStatsDTO> getFollowStats(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long currentUserId = userDetails.getId();
+    return ApiResponse.onSuccess(followService.getFollowStats(currentUserId));
   }
 
   /**
@@ -79,10 +87,12 @@ public class FollowController {
    */
 
   @Operation(summary = "팔로잉 목록 조회 API", description = "유저의 팔로잉(내가 팔로우하는 사람들) 조회")
-  @GetMapping("/{userId}/search/following")
-  public ApiResponse<List<FollowDTO.FollowingResponseDTO>> getAllFollowing(@PathVariable Long userId) {
+  @GetMapping("/search/following")
+  public ApiResponse<List<FollowDTO.FollowingResponseDTO>> getAllFollowing(
+          @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-    return ApiResponse.onSuccess(followService.getFollowings(userId));
+    Long currentUserId = userDetails.getId();
+    return ApiResponse.onSuccess(followService.getFollowings(currentUserId));
   }
 
 
@@ -91,10 +101,12 @@ public class FollowController {
    */
 
   @Operation(summary = "팔로워 목록 조회 API", description = "유저의 팔로워(나를 팔로우하는 사람들) 조회")
-  @GetMapping("/{userId}/search/followers")
-  public ApiResponse<List<FollowDTO.FollowerResponseDTO>> getAllFollowers(@PathVariable Long userId) {
+  @GetMapping("/search/followers")
+  public ApiResponse<List<FollowDTO.FollowerResponseDTO>> getAllFollowers(
+          @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-    return ApiResponse.onSuccess(followService.getFollowers(userId));
+    Long currentUserId = userDetails.getId();
+    return ApiResponse.onSuccess(followService.getFollowers(currentUserId));
   }
 
   /**
@@ -103,14 +115,13 @@ public class FollowController {
   @Operation(summary = "닉네임 또는 이름으로 팔로잉 검색", description = "팔로잉 검색 API 입니다.<br>"
       +"경로 변수 `userId`와 RequestParam `query`를 통해 요청하시면 됩니다.<br>"
       +"쿼리에는 검색할 사용자 name or nickname을 입력하시면 됩니다.")
-  @GetMapping("/{userId}/search/followings/name")
+  @GetMapping("/search/followings/name")
   public ApiResponse<List<SearchDTO.FollowingSearchResponseDTO>> getFollowigsSearch(
-      //현재 사용자 아이디
-      @PathVariable Long userId,
-      //검색할 사용자 name or nickname
-      @RequestParam String query) {
+          @AuthenticationPrincipal CustomUserDetails userDetails,
+          @RequestParam String query) {
 
-    List<SearchDTO.FollowingSearchResponseDTO> result = searchServiceImpl.getFollowingsSearch(userId, query);
+    Long currentUserId = userDetails.getId();
+    List<SearchDTO.FollowingSearchResponseDTO> result = searchServiceImpl.getFollowingsSearch(currentUserId, query);
     return ApiResponse.onSuccess(result);
   }
 
@@ -120,13 +131,13 @@ public class FollowController {
   @Operation(summary = "닉네임 또는 이름으로 팔로워 검색", description = "팔로워 검색 API 입니다.<br>"
       +"경로 변수 `userId`와 RequestParam `query`를 통해 요청하시면 됩니다.<br>"
       +"쿼리에는 검색할 사용자 name or nickname을 입력하시면 됩니다.")
-  @GetMapping("/{userId}/search/followers/name")
+  @GetMapping("/search/followers/name")
   public ApiResponse<List<SearchDTO.FollowerSearchResponseDTO>> getFollowersSearch(
-      @PathVariable Long userId,
-      @RequestParam String query) {
+          @AuthenticationPrincipal CustomUserDetails userDetails,
+          @RequestParam String query) {
 
-    List<SearchDTO.FollowerSearchResponseDTO> result = searchServiceImpl.getFollowersSearch(userId, query);
+    Long currentUserId = userDetails.getId();
+    List<SearchDTO.FollowerSearchResponseDTO> result = searchServiceImpl.getFollowersSearch(currentUserId, query);
     return ApiResponse.onSuccess(result);
   }
-
 }

@@ -2,6 +2,7 @@ package com.example.momogum.service.appointmentService;
 
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.domain.utils.S3UrlProvider;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ import java.util.List;
 @SpringBootTest
 @ActiveProfiles("test")
 class AppointmentCardServiceTest {
+
+    @MockBean
+    private FirebaseCloudMessageUtil util;
 
     @MockBean
     private JwtUtil jwtUtil;

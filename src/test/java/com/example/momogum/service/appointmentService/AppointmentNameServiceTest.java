@@ -3,6 +3,7 @@ import com.example.momogum.converter.appointmentConverter.AppointmentNameConvert
 import com.example.momogum.domain.appointment.AppointmentName;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.repository.appoinmentRepo.AppointmentNameRepository;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,6 +22,8 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 class AppointmentNameServiceTest {
 
+    @MockBean
+    private FirebaseCloudMessageUtil util;
 
     @MockBean
     private JwtUtil jwtUtil;

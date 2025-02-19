@@ -84,14 +84,17 @@ public class MealDiaryServiceImpl implements MealDiaryService {
                 .map(MealDiaryCommentConverter::toMealDiaryCommentReadDTO)
                 .toList();
 
-        String profileImageLink;
-        if (user.getProfileImage() == null){
-            profileImageLink = "default_image";
+        UserEntity mealDiaryOwnerUser = mealDiary.getUserEntity();
+
+        String mealDiaryOwnerUserImageLink;
+        if (mealDiaryOwnerUser.getProfileImage() == null){
+            mealDiaryOwnerUserImageLink = "default_image";
         }else {
-            profileImageLink = user.getProfileImage().getImageLink();
+            mealDiaryOwnerUserImageLink = mealDiaryOwnerUser.getProfileImage().getImageLink();
         }
 
-        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments,profileImageLink);
+
+        return MealDiaryConverter.toGetMealDiaryResponseDTO(mealDiary,list,mealDiaryImages, diaryLikeStatus,diaryBookmarkStatus,comments,mealDiaryOwnerUserImageLink);
     }
 
     @Override

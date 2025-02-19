@@ -83,7 +83,7 @@ public class SearchServiceImpl implements SearchService {
                             .toList();
 
                     boolean hasViewedStory = isViewedList.stream()
-                            .anyMatch(view -> view ==null || !view.isViewed());
+                            .allMatch(view -> view ==null || !view.isViewed());
 
 
                     return SearchConverter.toAccountSearchResponseDTO(

@@ -14,8 +14,6 @@ public class MealDiaryCommentCreateDTO {
     @AllArgsConstructor
     public static class MealDiaryCommentRequestDTO{
 
-        Long userId;
-
         Long mealDiaryId;
 
         String comment;

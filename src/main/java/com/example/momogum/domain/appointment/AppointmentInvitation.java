@@ -28,6 +28,7 @@ public class AppointmentInvitation extends BaseEntity {
 
     // 초대 상태
     @Enumerated(EnumType.STRING)
+    @Setter
     private InvitationStatus status;
 
     // 초대받은 사용자 Id
@@ -47,4 +48,5 @@ public class AppointmentInvitation extends BaseEntity {
     public void updateStatus(InvitationStatus updateStatus) {
         this.status = updateStatus;
     }
+
 }

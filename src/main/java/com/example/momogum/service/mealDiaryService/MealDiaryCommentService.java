@@ -5,11 +5,13 @@ import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDeleteDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface MealDiaryCommentService {
-    MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request);
+import java.io.IOException;
 
-    MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request);
+public interface MealDiaryCommentService {
+    MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(Long userId, MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException;
+
+    MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(Long userId,MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request);
 
     @Transactional
-    void delete(MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request);
+    void delete(Long userId, MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request);
 }

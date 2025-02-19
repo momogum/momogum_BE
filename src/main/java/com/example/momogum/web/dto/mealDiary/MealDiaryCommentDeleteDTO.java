@@ -13,8 +13,6 @@ public class MealDiaryCommentDeleteDTO {
     @AllArgsConstructor
     public static class MealDiaryCommentDeleteRequestDTO {
 
-        Long userId;
-
         Long mealDiaryCommentId;
 
     }

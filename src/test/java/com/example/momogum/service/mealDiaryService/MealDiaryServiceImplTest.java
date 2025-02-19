@@ -386,6 +386,7 @@ class MealDiaryServiceImplTest {
         mealDiaryKeywords.add(testMealDiaryKeyword);
 
         doReturn(mealDiaryKeywords).when(testMealDiary).getMealDiaryKeywords();
+        doReturn(LocalDateTime.now()).when(testMealDiary).getCreatedAt();
         doReturn(testProfileImage).when(spyMember).getProfileImage();
 
         when(mealDiaryImageUtil.findImagesByMealId(any())).thenReturn(List.of(imageLink));
@@ -397,6 +398,7 @@ class MealDiaryServiceImplTest {
 
         //when
         MealDairiesDTO.GetMealDiaryResponseDTO response = mealDiaryService.get(1L, 1L);
+        System.out.println(response.getCreatedAt());
 
         //then
         assertThat(response).isNotNull();
@@ -407,7 +409,7 @@ class MealDiaryServiceImplTest {
         assertThat(response.isMealDairyBookmark()).isFalse();
         assertThat(response.getKeywords()).contains("한식");
         assertThat(response.getLocation()).isEqualTo("test_location");
-
+        assertThat(response.getCreatedAt()).isNotNull();
         assertThat(response.getUserProfileImageLink()).isEqualTo("test_profile_image_link");
         assertThat(response.getComments()).isEqualTo(List.of());
     }

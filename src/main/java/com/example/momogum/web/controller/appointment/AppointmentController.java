@@ -34,25 +34,39 @@ public class AppointmentController {
         return ApiResponse.onSuccess(response);
     }
 
-//    @Operation(summary = "확정 대기중인 약속 조회 API",
-//            description = "현재 사용자가 초대받았으나 아직 확정되지 않은 약속 목록을 조회합니다.")
-//    @GetMapping("/pending")
-//    public ApiResponse<List<PendingInvitationDTO>> getPendingInvitations(@PathVariable Long appointmentId) {
-//        return ApiResponse.onSuccess(appointmentService.getPendingInvitations(appointmentId));
-//    }
+    @Operation(summary = "약속 확정 API",
+            description = "현재 보낸 초대장을 확인하고 약속 확정을 합니다.")
+    @PostMapping("/{appointmentId}/confirmed")
+    public ApiResponse<Long> confirmedAppointment(@PathVariable Long appointmentId) {
+        Long resultAppointmentId = appointmentService.confirmedAppointment(appointmentId);
+        return ApiResponse.onSuccess(resultAppointmentId);
+    }
 
+    @Operation(summary = "약속 삭제 API",
+            description = "현재 선택된 약속을 삭제합니다.")
+    @PostMapping("/{appointmentId}/delete")
+    public ApiResponse<String> deleteAppointment(@PathVariable Long appointmentId) {
+        appointmentService.deleteAppointment(appointmentId);
+        return ApiResponse.onSuccess("약속이 삭제되었습니다.");
+    }
+
+
+    // UserID를 @PathVariable 방식에서 @AuthenticationPrincipal로 대체
+    // 엔드포인트에서 userId를 직접 받는 방식에서 JWT에서 자동으로 가져오도록 수정
     @Operation(summary = "수락 대기중인 식사 약속 조회 API",
-            description = "현재 사용자가 확정한 승인된 식사 약속 목록을 조회합니다.")
+            description = "현재 사용자가 초대받았으나 아직 확정되지 않은 약속 목록을 조회합니다.")
     @GetMapping("/accept")
-    public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getAcceptedInvitations(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getAcceptedInvitations(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getId();
-        return ApiResponse.onSuccess(appointmentService.getAcceptedAppointments(userId));
+        return ApiResponse.onSuccess(appointmentService.getAllAcceptedAppointments(userId));
     }
 
     @Operation(summary = "확정된 식사 약속 조회 API",
-            description = "현재 사용자가 확정한 승인된 식사 약속 목록을 조회합니다.")
+            description = "현재 사용자가 확정한 승인된 전체 식사 약속 목록을 조회합니다.")
     @GetMapping("/confirmed")
-    public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getConfirmedInvitations(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getConfirmedInvitations(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getId();
         return ApiResponse.onSuccess(appointmentService.getConfirmedAppointments(userId));
     }

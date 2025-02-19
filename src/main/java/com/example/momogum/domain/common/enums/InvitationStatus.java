@@ -2,5 +2,6 @@ package com.example.momogum.domain.common.enums;
 
 public enum InvitationStatus {
 
-    PENDING, ACCEPTED, DECLINED, CONFIRMED
+    PENDING, ACCEPTED, CONFIRMED
+
 }

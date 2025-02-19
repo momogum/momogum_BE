@@ -10,11 +10,13 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryLikesRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.mealDiary.MealDiaryLikeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,12 +28,15 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
     private final MealDiaryRepository mealDiaryRepository;
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
     private final UserEntityRepository userEntityRepository;
+    private final FirebaseCloudMessageUtil firebaseCloudMessageUtil;
 
     @Override
-    public void toggle(Long userId, Long mealDiaryId) {
+    public void toggle(Long userId, Long mealDiaryId) throws IOException {
 
         MealDiary findMealDiary = findMealDiary(mealDiaryId);
         UserEntity findUser = findUser(userId);
+
+        UserEntity mealDiaryOwner = findMealDiary.getUserEntity();
 
         MealDiaryLikes mealDiaryLikes = mealDiaryLikesRepository.findByUserEntityAndMealDiary(findUser, findMealDiary)
                 .orElse(null);
@@ -45,6 +50,10 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
             findMealDiary.increaseLikeCount();
             mealDiaryLikesRepository.save(newMealDiaryLikes);
         }
+
+        String title = mealDiaryOwner.getNickname();
+        String body = findUser.getName()+"님이 회원님의 밥일기를 좋아합니다";
+        firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwner.getId(),title,body);
     }
 
     @Override

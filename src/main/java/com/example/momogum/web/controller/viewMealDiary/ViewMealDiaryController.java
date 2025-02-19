@@ -2,11 +2,13 @@ package com.example.momogum.web.controller.viewMealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.domain.common.enums.FoodCategory;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.viewMealDiaryService.ViewMealDiaryService;
 import com.example.momogum.web.dto.viewMealDiary.ViewMealDiaryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +25,8 @@ public class ViewMealDiaryController {
             description = "메인 페이지에서 또 올래요를 눌렀을 때 사용될 API입니다. ")
     @GetMapping("/revisit")
     public ApiResponse<List<ViewMealDiaryDTO.MainViewMealDiaryResponse>> getMealDiaryIsRevisit(
-            @RequestParam Long userId) {
-
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
         List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryIsRevisitedByLikesCount(userId);
 
         return ApiResponse.onSuccess(response);
@@ -38,10 +40,10 @@ public class ViewMealDiaryController {
                     ", ASIAN(아시안 푸드), FAST_FOOD(패스트 푸드), CAFE(카페), ETC(기타) 해당 태그 맞춰서 넣어 주세요")
     @GetMapping("/{foodCategory}")
     public ApiResponse<List<ViewMealDiaryDTO.MainViewMealDiaryResponse>> getMealDiaryByFoodCategory(
-            @RequestParam Long userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable FoodCategory foodCategory
             ) {
-
+        Long userId = userDetails.getId();
         List<ViewMealDiaryDTO.MainViewMealDiaryResponse> response = viewMealDiaryService.getMealDiaryByFoodCategory(userId,foodCategory);
 
         return ApiResponse.onSuccess(response);

@@ -3,13 +3,15 @@ package com.example.momogum.service.userProfileService;
 import com.example.momogum.domain.UserEntity;
 import com.example.momogum.web.dto.FollowDTO;
 import com.example.momogum.web.dto.FollowDTO.FollowerResponseDTO;
+
+import java.io.IOException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 
 public interface FollowService {
 
-  FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId);
+  FollowDTO.FollowStatsDTO toggleFollowUser(Long currentUserId, Long targetUserId) throws IOException;
 
   List<FollowDTO.FollowingResponseDTO> getFollowings(Long userId);
 

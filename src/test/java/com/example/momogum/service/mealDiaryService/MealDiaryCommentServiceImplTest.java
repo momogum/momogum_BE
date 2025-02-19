@@ -1,6 +1,7 @@
 package com.example.momogum.service.mealDiaryService;
 
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.handler.MealDiaryCommentHandler;
 import com.example.momogum.apiPayLoad.exception.handler.MealDiaryHandler;
 import com.example.momogum.apiPayLoad.exception.handler.UserEntityHandler;
 import com.example.momogum.domain.MealDiary;
@@ -13,6 +14,8 @@ import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentCreateDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDeleteDTO;
+import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -225,5 +228,226 @@ class MealDiaryCommentServiceImplTest {
         assertThat(response).isNotNull();
         assertThat(response.getMealDiaryCommentId()).isEqualTo(1L);
         assertThat(testMealDiary.getCommentCount()).isEqualTo(1);
+    }
+
+
+    @Test
+    @DisplayName("delete()를 이용하여 댓글을 삭제할 수 있다")
+    public void delete_success() {
+        // given
+        MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request =
+                MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO.builder()
+                        .userId(2L)
+                        .mealDiaryCommentId(1L)
+                        .build();
+
+        MealDiaryComments comment = MealDiaryComments.builder()
+                .id(1L)
+                .content("test_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
+        doNothing().when(mealDiaryCommentsRepository).delete(any(MealDiaryComments.class));
+
+        // when
+        mealDiaryCommentService.delete(request);
+
+        // then
+        verify(mealDiaryCommentsRepository).findById(1L);
+        verify(userEntityRepository).findById(2L);
+        verify(mealDiaryCommentsRepository).delete(comment);
+        assertThat(testMealDiary.getCommentCount()).isEqualTo(-1);
+    }
+
+
+    @Test
+    @DisplayName("존재하지 않는 댓글을 삭제하려고 하면 예외가 발생한다")
+    public void delete_fail_commentNotFound() {
+        // given
+        MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request =
+                MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO.builder()
+                        .userId(2L)
+                        .mealDiaryCommentId(999L)
+                        .build();
+
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> mealDiaryCommentService.delete(request))
+                .isInstanceOf(MealDiaryCommentHandler.class)
+                .hasFieldOrPropertyWithValue("code", ErrorStatus.COMMENT_NOT_FOUND);
+    }
+
+
+    @Test
+    @DisplayName("댓글 작성자가 아닌 사용자가 삭제하려고 하면 예외가 발생한다")
+    public void delete_fail_unauthorizedUser() {
+        // given
+        MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request =
+                MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO.builder()
+                        .userId(1L)
+                        .mealDiaryCommentId(1L)
+                        .build();
+
+        MealDiaryComments comment = MealDiaryComments.builder()
+                .id(1L)
+                .content("test_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember));
+
+        // when & then
+        assertThatThrownBy(() -> mealDiaryCommentService.delete(request))
+                .isInstanceOf(UserEntityHandler.class)
+                .hasFieldOrPropertyWithValue("code", ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
+    }
+
+
+    @Test
+    @DisplayName("댓글이 삭제되면 게시글의 댓글 카운트가 감소한다")
+    public void delete_success_countDown() {
+        // given
+        MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request =
+                MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO.builder()
+                        .userId(2L)
+                        .mealDiaryCommentId(1L)
+                        .build();
+
+        MealDiaryComments comment = MealDiaryComments.builder()
+                .id(1L)
+                .content("test_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        testMealDiary.setCommentCount(1);
+
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
+        doNothing().when(mealDiaryCommentsRepository).delete(any(MealDiaryComments.class));
+
+        // when
+        mealDiaryCommentService.delete(request);
+
+        // then
+        assertThat(testMealDiary.getCommentCount()).isEqualTo(0);
+        verify(mealDiaryCommentsRepository).delete(comment);
+    }
+
+
+    @Test
+    @DisplayName("update()를 이용해서 댓글 내용을 수정할 수 있다")
+    public void update_success() {
+        // given
+        MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request =
+                MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO.builder()
+                        .userId(2L)
+                        .mealDiaryCommentId(1L)
+                        .comment("updated_comment")
+                        .build();
+
+        MealDiaryComments originalComment = MealDiaryComments.builder()
+                .id(1L)
+                .content("original_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        MealDiaryComments updatedComment = MealDiaryComments.builder()
+                .id(1L)
+                .content("updated_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.of(originalComment));
+        when(mealDiaryCommentsRepository.save(any(MealDiaryComments.class))).thenReturn(updatedComment);
+
+        // when
+        MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO response =
+                mealDiaryCommentService.update(request);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getMealDiaryCommentId()).isEqualTo(1L);
+        verify(mealDiaryCommentsRepository).findById(1L);
+        verify(userEntityRepository).findById(2L);
+        verify(mealDiaryCommentsRepository).save(any(MealDiaryComments.class));
+    }
+
+
+    @Test
+    @DisplayName("존재하지 않는 댓글을 수정하려고 하면 예외가 발생한다")
+    public void update_fail_commentNotFound() {
+        // given
+        MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request =
+                MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO.builder()
+                        .userId(2L)
+                        .mealDiaryCommentId(999L)
+                        .comment("updated_comment")
+                        .build();
+
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> mealDiaryCommentService.update(request))
+                .isInstanceOf(MealDiaryCommentHandler.class)
+                .hasFieldOrPropertyWithValue("code", ErrorStatus.COMMENT_NOT_FOUND);
+    }
+
+
+    @Test
+    @DisplayName("존재하지 않는 사용자가 댓글을 수정하려고 하면 예외가 발생한다")
+    public void update_fail_userNotFound() {
+        // given
+        MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request =
+                MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO.builder()
+                        .userId(999L)
+                        .mealDiaryCommentId(1L)
+                        .comment("updated_comment")
+                        .build();
+
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> mealDiaryCommentService.update(request))
+                .isInstanceOf(UserEntityHandler.class)
+                .hasFieldOrPropertyWithValue("code", ErrorStatus.MEMBER_NOT_FOUND);
+    }
+
+
+    @Test
+    @DisplayName("댓글 작성자가 아닌 사용자가 수정하려고 하면 예외가 발생한다")
+    public void update_fail_unauthorizedUser() {
+        // given
+        MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request =
+                MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO.builder()
+                        .userId(1L)
+                        .mealDiaryCommentId(1L)
+                        .comment("updated_comment")
+                        .build();
+
+        MealDiaryComments originalComment = MealDiaryComments.builder()
+                .id(1L)
+                .content("original_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember));
+        when(mealDiaryCommentsRepository.findById(anyLong())).thenReturn(Optional.of(originalComment));
+
+        // when & then
+        assertThatThrownBy(() -> mealDiaryCommentService.update(request))
+                .isInstanceOf(UserEntityHandler.class)
+                .hasFieldOrPropertyWithValue("code", ErrorStatus.MEMBER_AUTHENTICATE_FAILED);
     }
 }

@@ -59,6 +59,7 @@ public class MealDiaryConverter {
                 .isRevisit(mealDiary.getIsRevisit())
                 .isLike(isLike)
                 .comments(comments)
+                .createdAt(mealDiary.getCreatedAt())
                 .build();
     }
 

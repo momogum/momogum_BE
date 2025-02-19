@@ -107,5 +107,9 @@ public class MealDiary extends BaseEntity {
         this.mealDiaryKeywords.clear();
     }
 
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
+    }
+
 
 }

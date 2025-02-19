@@ -99,9 +99,7 @@ public class MealDairiesDTO {
         @Schema(description = "식사한 위치 입니다")
         String location;
 
-        // 키워드 정해지는대로 String -> Keyword(Enum.class)로 수정하기 FIXME
-        @Schema(description = "키워드 입니다 <br>," +
-                "정해진 키워드에서 선택할 수 있도록 구현하였습니다")
+        @Schema(description = "키워드 입니다 <br>")
         List<String> keywords;
 
         @Schema(description = "식사한 후기 입니다")
@@ -116,6 +114,8 @@ public class MealDairiesDTO {
         @Schema(description = "게시글 댓글입니다")
         List<MealDiaryCommentReadDTO.MealDiaryReadResponseDTO> comments;
 
+        @Schema(description = "밥일기 생성일 입니다")
+        LocalDateTime createdAt;
     }
 
 

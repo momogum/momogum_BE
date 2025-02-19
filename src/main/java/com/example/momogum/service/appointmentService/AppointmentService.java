@@ -79,7 +79,6 @@ public class AppointmentService {
         return appointmentConverter.toDetailsDTO(appointment, invitations, selectedCard);
     }
 
-
     /**
      * 다가오는 확정된 약속 조회 (ACCEPTED)
      */

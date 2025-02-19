@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.example.momogum.web.dto.appointment.AppointmentInviteDTO.*;
@@ -51,6 +52,24 @@ public class AppointmentOrchestratorDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AppointmentOrchestratorResponseDTO {
+
+        @Schema(description = "약속 제목입니다.")
+        String name;
+
+        @Schema(description = "식사 메뉴입니다.")
+        String menu;
+
+        @Schema(description = "약속 날짜입니다.")
+        LocalDate date;
+
+        @Schema(description = "약속 위치입니다.")
+        String location;
+
+        @Schema(description = "추가 메모입니다.")
+        String notes;
+
+        @Schema(description = "약속 생성 날짜입니다.")
+        String createdAt;
 
         @Schema(description = "초대된 친구 리스트입니다.")
         private List<AppointmentInviteResponseDTO> invitedFriends;

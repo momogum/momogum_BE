@@ -13,6 +13,7 @@ import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.Appoin
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -60,6 +61,11 @@ public class AppointmentConverter {
 
         // 2️⃣ 응답 객체 생성
         return AppointmentOrchestratorResponseDTO.builder()
+                .name(appointment.getName())
+                .menu(appointment.getMenu())
+                .date(LocalDate.from(appointment.getDate()))
+                .location(appointment.getLocation())
+                .notes(appointment.getNotes())
                 .appointmentId(appointment.getId())
                 .invitedFriends(invitedFriends)
                 .selectedCards(selectedCards)

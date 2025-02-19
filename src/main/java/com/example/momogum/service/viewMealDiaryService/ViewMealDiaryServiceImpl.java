@@ -33,7 +33,7 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
     private final RedisRepository redisRepository;
     private final MealDiaryRepository mealDiaryRepository;
 
-    private static final int TTL_MINUTES = 1;
+    private static final int TTL_SECONDS = 15;
 
     /**
      * 또 올래요 조회 로직
@@ -94,7 +94,7 @@ public class ViewMealDiaryServiceImpl implements ViewMealDiaryService {
                 redisRepository.addViewedPost(redisKey, response.getMealDiaryId().toString()));
 
         // Redis TTL 설정
-        redisRepository.setSessionTimeout(redisKey, TTL_MINUTES);
+        redisRepository.setSessionTimeout(redisKey, TTL_SECONDS);
 
         return responseList;
     }

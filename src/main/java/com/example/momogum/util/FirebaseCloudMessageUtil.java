@@ -66,6 +66,8 @@ public class FirebaseCloudMessageUtil {
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .build();
 
+        log.info(request.toString());
+
         try (Response response = client.newCall(request).execute()) {
             String responseBody = response.body().string();
             if (!response.isSuccessful()) {

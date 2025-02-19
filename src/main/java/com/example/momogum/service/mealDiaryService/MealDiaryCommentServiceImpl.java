@@ -11,12 +11,15 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.repository.mealDiaryCommentsRepo.MealDiaryCommentsRepository;
 import com.example.momogum.repository.mealDiaryRepo.MealDiaryRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentCreateDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDeleteDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @Service
@@ -26,17 +29,24 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
     private final UserEntityRepository userEntityRepository;
     private final MealDiaryRepository mealDiaryRepository;
     private final MealDiaryCommentsRepository mealDiaryCommentsRepository;
+    private final FirebaseCloudMessageUtil firebaseCloudMessageUtil;
 
 
     @Override
-    public MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request){
+    public MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException {
 
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
-        UserEntity user = findUser(request.getUserId());
-        MealDiaryComments newComment = MealDiaryCommentConverter.toMealDiaryComments(request.getComment(), mealDiary,user);
+        UserEntity commentOwner = findUser(request.getUserId());
+        MealDiaryComments newComment = MealDiaryCommentConverter.toMealDiaryComments(request.getComment(), mealDiary,commentOwner);
 
         MealDiaryComments saveComment = mealDiaryCommentsRepository.save(newComment);
         mealDiary.increaseCommentCount();
+
+        UserEntity mealDiaryOwner = mealDiary.getUserEntity();
+
+        String title = mealDiaryOwner.getNickname();
+        String body = commentOwner.getName()+"님이 댓글을 작성하였습니다";
+        firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwner.getId(),title,body);
 
         return MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO.builder()
                 .mealDiaryCommentId(saveComment.getId())
@@ -105,6 +115,12 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
     private MealDiary findMealDiary(Long mealDairyId) {
         return mealDiaryRepository.findById(mealDairyId)
                 .orElseThrow(()->new MealDiaryHandler(ErrorStatus.MEALDIARY_NOT_FOUND));
+    }
+
+    public void sendPushAlarm(String commentOwnerNickName, Long mealDiaryOwnerId) throws IOException {
+        String title = "댓글이 작성되었습니다";
+        String body = commentOwnerNickName +"님이 댓글을 작성하였습니다";
+        firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwnerId,title,body);
     }
 
 }

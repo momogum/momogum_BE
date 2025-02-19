@@ -35,7 +35,7 @@ public class UserService {
 
     public Long validateUserId(Long userId) {
         return userEntityRepository.findById(userId)
-                .map(UserEntity::getId)  // Optional 내부에서 ID 추출
+                .map(UserEntity::getId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
     }
 

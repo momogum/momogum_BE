@@ -16,19 +16,23 @@ public class CustomUserDetails implements UserDetails {
         this.user = user;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // 🔹 권한이 있다면 추가 (ex: ROLE_USER)
-    }
-
-    @Override
-    public String getPassword() {
-        return null; // 🔹 패스워드가 없으므로 null 반환
+    public Long getId() { // 🔹 getId() 메서드 추가
+        return user.getId();
     }
 
     @Override
     public String getUsername() {
-        return String.valueOf(user.getId()); // 🔹 userId를 username으로 사용
+        return user.getNickname(); // or other unique identifier
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null; // 권한이 필요하면 설정
+    }
+
+    @Override
+    public String getPassword() {
+        return null; // 패스워드 필드가 없으면 null
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.momogum.security;
 
+import com.example.momogum.domain.UserEntity;
+import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,7 +24,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService; // ✅ UserDetailsService를 사용
 
     @Override
     protected void doFilterInternal(
@@ -36,17 +39,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userId = jwtTokenProvider.getUserIdFromToken(token);
             log.info("✅ JWT 검증 성공 - 사용자 ID: {}", userId);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-            JwtAuthenticationToken authentication = new JwtAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+            try {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+                log.info("🔍 UserDetails 조회 성공: {}", userDetails);
 
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                JwtAuthenticationToken authentication =
+                        new JwtAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (UsernameNotFoundException e) {
+                log.error("❌ UserDetails 조회 실패: {}", e.getMessage());
+            }
+
         } else {
             log.warn("❌ JWT 검증 실패 - SecurityContext 초기화");
         }
 
         filterChain.doFilter(request, response);
     }
+
 
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

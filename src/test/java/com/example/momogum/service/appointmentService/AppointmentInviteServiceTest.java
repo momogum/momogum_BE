@@ -15,6 +15,7 @@ import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.repository.followRepo.FollowerRepository;
 import com.example.momogum.repository.followRepo.FollowingRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,8 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 class AppointmentInviteServiceTest {
 
+    @MockBean
+    private FirebaseCloudMessageUtil util;
 
     @MockBean
     private JwtUtil jwtUtil;

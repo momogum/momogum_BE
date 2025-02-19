@@ -27,13 +27,18 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
                                 "/webjars/**",
+
                                 "/auth/signup/**",
-                                "/auth/login/**"
+                                "/auth/login/**",
+                                "/auth/check-nickname",
+                                "/auth/callback/**",
+
+                                "/health"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // permitAll 에 적용된 API 외의 API들은 인증된 사용자만 접근 가능
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // ✅ JWT 필터 추가
+                .addFilterBefore(jwtAuthenticationFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

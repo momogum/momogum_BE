@@ -4,7 +4,6 @@ import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentInfoDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
@@ -13,6 +12,7 @@ import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.Appoin
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -60,6 +60,11 @@ public class AppointmentConverter {
 
         // 2️⃣ 응답 객체 생성
         return AppointmentOrchestratorResponseDTO.builder()
+                .name(appointment.getName())
+                .menu(appointment.getMenu())
+                .date(LocalDate.from(appointment.getDate()))
+                .location(appointment.getLocation())
+                .notes(appointment.getNotes())
                 .appointmentId(appointment.getId())
                 .invitedFriends(invitedFriends)
                 .selectedCards(selectedCards)

@@ -64,3 +64,6 @@ cloud:
 
 jwt:
   secret: ${JWT_SECRETKEY}
+
+fcm:
+  api-url: ${FCM_API_URL}

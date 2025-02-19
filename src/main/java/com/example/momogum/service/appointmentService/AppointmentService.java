@@ -3,15 +3,22 @@ package com.example.momogum.service.appointmentService;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentCardRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
+import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.PendingInvitationDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +34,22 @@ public class AppointmentService {
     private final AppointmentConverter appointmentConverter;
     private final AppointmentInviteRepository appointmentInviteRepository;
     private final AppointmentCardRepository appointmentCardRepository;
+    private final UserEntityRepository userEntityRepository;
 
     /**
      * 빈 Appointment 객체를 생성하고, ID를 반환
      */
     @Transactional
     public Appointment createEmptyAppointment() {
-        // 1️⃣ 빈 Appointment 객체 생성 (아직 데이터 없음)
+        // 1. 빈 Appointment 객체 생성 (아직 데이터 없음)
         Appointment appointment = appointmentConverter.toEmptyEntity();
 
-        // 2️⃣ DB에 저장 (ID를 생성하기 위해)
+        // 더미 데이터 이용
+        UserEntity defaultUser = userEntityRepository.findById(1L)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
+        appointment.setCreator(defaultUser);
+
+        // 2. DB에 저장 (ID를 생성하기 위해)
         appointment = appointmentRepository.save(appointment);
 
         return appointment;
@@ -79,16 +92,35 @@ public class AppointmentService {
     }
 
     /**
-     * 확정 대기중인 약속 조회 (PENDING)
-     */
-    public List<PendingInvitationDTO> getPendingInvitations(Long userId) {
-        return appointmentInviteRepository.findPendingInvitations(userId);
-    }
-
-    /**
      * 다가오는 확정된 약속 조회 (ACCEPTED)
      */
-    public List<AppointmentDTO.AcceptedInvitationDTO> getAcceptedAppointments(Long userId) {
-        return appointmentInviteRepository.findAcceptedAppointments(userId);
+    public List<AppointmentOrchestratorResponseDTO> getAcceptedAppointments(Long userId) {
+        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.ACCEPTED)
+                .stream()
+                .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
+                        .stream()
+                        .map(card -> AppointmentCardResponseDTO.builder()
+                                .category(card.getCategory().getCategory())
+                                .imageUrl(card.getImageUrl())
+                                .build())
+                        .toList()))
+                .toList();
+    }
+
+
+    /**
+     * 확정된 약속 조회 (Confirmed)
+     */
+    public List<AppointmentOrchestratorResponseDTO> getConfirmedAppointments(Long userId) {
+        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.CONFIRMED)
+                .stream()
+                .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
+                        .stream()
+                        .map(card -> AppointmentCardResponseDTO.builder()
+                                .category(card.getCategory().getCategory())
+                                .imageUrl(card.getImageUrl())
+                                .build())
+                        .toList()))
+                .toList();
     }
 }

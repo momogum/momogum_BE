@@ -52,8 +52,8 @@ public class RedisRepository {
     }
 
     //  세션 만료 시간 설정
-    public void setSessionTimeout(String userId, long timeoutMinutes) {
+    public void setSessionTimeout(String userId, long timeoutSeconds) {
         String key = generateKey(userId);
-        redisTemplate.expire(key, Duration.ofMinutes(timeoutMinutes));
+        redisTemplate.expire(key, Duration.ofSeconds(timeoutSeconds));
     }
 }

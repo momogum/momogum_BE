@@ -2,6 +2,7 @@ package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,10 @@ import java.time.LocalDateTime;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentNameControllerTest {
+
+    @MockBean
+    private FirebaseCloudMessageUtil util;
+
 
     @MockBean
     private JwtUtil jwtUtil;

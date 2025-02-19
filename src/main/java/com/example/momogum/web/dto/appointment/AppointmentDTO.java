@@ -116,26 +116,4 @@ public class AppointmentDTO {
         private String notes;
     }
 
-    /**
-     * 초대 상태 PENDING DTO
-     */
-
-    public static interface PendingInvitationDTO {
-
-        Long getAppointmentId();
-        LocalDateTime getDate();
-        String getName();
-        String getCreatorNickname();
-    }
-
-
-    public interface AcceptedInvitationDTO {
-
-        Long getAppointmentId();
-        LocalDateTime getDate();
-        String getLocation();
-        String getAppointmentName();
-        String getMenu();
-    }
-
 }

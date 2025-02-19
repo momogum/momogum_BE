@@ -17,23 +17,4 @@ public interface AppointmentInviteRepository extends JpaRepository<AppointmentIn
 
     List<AppointmentInvitation> findByAppointmentId(Long appointmentId);
 
-    @Query("SELECT a.id as appointmentId, a.date as date, a.name as name, creator.nickname as creatorNickname " +
-            "FROM AppointmentInvitation ai " +
-            "JOIN ai.appointment a " +
-            "JOIN ai.userEntity invitedUser " +
-            "JOIN a.creator creator " +
-            "WHERE invitedUser.id = :userId " +
-            "AND ai.status = 'PENDING'"
-    )
-    List<PendingInvitationDTO> findPendingInvitations(Long userId);
-
-
-    @Query("SELECT a.id as appointmentId, a.date as date, a.location as location, a.name as appointmentName, a.menu as menu " +
-            "FROM AppointmentInvitation ai " +
-            "JOIN ai.appointment a " +
-            "WHERE ai.userEntity.id = :userId " +
-            "AND ai.status = 'ACCEPTED' " +
-            "ORDER BY a.date ASC")
-    List<AcceptedInvitationDTO> findAcceptedAppointments(Long userId);
-
 }

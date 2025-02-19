@@ -78,17 +78,23 @@ public class AppointmentService {
         return appointmentConverter.toDetailsDTO(appointment, invitations, selectedCard);
     }
 
-    /**
-     * 확정 대기중인 약속 조회 (PENDING)
-     */
-    public List<PendingInvitationDTO> getPendingInvitations(Long userId) {
-        return appointmentInviteRepository.findPendingInvitations(userId);
+
+
+    public List<PendingInvitationDTO> getPendingInvitations(Long appointmentId) {
+        return null;
     }
 
     /**
      * 다가오는 확정된 약속 조회 (ACCEPTED)
      */
-    public List<AppointmentDTO.AcceptedInvitationDTO> getAcceptedAppointments(Long userId) {
-        return appointmentInviteRepository.findAcceptedAppointments(userId);
+    public List<AppointmentDTO.AcceptedInvitationDTO> getAcceptedAppointments(Long appointmentId) {
+        return null;
+    }
+
+    /**
+     * 확정된 약속 조회 (Confirmed)
+     */
+    public List<AppointmentDTO.AcceptedInvitationDTO> getConfirmedAppointments(Long appointmentId) {
+        return null;
     }
 }

@@ -41,6 +41,15 @@ public class SearchDTO {
         @Schema(description = "스토리 확인 여부")
         private Boolean hasViewedStory;
 
+        @Schema(description = "한줄 소개")
+        private String about;
+
+        @Schema(description = "팔로워 수")
+        private Integer follower;
+
+        @Schema(description = "팔로잉 수")
+        private Integer following;
+
     }
 
     @NoArgsConstructor

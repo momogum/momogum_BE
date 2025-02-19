@@ -45,6 +45,9 @@ public class SearchConverter {
                 .searchFollowCount(count)
                 .hasStory(hasStory)
                 .hasViewedStory(hasViewedStory)
+                .about(user.getAbout())
+                .follower(user.getFollowerCount())
+                .following(user.getFollowingCount())
                 .build();
     }
 

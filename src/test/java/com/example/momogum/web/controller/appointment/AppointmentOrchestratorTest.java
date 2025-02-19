@@ -12,6 +12,7 @@ import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
 import com.example.momogum.service.appointmentService.AppointmentService;
 import com.example.momogum.service.appointmentService.orchestrator.AppointmentOrchestrator;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
@@ -39,6 +40,9 @@ import static org.mockito.Mockito.*;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentOrchestratorTest {
+
+    @MockBean
+    private FirebaseCloudMessageUtil util;
 
     @MockBean
     private JwtUtil jwtUtil;

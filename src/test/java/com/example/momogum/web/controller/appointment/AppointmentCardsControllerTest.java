@@ -3,6 +3,7 @@ package com.example.momogum.web.controller.appointment;
 import com.example.momogum.domain.common.enums.CardCategory;
 import com.example.momogum.domain.utils.JwtUtil;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
+import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AppointmentCardsControllerTest {
+
+    @MockBean
+    private FirebaseCloudMessageUtil util;
+
 
     @MockBean
     private JwtUtil jwtUtil;

@@ -12,12 +12,8 @@ import com.example.momogum.repository.appoinmentRepo.AppointmentCardRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
-import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
-import com.example.momogum.web.dto.appointment.AppointmentDTO.PendingInvitationDTO;
-import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +41,7 @@ public class AppointmentService {
         Appointment appointment = appointmentConverter.toEmptyEntity();
 
         // 더미 데이터 이용
-        UserEntity defaultUser = userEntityRepository.findById(1L)
+        UserEntity defaultUser = userEntityRepository.findById(9L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
         appointment.setCreator(defaultUser);
 
@@ -56,19 +52,19 @@ public class AppointmentService {
     }
 
     /**
-     * ID로 Appointment 조회
-     */
-    public Appointment findById(Long appointmentId) {
-        return appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
-    }
-
-    /**
      * 업데이트된 Appointment 저장
      */
     @Transactional
     public Appointment save(Appointment appointment) {
         return appointmentRepository.save(appointment);
+    }
+
+    /**
+     * ID로 Appointment 조회
+     */
+    public Appointment findById(Long appointmentId) {
+        return appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
     }
 
     /**
@@ -92,9 +88,9 @@ public class AppointmentService {
     }
 
     /**
-     * 다가오는 확정된 약속 조회 (ACCEPTED)
+     * 다가오는 확정된 전체 약속 조회 (ACCEPTED)
      */
-    public List<AppointmentOrchestratorResponseDTO> getAcceptedAppointments(Long userId) {
+    public List<AppointmentOrchestratorResponseDTO> getAllAcceptedAppointments(Long userId) {
         return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.ACCEPTED)
                 .stream()
                 .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
@@ -109,7 +105,7 @@ public class AppointmentService {
 
 
     /**
-     * 확정된 약속 조회 (Confirmed)
+     * 확정된 약속 전체 조회 (Confirmed)
      */
     public List<AppointmentOrchestratorResponseDTO> getConfirmedAppointments(Long userId) {
         return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.CONFIRMED)
@@ -123,4 +119,32 @@ public class AppointmentService {
                         .toList()))
                 .toList();
     }
+
+
+    /**
+     * 약속 삭제
+     * @param appointmentId
+     */
+    @Transactional
+    public void deleteAppointment(Long appointmentId) {
+        Appointment appointment = findById(appointmentId);
+        appointmentRepository.delete(appointment);
+    }
+
+    /**
+     * 약속 확정 후 상태 변경 ACCEPTED -> CONFIRMED
+     * @param appointmentId
+     */
+    @Transactional
+    public Long confirmedAppointment(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
+
+        appointment.getInvitations().forEach(invite -> invite.setStatus(InvitationStatus.CONFIRMED));
+
+        appointmentRepository.save(appointment);
+
+        return appointment.getId();
+    }
+
 }

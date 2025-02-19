@@ -29,7 +29,6 @@ public class MealDiaryStory extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private MealDiary mealDiary;
 
-    public void setCreateAt(LocalDateTime createAt) {
-    }
-
+    @OneToMany(mappedBy = "mealDiaryStory", cascade = CascadeType.ALL)
+    private List<MealDiaryStoryView> mealDiaryStoryViews = new ArrayList<>();
 }

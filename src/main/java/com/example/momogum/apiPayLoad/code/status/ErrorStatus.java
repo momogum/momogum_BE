@@ -53,6 +53,7 @@ public enum ErrorStatus implements BaseErrorCode {
     KEYWORD_BLANK(HttpStatus.BAD_REQUEST,"SEARCH4001","검색어는 필수입니다."),
     NO_RESULT_FOUND(HttpStatus.NOT_FOUND, "SEARCH4002", "검색 결과가 없습니다."),
 
+    FCM_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST,"FCM4001","FCM 토큰을 찾을 수 없습니다"),
 
     APPOINTMENT_NOT_EXIST(HttpStatus.NOT_FOUND,"APPOINTMENT4001","약속을 찾을 수 없습니다"),
 

@@ -130,4 +130,5 @@ public class UserProfileServiceImpl implements UserProfileService {
         .map(ViewMealDiaryConverter::toViewMealDiaryResponse)
         .collect(Collectors.toList());
   }
+  // 주석
 }

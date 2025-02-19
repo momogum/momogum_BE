@@ -6,12 +6,17 @@ import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentCardRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.PendingInvitationDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,23 +83,36 @@ public class AppointmentService {
         return appointmentConverter.toDetailsDTO(appointment, invitations, selectedCard);
     }
 
-
-
-    public List<PendingInvitationDTO> getPendingInvitations(Long appointmentId) {
-        return null;
-    }
-
     /**
      * 다가오는 확정된 약속 조회 (ACCEPTED)
      */
-    public List<AppointmentDTO.AcceptedInvitationDTO> getAcceptedAppointments(Long appointmentId) {
-        return null;
+    public List<AppointmentOrchestratorResponseDTO> getAcceptedAppointments(Long userId) {
+        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.ACCEPTED)
+                .stream()
+                .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
+                        .stream()
+                        .map(card -> AppointmentCardResponseDTO.builder()
+                                .category(card.getCategory().getCategory())
+                                .imageUrl(card.getImageUrl())
+                                .build())
+                        .toList()))
+                .toList();
     }
+
 
     /**
      * 확정된 약속 조회 (Confirmed)
      */
-    public List<AppointmentDTO.AcceptedInvitationDTO> getConfirmedAppointments(Long appointmentId) {
-        return null;
+    public List<AppointmentOrchestratorResponseDTO> getConfirmedAppointments(Long userId) {
+        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.CONFIRMED)
+                .stream()
+                .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
+                        .stream()
+                        .map(card -> AppointmentCardResponseDTO.builder()
+                                .category(card.getCategory().getCategory())
+                                .imageUrl(card.getImageUrl())
+                                .build())
+                        .toList()))
+                .toList();
     }
 }

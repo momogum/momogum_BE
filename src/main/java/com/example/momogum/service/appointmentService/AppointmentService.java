@@ -140,13 +140,11 @@ public class AppointmentService {
      * appointment 업데이트
      */
     @Transactional
-    public Appointment updateAppointment(Long appointmentId, AppointmentOrchestratorRequestDTO request) {
+    public void updateAppointment(Long appointmentId, AppointmentOrchestratorRequestDTO request) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
 
         Appointment updatedAppointment = appointment.updateAppointment(request);
-
-        return appointmentRepository.save(updatedAppointment);
     }
 
     /**

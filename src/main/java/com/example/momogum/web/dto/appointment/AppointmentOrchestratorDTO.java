@@ -31,8 +31,8 @@ public class AppointmentOrchestratorDTO {
         @Schema(description = "현재 약속 ID 입니다.")
         private Long appointmentId;
 
-        @Schema(description = "현재 사용자 nicknames 입니다.")
-        private List<String> nicknames;
+        @Schema(description = "초대받은 사용자들의 고유 id 입니다.")
+        private List<Long > userIds;
 
         @Schema(description = "약속 카드 카테고리 입니다.")
         private CardCategory cardCategory;

@@ -122,16 +122,6 @@ public class AppointmentService {
 
 
     /**
-     * 약속 삭제
-     * @param appointmentId
-     */
-    @Transactional
-    public void deleteAppointment(Long appointmentId) {
-        Appointment appointment = findById(appointmentId);
-        appointmentRepository.delete(appointment);
-    }
-
-    /**
      * 약속 확정 후 상태 변경 ACCEPTED -> CONFIRMED
      * @param appointmentId
      */
@@ -145,6 +135,16 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
 
         return appointment.getId();
+    }
+
+    /**
+     * 약속 삭제
+     * @param appointmentId
+     */
+    @Transactional
+    public void deleteAppointment(Long appointmentId) {
+        Appointment appointment = findById(appointmentId);
+        appointmentRepository.delete(appointment);
     }
 
 }

@@ -1,0 +1,7 @@
+spring:
+  security:
+    enabled: false
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: create-drop

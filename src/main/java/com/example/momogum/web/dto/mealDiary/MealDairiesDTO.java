@@ -19,9 +19,9 @@ public class MealDairiesDTO {
     @AllArgsConstructor
     public static class CreateStoryRequestDTO {
 
-        @Schema(description = "회원의 식별자를 입력 받습니다 <br>," +
-                "추후에 JWT Token으로 변경될 수 있습니다")
-        Long memberId;
+//        @Schema(description = "회원의 식별자를 입력 받습니다 <br>," +
+//                "추후에 JWT Token으로 변경될 수 있습니다")
+//        Long memberId;
 
         @Schema(description = "식사 카테고리 입니다 <br>," +
                 "정해진 카테고리에서 선택할 수 있도록 구현하였습니다")

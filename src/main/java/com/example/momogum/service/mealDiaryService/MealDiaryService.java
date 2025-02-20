@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface MealDiaryService {
-    MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request, List<MultipartFile> files);
+    MealDairiesDTO.CreateStoryResponseDTO save(Long userId, MealDairiesDTO.CreateStoryRequestDTO request, List<MultipartFile> files);
 
     MealDairiesDTO.GetMealDiaryResponseDTO get(Long mealDiaryId, Long userId);
 
@@ -17,9 +17,9 @@ public interface MealDiaryService {
 
     void delete(Long userId, Long mealDiaryId) throws FileNotFoundException;
 
-    MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request);
+    MealDiaryReportDTO.MealDiaryReportResponseDTO report(Long userId, MealDiaryReportDTO.MealDiaryReportRequestDTO request);
 
     List<MealDiaryReportDTO.MealDiaryReportResponseDTO> getReport();
 
-    MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request);
+    MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(Long userId, MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request);
 }

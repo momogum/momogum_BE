@@ -1,6 +1,7 @@
 package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.mealDiaryService.MealDiaryService;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryReportDTO;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,9 +33,12 @@ public class MealDiaryController {
     @PostMapping(path = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MealDairiesDTO.CreateStoryResponseDTO> create(
             @RequestPart(value = "files") List<MultipartFile> files,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestPart(value = "request") MealDairiesDTO.CreateStoryRequestDTO request) {
 
-        MealDairiesDTO.CreateStoryResponseDTO result = mealDiaryService.save(request, files);
+        Long userId = userDetails.getId();
+
+        MealDairiesDTO.CreateStoryResponseDTO result = mealDiaryService.save(userId, request, files);
 
         return ApiResponse.onSuccess(result);
     }
@@ -41,7 +46,9 @@ public class MealDiaryController {
     @Operation(summary = "단일 밥일기 조회 API")
     @GetMapping("")
     public ApiResponse<MealDairiesDTO.GetMealDiaryResponseDTO> get(@RequestParam Long mealDairyId,
-                                                                   @RequestParam Long userId){
+                                                                   @AuthenticationPrincipal CustomUserDetails userDetails){
+
+        Long userId = userDetails.getId();
         MealDairiesDTO.GetMealDiaryResponseDTO getMealDiaryResponseDTO = mealDiaryService.get(mealDairyId,userId);
 
         return ApiResponse.onSuccess(getMealDiaryResponseDTO);
@@ -49,22 +56,24 @@ public class MealDiaryController {
 
 
     @Operation(summary = "회원 보관 밥일기 API", description = "회원이 작성한 모든 밥일기를 조회합니다")
-    @GetMapping("/memberId/{memberId}/all")
+    @GetMapping("/all")
     public ApiResponse<List<MealDairiesDTO.GetAllMealDiaryResponseDTO>> getMemberMealDiaries(
-            @PathVariable Long memberId) {
-
-        List<MealDairiesDTO.GetAllMealDiaryResponseDTO> result = mealDiaryService.getAll(memberId);
+            @AuthenticationPrincipal CustomUserDetails userDetails
+            ) {
+        Long userId = userDetails.getId();
+        List<MealDairiesDTO.GetAllMealDiaryResponseDTO> result = mealDiaryService.getAll(userId);
         return ApiResponse.onSuccess(result);
 
     }
 
 
     @Operation(summary = "밥일기 삭제 API")
-    @DeleteMapping("/mealDiaryId/{mealDiaryId}/userId/{userId}")
+    @DeleteMapping("/mealDiaryId/{mealDiaryId}")
     public ApiResponse<String> delete(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long mealDiaryId) throws FileNotFoundException {
 
+        Long userId = userDetails.getId();
         mealDiaryService.delete(userId, mealDiaryId);
 
         return ApiResponse.onSuccess("밥일기 삭제되었습니다");
@@ -73,9 +82,12 @@ public class MealDiaryController {
 
     @Operation(summary = "신고하기 API")
     @PostMapping("/report")
-    public ApiResponse<MealDiaryReportDTO.MealDiaryReportResponseDTO> report(@RequestBody MealDiaryReportDTO.MealDiaryReportRequestDTO request){
+    public ApiResponse<MealDiaryReportDTO.MealDiaryReportResponseDTO> report(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody MealDiaryReportDTO.MealDiaryReportRequestDTO request){
 
-        MealDiaryReportDTO.MealDiaryReportResponseDTO result = mealDiaryService.report(request);
+        Long userId = userDetails.getId();
+        MealDiaryReportDTO.MealDiaryReportResponseDTO result = mealDiaryService.report(userId, request);
 
         return ApiResponse.onSuccess(result);
     }
@@ -96,8 +108,13 @@ public class MealDiaryController {
     description = "키워드 필드를 제외하고는 모두 필드 업데이트 방식입니다 <br> " +
             "키워드 필드는 아예 삭제하고 새로운 키워드를 저장하는 방식입니다")
     @PatchMapping("/")
-    public ApiResponse<MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO> update(@RequestBody MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
-        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(request);
+    public ApiResponse<MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO> update(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+
+        Long userId = userDetails.getId();
+        MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO response = mealDiaryService.update(userId, request);
+
         return ApiResponse.onSuccess(response);
     }
 }

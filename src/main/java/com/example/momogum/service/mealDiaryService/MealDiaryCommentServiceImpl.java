@@ -34,10 +34,10 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
 
     @Override
-    public MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException {
+    public MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(Long userId, MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException {
 
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
-        UserEntity commentOwner = findUser(request.getUserId());
+        UserEntity commentOwner = findUser(userId);
         MealDiaryComments newComment = MealDiaryCommentConverter.toMealDiaryComments(request.getComment(), mealDiary,commentOwner);
 
         MealDiaryComments saveComment = mealDiaryCommentsRepository.save(newComment);
@@ -61,9 +61,9 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
     }
 
     @Override
-    public MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request){
+    public MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(Long userId, MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request){
 
-        UserEntity findUser = findUser(request.getUserId());
+        UserEntity findUser = findUser(userId);
         MealDiaryComments byId = findComment(request.getMealDiaryCommentId());
 
         userValid(findUser, byId);
@@ -78,7 +78,7 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
     @Override
     @Transactional
-    public void delete(MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request){
+    public void delete(Long userId, MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request){
 
         MealDiaryComments comment = findComment(request.getMealDiaryCommentId());
 
@@ -88,7 +88,7 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
         }
         mealDiary.decreaseCommentCount();
 
-        UserEntity user = findUser(request.getUserId());
+        UserEntity user = findUser(userId);
 
         userValid(user, comment);
 

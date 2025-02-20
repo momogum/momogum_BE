@@ -2,6 +2,7 @@ package com.example.momogum.web.controller;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.domain.UserEntity;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.TokenService;
 import com.example.momogum.service.UserService;
 import com.example.momogum.web.dto.AuthDTO;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -221,29 +223,33 @@ public class AuthController {
         );
     }
 
-    @Operation(summary = "현재 로그인한 유저 정보 조회 API", description = "JWT를 이용하여 현재 로그인한 유저 정보를 반환합니다.")
-    @GetMapping("/me")
-    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo(@RequestParam Long userId) {
-        // 요청에서 유저 ID 가져오기
-        Long resultUserId = userService.validateUserId(userId);
-        log.info("현재 로그인한 유저 정보 요청 - 유저 ID: {}", resultUserId);
 
-        UserEntity user = tokenService.findUserById(resultUserId)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+// AuthenticationPrincippal 정상작동 확인 후 주석처리
+//    @Operation(summary = "현재 로그인한 유저 정보 조회 API", description = "JWT를 이용하여 현재 로그인한 유저 정보를 반환합니다.")
+//    @GetMapping("/me")
+//    public ApiResponse<UserDTO.UserResponseDTO> getCurrentUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+//        log.info("📌 현재 인증된 사용자: {}", userDetails);
+//
+//        if (userDetails == null) {
+//            throw new RuntimeException("❌ 인증된 사용자가 없습니다.");
+//        }
+//
+//        UserEntity user = tokenService.findUserById(userDetails.getId())
+//                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+//
+//        String profileImageUrl = user.getProfileImage() != null ? user.getProfileImage().getImageLink() : null;
+//
+//        return ApiResponse.onSuccess(
+//                UserDTO.UserResponseDTO.builder()
+//                        .id(user.getId())
+//                        .name(user.getName())
+//                        .nickname(user.getNickname())
+//                        .profileImage(profileImageUrl)
+//                        .isNewUser(false)
+//                        .build()
+//        );
+//    }
 
-        // 프로필 이미지 URL 가져오기
-        String profileImageUrl = user.getProfileImage() != null ? user.getProfileImage().getImageLink() : null;
-
-        return ApiResponse.onSuccess(
-                UserDTO.UserResponseDTO.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .nickname(user.getNickname())
-                        .profileImage(profileImageUrl)
-                        .isNewUser(false)
-                        .build()
-        );
-    }
 
     /**
      * 회원 탈퇴 API
@@ -251,17 +257,16 @@ public class AuthController {
      */
     @Operation(summary = "회원 탈퇴 API", description = "현재 로그인한 유저를 삭제합니다.")
     @DeleteMapping("/deleteID")
-    public ApiResponse<String> deleteCurrentUser(@RequestParam Long userId) {
-        // 요청에서 유저 ID 가져오기
-        Long resultUserId = userService.validateUserId(userId);
-        log.info("회원 탈퇴 요청 - 유저 ID: {}", userId);
+    public ApiResponse<String> deleteCurrentUser(@AuthenticationPrincipal UserEntity user) {
+        log.info("회원 탈퇴 요청 - 유저 ID: {}", user.getId());
 
         // ✅ 유저 정보 삭제 (DB)
-        userService.deleteUser(resultUserId);
+        userService.deleteUser(user.getId());
 
         // ✅ Redis에서 토큰 삭제
-        tokenService.deleteTokensByUserId(resultUserId);
+        tokenService.deleteTokensByUserId(user.getId());
 
         return ApiResponse.onSuccess("회원 탈퇴가 정상적으로 처리되었습니다.");
     }
+
 }

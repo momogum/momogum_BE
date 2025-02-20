@@ -2,6 +2,7 @@ package com.example.momogum.web.controller.search;
 
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.searchService.SearchService;
 import com.example.momogum.web.dto.mealDiary.MealDairiesDTO;
 import com.example.momogum.web.dto.search.SearchDTO;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +27,15 @@ public class SearchController {
     @GetMapping("/account")
     public ApiResponse<List<SearchDTO.AccountSearchResponseDTO>> getAccountSearch(
             @RequestParam String request,
-            @RequestParam Long userId) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        List<SearchDTO.AccountSearchResponseDTO> result = searchService.getAccountSearch(request, userId);
+        Long currentUserId = userDetails.getId(); // 현재 로그인한 사용자 ID
+
+        List<SearchDTO.AccountSearchResponseDTO> result = searchService.getAccountSearch(request, currentUserId);
 
         return ApiResponse.onSuccess(result);
     }
+
 
 
     @Operation(summary = "밥일기 검색 API")

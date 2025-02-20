@@ -14,7 +14,7 @@ public class MealDiaryReportDTO {
     @AllArgsConstructor
     public static class MealDiaryReportRequestDTO{
 
-        Long userID;
+//        Long userID;
 
         Long mealDiaryId;
 

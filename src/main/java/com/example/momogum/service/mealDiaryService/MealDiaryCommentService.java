@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 
 public interface MealDiaryCommentService {
-    MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException;
+    MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO create(Long userId, MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request) throws IOException;
 
-    MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request);
+    MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateResponseDTO update(Long userId,MealDiaryCommentUpdateDTO.MealDiaryCommentUpdateRequestDTO request);
 
     @Transactional
-    void delete(MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request);
+    void delete(Long userId, MealDiaryCommentDeleteDTO.MealDiaryCommentDeleteRequestDTO request);
 }

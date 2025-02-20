@@ -45,9 +45,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
     private final MealDiaryStoryRepository mealDiaryStoryRepository;
 
     @Override
-    public MealDairiesDTO.CreateStoryResponseDTO save(MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
+    public MealDairiesDTO.CreateStoryResponseDTO save(Long userId, MealDairiesDTO.CreateStoryRequestDTO request,List<MultipartFile> files) {
 
-        UserEntity byId = findUser(request.getMemberId());
+        UserEntity byId = findUser(userId);
         MealDiary mealDiary = MealDiaryConverter.toMealDiary(request,byId);
 
         MealDiary newMealDiary = mealDiaryRepository.save(mealDiary);
@@ -123,9 +123,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     @Override
-    public MealDiaryReportDTO.MealDiaryReportResponseDTO report(MealDiaryReportDTO.MealDiaryReportRequestDTO request){
+    public MealDiaryReportDTO.MealDiaryReportResponseDTO report(Long userId, MealDiaryReportDTO.MealDiaryReportRequestDTO request){
 
-        UserEntity user = findUser(request.getUserID());
+        UserEntity user = findUser(userId);
         MealDiary mealDiary = findMealDiary(request.getMealDiaryId());
 
         validMealDiaryExist(user, mealDiary);
@@ -149,9 +149,9 @@ public class MealDiaryServiceImpl implements MealDiaryService {
 
 
     @Override
-    public MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
+    public MealDiaryUpdateDTO.MealDiaryUpdateResponseDTO update(Long userId, MealDiaryUpdateDTO.MealDiaryUpdateRequestDTO request){
 
-        UserEntity findUser = findUser(request.getMemberId());
+        UserEntity findUser = findUser(userId);
         MealDiary findMealDiary = findMealDiary(request.getMealDiaryId());
 
         valid(findUser.getId(),findMealDiary);

@@ -16,9 +16,9 @@ public class MealDiaryUpdateDTO {
     @AllArgsConstructor
     public static class MealDiaryUpdateRequestDTO{
 
-        @Schema(description = "회원의 식별자를 입력 받습니다 <br>," +
-                "추후에 JWT Token으로 변경될 수 있습니다")
-        Long memberId;
+//        @Schema(description = "회원의 식별자를 입력 받습니다 <br>," +
+//                "추후에 JWT Token으로 변경될 수 있습니다")
+//        Long memberId;
 
         @Schema(description = "업데이트 대상 밥일기 입니다")
         Long mealDiaryId;

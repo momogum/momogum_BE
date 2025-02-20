@@ -3,6 +3,7 @@ package com.example.momogum.web.controller.appointment;
 import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
 import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.domain.utils.JwtUtil;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.UserService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,10 +42,10 @@ public class AppointmentInviteController {
     @GetMapping("/{appointmentId}/invites")
     public ResponseEntity<List<AppointmentInviteResponseDTO>> getFriendsForInvitations(
             @PathVariable Long appointmentId,
-            @RequestParam Long userId
+            @AuthenticationPrincipal CustomUserDetails userDetails // Principal 적용
     ) {
-        Long validUserId = userService.validateUserId(userId);
-        List<AppointmentInviteResponseDTO> invitations = appointmentInviteService.getFriendsForInvitation(appointmentId, validUserId);
+        Long userId = userDetails.getId(); // 현재 인증된 사용자 ID 가져오기
+        List<AppointmentInviteResponseDTO> invitations = appointmentInviteService.getFriendsForInvitation(appointmentId, userId);
         return ResponseEntity.ok(invitations);
     }
 

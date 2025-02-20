@@ -1,12 +1,14 @@
 package com.example.momogum.web.controller.mealDiary;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.mealDiaryService.MealDiaryLikeService;
 import com.example.momogum.service.mealDiaryService.MealDiaryLikeServiceImpl;
 import com.example.momogum.web.dto.mealDiary.MealDiaryLikeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -23,12 +25,13 @@ public class MealDiaryLikeController {
 
     // 좋아요 토글형식으로 API 구현
     @Operation(summary = "밥일기 좋아요 토글 API")
-    @PostMapping("/userId/{userId}/mealDiaryId/{mealDiaryId}")
+    @PostMapping("/mealDiaryId/{mealDiaryId}")
     public ApiResponse<String> toggle(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long mealDiaryId
     ) throws IOException {
 
+        Long userId = userDetails.getId();
         mealDiaryLikeService.toggle(userId,mealDiaryId);
 
         return ApiResponse.onSuccess("반영 되었습니다");

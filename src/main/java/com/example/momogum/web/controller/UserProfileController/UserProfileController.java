@@ -1,6 +1,7 @@
 package com.example.momogum.web.controller.UserProfileController;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
+import com.example.momogum.security.CustomUserDetails;
 import com.example.momogum.service.userProfileService.FollowService;
 import com.example.momogum.service.userProfileService.UserProfileServiceImpl;
 import com.example.momogum.service.userProfileService.ProfileImageService;
@@ -18,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,12 +54,11 @@ public class UserProfileController {
    * 유저 정보 조회 1. 유저 닉네임, 실명, 팔로워/팔로잉(총 인원), 프로필 사진 조회 2. 한 줄 소개
    */
 
-  @Operation(summary = "유저 정보 조회 API", description = " 유저의 기본 정보를 반환")
-  @GetMapping("/userId/{userId}")
-  public ApiResponse<UserDTO.UserResponseDTO> getUserProfile(@PathVariable Long userId) {
-
+  @Operation(summary = "유저 정보 조회 API", description = "유저의 기본 정보를 반환")
+  @GetMapping("/me")
+  public ApiResponse<UserDTO.UserResponseDTO> getUserProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long userId = userDetails.getId();
     UserDTO.UserResponseDTO getUserProfile = userProfileServiceImpl.getUserProfile(userId);
-
     return ApiResponse.onSuccess(getUserProfile);
   }
 
@@ -66,12 +67,12 @@ public class UserProfileController {
    */
 
   @Operation(summary = "유저 프로필 수정 API", description = "유저 프로필을 수정하고 수정된 정보를 반환합니다.")
-  @PutMapping("/{userId}/profile")
+  @PutMapping("/me/profile")
   public ApiResponse<UserDTO.UserEditDTO> updateUserProfile(
-      @PathVariable Long userId, @RequestBody @Valid UserDTO.UserEditDTO request) {
-
+          @AuthenticationPrincipal CustomUserDetails userDetails,
+          @RequestBody @Valid UserDTO.UserEditDTO request) {
+    Long userId = userDetails.getId();
     UserDTO.UserEditDTO updatedProfile = userProfileServiceImpl.updateUserProfile(userId, request);
-
     return ApiResponse.onSuccess(updatedProfile);
   }
 
@@ -101,8 +102,9 @@ public class UserProfileController {
    * 프로필 이미지 기본 이미지로 수정
    */
   @Operation(summary = "기본 프로필 이미지로 변경", description = "모든 경우에서 기본 프로필 이미지로 변경")
-  @PutMapping("/{userId}/setDefaultProfileImage")
-  public ApiResponse<String> setDefaultProfileImage(@PathVariable Long userId) {
+  @PutMapping("/me/setDefaultProfileImage")
+  public ApiResponse<String> setDefaultProfileImage(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long userId = userDetails.getId();
     String defaultImageUrl = profileImageService.setDefaultProfileImage(userId);
     return ApiResponse.onSuccess(defaultImageUrl);
   }
@@ -111,29 +113,34 @@ public class UserProfileController {
    * 프로필 이미지 커스텀 이미지로 수정
    */
   @Operation(summary = "갤러리 이미지로 변경", description = "사용자가 직접 업로드한 이미지로 프로필을 변경")
-  @PutMapping(value = "/{userId}/uploadCustomProfileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PutMapping(value = "/me/uploadCustomProfileImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResponse<String> uploadCustomProfileImage(
-      @PathVariable Long userId,
-      @RequestPart("file") @Parameter(description = "업로드할 커스텀 프로필 이미지") MultipartFile file) {
-
+          @AuthenticationPrincipal CustomUserDetails userDetails,
+          @RequestPart("file") @Parameter(description = "업로드할 커스텀 프로필 이미지") MultipartFile file) {
+    Long userId = userDetails.getId();
     String updatedImageUrl = profileImageService.uploadCustomProfileImage(file, userId);
     return ApiResponse.onSuccess(updatedImageUrl);
   }
+
 
   /**
    * 내가 작성한 밥일기 목록 조회 API
    */
 
   @Operation(summary = "작성한 밥일기 목록 조회 API", description = "본인이 작성한 밥일기의 목록을 조회합니다.")
-  @GetMapping("/{userId}/meal-diaries")
-  public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getUserMealDiaries(@PathVariable Long userId) {
+  @GetMapping("/me/meal-diaries")
+  public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getUserMealDiaries(
+          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long userId = userDetails.getId();
     List<ViewMealDiaryDTO.ViewMealDiaryResponse> response = userProfileServiceImpl.getUserMealDiaries(userId);
     return ApiResponse.onSuccess(response);
   }
 
   @Operation(summary = "북마크한 밥일기 목록 조회 API", description = "북마크 해놓은 밥일기의 목록을 조회합니다.")
-  @GetMapping("/{userId}/bookmarked-meal-diaries")
-  public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getBookmarkedMealDiaries(@PathVariable Long userId) {
+  @GetMapping("/me/bookmarked-meal-diaries")
+  public ApiResponse<List<ViewMealDiaryDTO.ViewMealDiaryResponse>> getBookmarkedMealDiaries(
+          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    Long userId = userDetails.getId();
     List<ViewMealDiaryDTO.ViewMealDiaryResponse> response = userProfileServiceImpl.getBookmarkedMealDiaries(userId);
     return ApiResponse.onSuccess(response);
   }

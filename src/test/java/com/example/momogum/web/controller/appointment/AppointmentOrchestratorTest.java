@@ -93,14 +93,14 @@ class AppointmentOrchestratorTest {
         ReflectionTestUtils.setField(sender, "name", "머머금");
 
         // 2. 공통 데이터 설정
-        List<String> nicknames = List.of("user1", "user2");
+        List<Long> userIds = List.of(1L,2L);
         LocalDateTime date = LocalDateTime.of(2025, 2, 20, 18, 26);
 
         // 3. 요청 DTO 생성
         request = AppointmentOrchestratorRequestDTO.builder()
                 .userId(sender.getId())
                 .appointmentId(9L)
-                .nicknames(nicknames)
+                .userIds(userIds)
                 .selectedCardUrl("https://example-bucket.s3.amazonaws.com/basic/image1.jpg")
                 .cardCategory(CardCategory.BASIC)
                 .appointmentName(

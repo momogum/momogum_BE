@@ -24,10 +24,8 @@ public class AppointmentOrchestrator {
 
     private final AppointmentInviteService inviteService;
     private final AppointmentCardService cardService;
-    private final AppointmentNameService nameService;
     private final AppointmentService appointmentService;
     private final AppointmentConverter appointmentConverter;
-    private final AppointmentRepository appointmentRepository;
 
     @Transactional
     public AppointmentOrchestratorResponseDTO createWholeAppointment(AppointmentOrchestratorRequestDTO request) {
@@ -38,7 +36,7 @@ public class AppointmentOrchestrator {
         // 2. 초대된 친구 추가
         inviteService.inviteFriends(AppointmentInviteRequestDTO.builder()
                 .appointmentId(appointment.getId())
-                .nicknames(request.getNicknames())
+                .userIds(request.getUserIds())
                 .build());
 
         // 3.  카드 정보 조회 (S3 기반)

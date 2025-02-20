@@ -89,7 +89,7 @@ class AppointmentInviteServiceTest {
         // 테스트 요청 객체 생성 (appointmentId와 초대할 사용자 닉네임 목록)
         request = AppointmentInviteRequestDTO.builder()
                 .appointmentId(1L)
-                .nicknames(List.of("user1", "user2"))
+                .userIds(List.of(1L, 2L))
                 .build();
 
         // 테스트용 UserEntity 생성 (필요한 필드만 설정)
@@ -97,7 +97,7 @@ class AppointmentInviteServiceTest {
         user2 = createTestUser(2L, "user2", "유저 닉네임 2");
 
         // repository에서 username으로 UserEntity 조회 시 설정
-        when(userEntityRepository.findByNicknameIn(List.of("user1", "user2")))
+        when(userEntityRepository.findByIdIn(List.of(1L, 2L)))
                 .thenReturn(List.of(user1, user2));
 
         // converter의 DTO 변환 결과를 미리 설정 1
@@ -230,7 +230,7 @@ class AppointmentInviteServiceTest {
         //given - 초대할 친구를 아무도 지정하지 않았을 경우
         AppointmentInviteRequestDTO request = AppointmentInviteRequestDTO.builder()
                 .appointmentId(1L)
-                .nicknames(Collections.emptyList())
+                .userIds(Collections.emptyList())
                 .build();
 
         //when & then - 예상 기대값 : GeneralException - MEMBER_NOT_FOUND
@@ -245,7 +245,7 @@ class AppointmentInviteServiceTest {
         //given - appointmentId == null
         AppointmentInviteRequestDTO invalidRequest = AppointmentInviteRequestDTO.builder()
                 .appointmentId(null)
-                .nicknames(List.of("user1"))
+                .userIds(List.of(1L))
                 .build();
 
         //when & then - 예상 기대값 : GeneralException - APPOINTMENT_NOT_EXIST

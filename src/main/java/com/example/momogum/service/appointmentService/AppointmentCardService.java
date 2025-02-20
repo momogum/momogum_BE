@@ -56,14 +56,14 @@ public class AppointmentCardService {
      */
     @Transactional
     public AppointmentCardResponseDTO selectCard(Long appointmentId, AppointmentCardRequestDTO request) {
-        // 1️⃣ 해당 약속 정보 가져오기
+        // 1. 해당 약속 정보 가져오기
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
 
-        // 2️⃣ 카드 저장 또는 업데이트
+        // 2. 카드 저장 또는 업데이트
         AppointmentCard selectedCard = saveSelectedCards(appointment, request.getImageUrl(), request.getCategory());
 
-        // 3️⃣ 응답 DTO 변환 후 반환
+        // 3. 응답 DTO 변환 후 반환
         return new AppointmentCardResponseDTO(selectedCard.getCategory().getCategory(), selectedCard.getImageUrl());
     }
 

@@ -74,8 +74,8 @@ public class AppointmentOrchestratorDTO {
         @Schema(description = "초대된 친구 리스트입니다.")
         private List<AppointmentInviteResponseDTO> invitedFriends;
 
-        @Schema(description = "선택된 카드 목록입니다.")
-        private List<AppointmentCardResponseDTO> selectedCards;
+        @Schema(description = "선택된 카드입니다.")
+        private AppointmentCardResponseDTO selectedCard;
 
         @Schema(description = "저장된 약속 ID 입니다.")
         private Long appointmentId;

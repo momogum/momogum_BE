@@ -5,6 +5,8 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentInfoDTO;
@@ -75,7 +77,7 @@ public class AppointmentConverter {
      * 오케스트레이터에서 사용되는 응답 DTO 변환
      */
     public AppointmentOrchestratorResponseDTO toResponseDTO(
-            Appointment appointment, List<AppointmentCardResponseDTO> selectedCards) {
+            Appointment appointment, AppointmentCardResponseDTO selectedCard) {
 
         UserEntity sender = appointment.getSender();
 
@@ -87,7 +89,7 @@ public class AppointmentConverter {
                 .notes(appointment.getNotes())
                 .appointmentId(appointment.getId())
                 .invitedFriends(convertInvitedFriends(appointment.getInvitations()))
-                .selectedCards(selectedCards)
+                .selectedCard(selectedCard)
                 .senderId(sender != null ? sender.getId() : null)
                 .senderName(sender != null ? sender.getName() : "senderName이 존재하지 않습니다.")
                 .build();

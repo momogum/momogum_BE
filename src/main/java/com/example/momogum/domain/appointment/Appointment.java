@@ -1,6 +1,8 @@
 package com.example.momogum.domain.appointment;
 
 import com.example.momogum.domain.UserEntity;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +16,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Appointment {
 
     @Id
@@ -37,4 +39,13 @@ public class Appointment {
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentCard> selectedCards = new ArrayList<>();
 
+    public Appointment updateAppointment(AppointmentOrchestratorRequestDTO request) {
+        return this.toBuilder()
+                .name(request.getAppointmentName().getName())
+                .menu(request.getAppointmentName().getMenu())
+                .date(request.getAppointmentName().getDate())
+                .location(request.getAppointmentName().getLocation())
+                .notes(request.getAppointmentName().getNotes())
+                .build();
+    }
 }

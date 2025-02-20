@@ -1,12 +1,16 @@
 package com.example.momogum.service.appointmentService.orchestrator;
 
+import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
+import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.common.enums.InvitationStatus;
+import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
 import com.example.momogum.service.appointmentService.AppointmentService;
+import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
@@ -23,6 +27,7 @@ public class AppointmentOrchestrator {
     private final AppointmentNameService nameService;
     private final AppointmentService appointmentService;
     private final AppointmentConverter appointmentConverter;
+    private final AppointmentRepository appointmentRepository;
 
     @Transactional
     public AppointmentOrchestratorResponseDTO createWholeAppointment(AppointmentOrchestratorRequestDTO request) {
@@ -37,20 +42,19 @@ public class AppointmentOrchestrator {
                 .build());
 
         // 3.  카드 정보 조회 (S3 기반)
-        cardService.saveSelectedCards(
-                appointment, request.getSelectedCardUrl(), request.getCardCategory());
+        AppointmentCardDTO.AppointmentCardResponseDTO selectCard = cardService.selectCard(
+                appointment.getId(), new AppointmentCardDTO.AppointmentCardRequestDTO(request.getSelectedCardUrl(), request.getCardCategory()));
 
         // 4. 약속 이름 저장
-        nameService.saveAppointmentName(request.getAppointmentName());
+        appointmentService.updateAppointment(appointment.getId(), request);
 
-        // 5. DB에 저장 (업데이트)
-        appointment = appointmentService.save(appointment);
 
         // 6. 초대 상황 변경
         inviteService.updateInvitationStatus(appointment.getId(), InvitationStatus.ACCEPTED);
 
-        return appointmentConverter.toResponseDTO(appointment, cardService.getCards(request.getCardCategory()));
+        return appointmentConverter.toResponseDTO(appointment, selectCard);
 
 
     }
 }
+

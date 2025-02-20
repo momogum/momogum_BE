@@ -111,5 +111,9 @@ public class MealDiary extends BaseEntity {
         this.commentCount = commentCount;
     }
 
+    public void setLikesCount(Integer likesCount) {
+        this.likesCount = likesCount;
+    }
+
 
 }

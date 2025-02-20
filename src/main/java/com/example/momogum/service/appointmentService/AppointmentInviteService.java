@@ -20,10 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -75,29 +72,42 @@ public class AppointmentInviteService {
     public List<AppointmentInviteResponseDTO> inviteFriends(AppointmentInviteRequestDTO request) {
         validateAppointmentInviteRequest(request);
 
-        // user_id 기반으로 조회 (닉네임 X)
+        // 1. 초대할 사용자 조회 (DB에서 존재하는 userIds만 가져오기)
         List<UserEntity> users = userEntityRepository.findByIdIn(request.getUserIds());
+
+        if (users.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         Map<Long, UserEntity> userMap = users.stream()
                 .collect(Collectors.toMap(UserEntity::getId, Function.identity()));
 
+        // 2. 초대할 약속 조회
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
+
+        // 3. 이미 초대된 사용자 ID 목록 조회 (한 번의 쿼리로 조회하여 contains()로 필터링)
+        Set<Long> alreadyInvitedUserIds = new HashSet<>(appointmentInviteRepository.findByAppointmentId(request.getAppointmentId())
+                .stream()
+                .map(invitation -> invitation.getUserEntity().getId())
+                .toList());
 
         List<AppointmentInvitation> invitationsToSave = new ArrayList<>();
         List<AppointmentInviteResponseDTO> invitedUsers = new ArrayList<>();
 
+        // 4️⃣ 초대할 사용자 필터링 후 추가
         for (Long userId : request.getUserIds()) {
             UserEntity user = userMap.get(userId);
-            if (user == null) {
-                throw new UserEntityHandler(ErrorStatus.MEMBER_NOT_FOUND);
-            }
 
-            boolean isInvited = appointmentInviteRepository.existsByAppointmentIdAndUserEntity(request.getAppointmentId(), user);
-            if (isInvited) {
+            if (user == null) {
                 continue;
             }
 
+            if (alreadyInvitedUserIds.contains(userId)) {
+                continue;
+            }
+
+            // 5️⃣ 초대 객체 생성 후 리스트 추가
             AppointmentInvitation invitation = AppointmentInvitation.builder()
                     .appointment(appointment)
                     .userEntity(user)
@@ -108,10 +118,15 @@ public class AppointmentInviteService {
             invitedUsers.add(converter.toResponseDTO(user, InvitationStatus.PENDING));
         }
 
-        appointmentInviteRepository.saveAll(invitationsToSave);
+        // 6️⃣ 실제 DB 저장 (빈 리스트가 아닐 경우에만 실행)
+        if (!invitationsToSave.isEmpty()) {
+            appointmentInviteRepository.saveAll(invitationsToSave);
+        }
 
         return invitedUsers;
     }
+
+
 
 
     private static void validateAppointmentInviteRequest(AppointmentInviteRequestDTO request) {

@@ -13,6 +13,9 @@ import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.util.FirebaseCloudMessageUtil;
 import com.example.momogum.web.dto.mealDiary.MealDiaryLikeDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
 
+    private static final Logger log = LoggerFactory.getLogger(MealDiaryLikeServiceImpl.class);
     private final MealDiaryRepository mealDiaryRepository;
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
     private final UserEntityRepository userEntityRepository;
@@ -45,15 +49,19 @@ public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
             findMealDiary.decreaseLikeCount(); // 좋아요 수 감소
             mealDiaryLikesRepository.delete(mealDiaryLikes); // 좋아요 삭제
         } else {
-            MealDiaryLikes newMealDiaryLikes = MealDiaryLikeConverter.toMealDiaryLikes(findUser,findMealDiary);
+            MealDiaryLikes newMealDiaryLikes = MealDiaryLikeConverter.toMealDiaryLikes(findUser, findMealDiary);
 
             findMealDiary.increaseLikeCount();
             mealDiaryLikesRepository.save(newMealDiaryLikes);
         }
 
-        String title = mealDiaryOwner.getNickname();
-        String body = findUser.getName()+"님이 회원님의 밥일기를 좋아합니다";
-        firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwner.getId(),title,body);
+        if (mealDiaryOwner.getFcmToken() == null) {
+            return;
+        }else {
+            String title = mealDiaryOwner.getNickname();
+            String body = findUser.getName() + "님이 회원님을 팔로우합니다";
+            firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwner.getId(), title, body);
+        }
     }
 
     @Override

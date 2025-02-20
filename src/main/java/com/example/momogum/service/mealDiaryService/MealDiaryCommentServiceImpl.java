@@ -16,6 +16,7 @@ import com.example.momogum.web.dto.mealDiary.MealDiaryCommentCreateDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentDeleteDTO;
 import com.example.momogum.web.dto.mealDiary.MealDiaryCommentUpdateDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,13 +45,19 @@ public class MealDiaryCommentServiceImpl implements MealDiaryCommentService {
 
         UserEntity mealDiaryOwner = mealDiary.getUserEntity();
 
-        String title = mealDiaryOwner.getNickname();
-        String body = commentOwner.getName()+"님이 댓글을 작성하였습니다";
-        firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwner.getId(),title,body);
+        if (mealDiaryOwner.getFcmToken() == null){
+            return MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO.builder()
+                    .mealDiaryCommentId(saveComment.getId())
+                    .build();
+        }else {
+            String title = mealDiaryOwner.getNickname();
+            String body = commentOwner.getName()+"님이 댓글을 작성하였습니다";
+            firebaseCloudMessageUtil.sendMessageTo(mealDiaryOwner.getId(),title,body);
 
-        return MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO.builder()
-                .mealDiaryCommentId(saveComment.getId())
-                .build();
+            return MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO.builder()
+                    .mealDiaryCommentId(saveComment.getId())
+                    .build();
+        }
     }
 
     @Override

@@ -68,6 +68,7 @@ public class AppointmentController {
     public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getConfirmedInvitations(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         Long userId = userDetails.getId();
+
         return ApiResponse.onSuccess(appointmentService.getConfirmedAppointments(userId));
     }
 }

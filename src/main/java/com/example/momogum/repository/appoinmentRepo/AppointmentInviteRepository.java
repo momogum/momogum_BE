@@ -17,7 +17,11 @@ public interface AppointmentInviteRepository extends JpaRepository<AppointmentIn
 
     List<AppointmentInvitation> findByAppointmentId(Long appointmentId);
 
+    /**
+     * 사용자가 초대된 약속을 상태별로 조회하는 메서드
+     */
     @Query("SELECT ai.appointment FROM AppointmentInvitation ai " +
+            "JOIN FETCH ai.appointment.sender " +
             "WHERE ai.userEntity.id = :userId " +
             "AND ai.status = :status " +
             "ORDER BY ai.appointment.date ASC")

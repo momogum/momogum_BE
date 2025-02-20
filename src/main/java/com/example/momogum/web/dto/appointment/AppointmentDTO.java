@@ -94,6 +94,9 @@ public class AppointmentDTO {
         private List<AppointmentInviteResponseDTO> invitedFriends;
     }
 
+    /**
+     * 약속 정보 DTO
+     */
     @Getter
     @Builder
     @NoArgsConstructor
@@ -119,25 +122,46 @@ public class AppointmentDTO {
     }
 
     /**
-     * 초대 상태 PENDING DTO
+     * 약속관리 메인페이지 조회 DTO
      */
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AppointmentMainPageResponseDTO {
 
-    public static interface PendingInvitationDTO {
+        @Schema(description = "약속 제목입니다.")
+        String name;
 
-        Long getAppointmentId();
-        LocalDateTime getDate();
-        String getName();
-        String getCreatorNickname();
+        @Schema(description = "식사 메뉴입니다.")
+        String menu;
+
+        @Schema(description = "약속 날짜입니다.")
+        LocalDate date;
+
+        @Schema(description = "약속 위치입니다.")
+        String location;
+
+        @Schema(description = "추가 메모입니다.")
+        String notes;
+
+        @Schema(description = "약속 생성 날짜입니다.")
+        String createdAt;
+
+        @Schema(description = "초대된 친구 리스트입니다.")
+        private List<AppointmentInviteResponseDTO> invitedFriends;
+
+        @Schema(description = "선택된 카드 목록입니다.")
+        private List<AppointmentCardResponseDTO> selectedCards;
+
+        @Schema(description = "저장된 약속 ID 입니다.")
+        private Long appointmentId;
+
+        @Schema(description = "초대한 사람 ID")
+        private Long senderId;
+
+        @Schema(description = "초대한 사람 이름")
+        private String senderName;
+
     }
-
-
-    public interface AcceptedInvitationDTO {
-
-        Long getAppointmentId();
-        LocalDateTime getDate();
-        String getLocation();
-        String getAppointmentName();
-        String getMenu();
-    }
-
 }

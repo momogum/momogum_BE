@@ -1,11 +1,13 @@
 package com.example.momogum.converter.appointmentConverter;
 
+import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentInfoDTO;
+import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentMainPageResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
@@ -68,6 +70,42 @@ public class AppointmentConverter {
                 .appointmentId(appointment.getId())
                 .invitedFriends(invitedFriends)
                 .selectedCards(selectedCards)
+                .build();
+    }
+
+    /**
+     * 메인페이지에서 사용되는 응답 DTO 변환
+     */
+    public AppointmentMainPageResponseDTO toMainPageDTO(
+            Appointment appointment, List<AppointmentCardResponseDTO> selectedCards) {
+
+        // 1️⃣ 초대된 친구 목록 변환
+        List<AppointmentInviteResponseDTO> invitedFriends = appointment.getInvitations().stream()
+                .map(invite -> AppointmentInviteResponseDTO.builder()
+                        .nickname(invite.getUserEntity().getNickname())
+                        .name(invite.getUserEntity().getName())
+                        .profileImage(invite.getUserEntity().getProfileImage() != null
+                                ? invite.getUserEntity().getProfileImage().getImageLink()
+                                : null)
+                        .status(invite.getStatus())
+                        .build())
+                .toList();
+
+        UserEntity sender = appointment.getSender();
+
+
+        // 2️⃣ 응답 객체 생성
+        return AppointmentMainPageResponseDTO.builder()
+                .name(appointment.getName())
+                .menu(appointment.getMenu())
+                .date(LocalDate.from(appointment.getDate()))
+                .location(appointment.getLocation())
+                .notes(appointment.getNotes())
+                .appointmentId(appointment.getId())
+                .invitedFriends(invitedFriends)
+                .selectedCards(selectedCards)
+                .senderId(sender.getId())
+                .senderName(sender.getName())
                 .build();
     }
 

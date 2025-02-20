@@ -14,7 +14,7 @@ import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
-import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
+import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentMainPageResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +43,7 @@ public class AppointmentService {
         // 더미 데이터 이용
         UserEntity defaultUser = userEntityRepository.findById(9L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
-        appointment.setCreator(defaultUser);
+        appointment.setSender(defaultUser);
 
         // 2. DB에 저장 (ID를 생성하기 위해)
         appointment = appointmentRepository.save(appointment);
@@ -90,10 +90,10 @@ public class AppointmentService {
     /**
      * 다가오는 확정된 전체 약속 조회 (ACCEPTED)
      */
-    public List<AppointmentOrchestratorResponseDTO> getAllAcceptedAppointments(Long userId) {
+    public List<AppointmentMainPageResponseDTO> getAllAcceptedAppointments(Long userId) {
         return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.ACCEPTED)
                 .stream()
-                .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
+                .map(appointment -> appointmentConverter.toMainPageDTO(appointment, appointment.getSelectedCards()
                         .stream()
                         .map(card -> AppointmentCardResponseDTO.builder()
                                 .category(card.getCategory().getCategory())
@@ -107,10 +107,10 @@ public class AppointmentService {
     /**
      * 확정된 약속 전체 조회 (Confirmed)
      */
-    public List<AppointmentOrchestratorResponseDTO> getConfirmedAppointments(Long userId) {
+    public List<AppointmentMainPageResponseDTO> getConfirmedAppointments(Long userId) {
         return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.CONFIRMED)
                 .stream()
-                .map(appointment -> appointmentConverter.toResponseDTO(appointment, appointment.getSelectedCards()
+                .map(appointment -> appointmentConverter.toMainPageDTO(appointment, appointment.getSelectedCards()
                         .stream()
                         .map(card -> AppointmentCardResponseDTO.builder()
                                 .category(card.getCategory().getCategory())

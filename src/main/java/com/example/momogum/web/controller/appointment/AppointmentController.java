@@ -2,7 +2,9 @@ package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.appointmentService.AppointmentService;
+import com.example.momogum.web.dto.appointment.AppointmentDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
+import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentMainPageResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -49,14 +51,14 @@ public class AppointmentController {
     @Operation(summary = "수락 대기중인 식사 약속 조회 API",
             description = "현재 사용자가 확정한 승인된 전체 식사 약속 목록을 조회합니다.")
     @GetMapping(value = "{userId}/accept", produces = "application/json; charset=UTF-8")
-    public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getAcceptedInvitations(@PathVariable Long userId) {
+    public ApiResponse<List<AppointmentMainPageResponseDTO>> getAcceptedInvitations(@PathVariable Long userId) {
         return ApiResponse.onSuccess(appointmentService.getAllAcceptedAppointments(userId));
     }
 
     @Operation(summary = "확정된 식사 약속 조회 API",
             description = "현재 사용자가 확정한 승인된 전체 식사 약속 목록을 조회합니다.")
     @GetMapping(value = "{userId}/confirmed", produces = "application/json; charset=UTF-8")
-    public ApiResponse<List<AppointmentOrchestratorResponseDTO>> getConfirmedInvitations(@PathVariable Long userId) {
+    public ApiResponse<List<AppointmentMainPageResponseDTO>> getConfirmedInvitations(@PathVariable Long userId) {
         return ApiResponse.onSuccess(appointmentService.getConfirmedAppointments(userId));
     }
 }

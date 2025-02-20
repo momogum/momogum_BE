@@ -116,11 +116,15 @@ public class FollowServiceImpl implements FollowService {
       }
     }
 
-    String title = target.getNickname();
-    String body = follower.getName()+("(@")+follower.getNickname()+(")")+"님이 회원님을 팔로우하기 시작했습니다.";
-    firebaseCloudMessageUtil.sendMessageTo(targetUserId,title,body);
+    if (target.getFcmToken() == null){
+      return getFollowStats(currentUserId);
+    }else {
+      String title = target.getNickname();
+      String body = follower.getName()+("(@")+follower.getNickname()+(")")+"님이 회원님을 팔로우하기 시작했습니다.";
+      firebaseCloudMessageUtil.sendMessageTo(targetUserId,title,body);
 
-    return getFollowStats(currentUserId);
+      return getFollowStats(currentUserId);
+    }
   }
 
   /**

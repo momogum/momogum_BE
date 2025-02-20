@@ -20,7 +20,7 @@ public class AppointmentInitController {
 
     @PostMapping("/init")
     public ApiResponse<CreateAppointmentResponseDTO> initAppointment() {
-        Appointment appointment = appointmentService.createEmptyAppointment();
+        Appointment appointment = appointmentService.createTemporaryAppointment();
 
         return ApiResponse.onSuccess(new CreateAppointmentResponseDTO(appointment.getId()));
     }

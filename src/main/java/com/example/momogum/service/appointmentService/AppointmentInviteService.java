@@ -97,7 +97,7 @@ public class AppointmentInviteService {
         Map<String, UserEntity> userMap = users.stream()
                 .collect(Collectors.toMap(UserEntity::getNickname, Function.identity()));
 
-        // 3️⃣ Appointment 조회 (🔥 appointmentId를 통해 객체 가져오기)
+        // 3️⃣ Appointment 조회
         Appointment appointment = appointmentRepository.findById(request.getAppointmentId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
 

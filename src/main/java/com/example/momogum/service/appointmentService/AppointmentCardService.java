@@ -72,11 +72,11 @@ public class AppointmentCardService {
      */
     @Transactional
     public AppointmentCard saveSelectedCards(Appointment appointment, String selectedUrl, CardCategory category) {
-        Optional<AppointmentCard> exisitingCard = appointmentCardRepository.findByAppointment(appointment);
+        Optional<AppointmentCard> findCard = appointmentCardRepository.findByAppointment(appointment);
 
         //카드가 있을 경우 업데이트
-        if (exisitingCard.isPresent()) {
-            AppointmentCard card = exisitingCard.get();
+        if (findCard.isPresent()) {
+            AppointmentCard card = findCard.get();
             card.setImageUrl(selectedUrl);
             card.setCategory(category);
             return appointmentCardRepository.save(card); // 업데이트된 객체 저장

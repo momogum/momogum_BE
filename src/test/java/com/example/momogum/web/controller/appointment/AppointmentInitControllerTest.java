@@ -62,7 +62,7 @@ class AppointmentInitControllerTest {
         // creator 설정
         mockAppointment.setSender(mockUser);
 
-        when(appointmentService.createEmptyAppointment()).thenReturn(mockAppointment);
+        when(appointmentService.createTemporaryAppointment()).thenReturn(mockAppointment);
 
         // when & then
         mockMvc.perform(post("/appointment/init")
@@ -71,6 +71,6 @@ class AppointmentInitControllerTest {
                 .andExpect(jsonPath("$.result.appointmentId").value(1L))
                 .andDo(print());
 
-        verify(appointmentService, times(1)).createEmptyAppointment();
+        verify(appointmentService, times(1)).createTemporaryAppointment();
     }
 }

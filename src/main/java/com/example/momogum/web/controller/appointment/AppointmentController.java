@@ -22,14 +22,6 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    @Operation(summary = "초대장 확인 API",
-            description = "약속 정보, 초대된 친구, 선택된 카드 정보를 반환합니다.")
-    @PostMapping("/{appointmentId}/details")
-    public ApiResponse<AppointmentDetailsDTO> createWholeAppointment(@PathVariable Long appointmentId) {
-        AppointmentDetailsDTO response = appointmentService.getAppointmentDetails(appointmentId);
-        return ApiResponse.onSuccess(response);
-    }
-
     @Operation(summary = "약속 확정 API",
             description = "현재 보낸 초대장을 확인하고 약속 확정을 합니다.")
     @PostMapping("/{appointmentId}/confirmed")
@@ -37,16 +29,6 @@ public class AppointmentController {
         Long resultAppointmentId = appointmentService.confirmedAppointment(appointmentId);
         return ApiResponse.onSuccess(resultAppointmentId);
     }
-
-    @Operation(summary = "약속 삭제 API",
-            description = "현재 선택된 약속을 삭제합니다.")
-    @PostMapping("/{appointmentId}/delete")
-    public ApiResponse<String> deleteAppointment(@PathVariable Long appointmentId) {
-        appointmentService.deleteAppointment(appointmentId);
-        return ApiResponse.onSuccess("약속이 삭제되었습니다.");
-    }
-
-
 
     @Operation(summary = "수락 대기중인 식사 약속 조회 API",
             description = "현재 사용자가 확정한 승인된 전체 식사 약속 목록을 조회합니다.")
@@ -61,6 +43,23 @@ public class AppointmentController {
     public ApiResponse<List<AppointmentMainPageResponseDTO>> getConfirmedInvitations(@PathVariable Long userId) {
         return ApiResponse.onSuccess(appointmentService.getConfirmedAppointments(userId));
     }
+
+    @Operation(summary = "초대장 확인 API",
+            description = "약속 정보, 초대된 친구, 선택된 카드 정보를 반환합니다.")
+    @PostMapping("/{appointmentId}/details")
+    public ApiResponse<AppointmentDetailsDTO> createWholeAppointment(@PathVariable Long appointmentId) {
+        AppointmentDetailsDTO response = appointmentService.getAppointmentDetails(appointmentId);
+        return ApiResponse.onSuccess(response);
+    }
+
+    @Operation(summary = "약속 삭제 API",
+            description = "현재 선택된 약속을 삭제합니다.")
+    @PostMapping("/{appointmentId}/delete")
+    public ApiResponse<String> deleteAppointment(@PathVariable Long appointmentId) {
+        appointmentService.deleteAppointment(appointmentId);
+        return ApiResponse.onSuccess("약속이 삭제되었습니다.");
+    }
+
 }
 
 

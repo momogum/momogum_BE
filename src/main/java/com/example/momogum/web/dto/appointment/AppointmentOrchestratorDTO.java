@@ -80,5 +80,11 @@ public class AppointmentOrchestratorDTO {
         @Schema(description = "저장된 약속 ID 입니다.")
         private Long appointmentId;
 
+        @Schema(description = "초대한 사람 ID")
+        private Long senderId;
+
+        @Schema(description = "초대한 사람 이름")
+        private String senderName;
+
     }
 }

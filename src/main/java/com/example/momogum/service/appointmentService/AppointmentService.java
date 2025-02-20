@@ -36,19 +36,15 @@ public class AppointmentService {
      * 빈 Appointment 객체를 생성하고, ID를 반환
      */
     @Transactional
-    public Appointment createEmptyAppointment() {
-        // 1. 빈 Appointment 객체 생성 (아직 데이터 없음)
-        Appointment appointment = appointmentConverter.toEmptyEntity();
+    public Appointment createTemporaryAppointment() {
 
         // 더미 데이터 이용
         UserEntity defaultUser = userEntityRepository.findById(9L)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NO_RESULT_FOUND));
-        appointment.setSender(defaultUser);
 
-        // 2. DB에 저장 (ID를 생성하기 위해)
-        appointment = appointmentRepository.save(appointment);
+        Appointment appointment = appointmentConverter.toTemporaryEntity(defaultUser);
 
-        return appointment;
+        return appointmentRepository.save(appointment);
     }
 
     /**

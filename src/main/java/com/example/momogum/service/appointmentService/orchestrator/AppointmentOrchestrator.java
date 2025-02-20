@@ -7,7 +7,7 @@ import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
 import com.example.momogum.service.appointmentService.AppointmentNameService;
 import com.example.momogum.service.appointmentService.AppointmentService;
-import com.example.momogum.web.dto.appointment.AppointmentInviteDTO;
+import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +28,10 @@ public class AppointmentOrchestrator {
     public AppointmentOrchestratorResponseDTO createWholeAppointment(AppointmentOrchestratorRequestDTO request) {
 
         // 1. Appointment 객체 생성 (연관 데이터 없이 먼저 생성)
-        Appointment appointment = appointmentService.createEmptyAppointment();
+        Appointment appointment = appointmentService.createTemporaryAppointment();
 
         // 2. 초대된 친구 추가
-        inviteService.inviteFriends(AppointmentInviteDTO.AppointmentInviteRequestDTO.builder()
+        inviteService.inviteFriends(AppointmentInviteRequestDTO.builder()
                 .appointmentId(appointment.getId())
                 .nicknames(request.getNicknames())
                 .build());
@@ -43,7 +43,7 @@ public class AppointmentOrchestrator {
         // 4. 약속 이름 저장
         nameService.saveAppointmentName(request.getAppointmentName());
 
-        // 5. DB에 저장
+        // 5. DB에 저장 (업데이트)
         appointment = appointmentService.save(appointment);
 
         // 6. 초대 상황 변경

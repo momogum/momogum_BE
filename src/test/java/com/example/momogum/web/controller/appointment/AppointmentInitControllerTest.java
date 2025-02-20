@@ -19,8 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -62,7 +60,7 @@ class AppointmentInitControllerTest {
         ReflectionTestUtils.setField(mockUser, "id", 1L);
 
         // creator 설정
-        mockAppointment.setCreator(mockUser);
+        mockAppointment.setSender(mockUser);
 
         when(appointmentService.createEmptyAppointment()).thenReturn(mockAppointment);
 

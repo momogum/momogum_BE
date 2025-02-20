@@ -7,6 +7,7 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.domain.appointment.AppointmentName;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentCardRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
@@ -15,6 +16,8 @@ import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentMainPageResponseDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
+import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,6 +137,19 @@ public class AppointmentService {
     }
 
     /**
+     * appointment 업데이트
+     */
+    @Transactional
+    public Appointment updateAppointment(Long appointmentId, AppointmentOrchestratorRequestDTO request) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
+
+        Appointment updatedAppointment = appointment.updateAppointment(request);
+
+        return appointmentRepository.save(updatedAppointment);
+    }
+
+    /**
      * 약속 삭제
      * @param appointmentId
      */
@@ -142,5 +158,4 @@ public class AppointmentService {
         Appointment appointment = findById(appointmentId);
         appointmentRepository.delete(appointment);
     }
-
 }

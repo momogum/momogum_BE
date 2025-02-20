@@ -93,4 +93,8 @@ public class UserEntity extends BaseEntity {
         user.setProfileImage(null);
     }
 
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
 }

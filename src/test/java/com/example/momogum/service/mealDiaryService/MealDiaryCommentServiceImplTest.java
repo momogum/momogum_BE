@@ -111,7 +111,6 @@ class MealDiaryCommentServiceImplTest {
         when(mealDiaryRepository.findById(anyLong())).thenReturn(Optional.of(testMealDiary));
         when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
         when(mealDiaryCommentsRepository.save(any(MealDiaryComments.class))).thenReturn(savedComment);
-        doNothing().when(firebaseCloudMessageUtil).sendMessageTo(anyLong(), anyString(), anyString());
 
         // when
         MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO response = mealDiaryCommentService.create(request);
@@ -184,6 +183,8 @@ class MealDiaryCommentServiceImplTest {
                 .user(testMember2)
                 .build();
 
+        testMember.setFcmToken("test_token");
+
         when(mealDiaryRepository.findById(anyLong())).thenReturn(Optional.of(testMealDiary));
         when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
         when(mealDiaryCommentsRepository.save(any(MealDiaryComments.class))).thenReturn(savedComment);
@@ -197,6 +198,38 @@ class MealDiaryCommentServiceImplTest {
         assertThat(response.getMealDiaryCommentId()).isEqualTo(1L);
 
         verify(firebaseCloudMessageUtil).sendMessageTo(anyLong(), anyString(), anyString());
+    }
+
+
+    @Test
+    @DisplayName("FCM 토큰이 없으면 푸시를 전달하지 않고 댓글을 달 수 있다")
+    public void create_success_noPush() throws IOException {
+        // given
+        MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO request = MealDiaryCommentCreateDTO.MealDiaryCommentRequestDTO.builder()
+                .userId(2L)
+                .mealDiaryId(1L)
+                .comment("test_comment")
+                .build();
+
+        MealDiaryComments savedComment = MealDiaryComments.builder()
+                .id(1L)
+                .content("test_comment")
+                .mealDiary(testMealDiary)
+                .user(testMember2)
+                .build();
+
+        when(mealDiaryRepository.findById(anyLong())).thenReturn(Optional.of(testMealDiary));
+        when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
+        when(mealDiaryCommentsRepository.save(any(MealDiaryComments.class))).thenReturn(savedComment);
+
+        // when
+        MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO response = mealDiaryCommentService.create(request);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.getMealDiaryCommentId()).isEqualTo(1L);
+
+        verify(firebaseCloudMessageUtil,times(0)).sendMessageTo(anyLong(), anyString(), anyString());
     }
 
 
@@ -219,7 +252,6 @@ class MealDiaryCommentServiceImplTest {
         when(mealDiaryRepository.findById(anyLong())).thenReturn(Optional.of(testMealDiary));
         when(userEntityRepository.findById(anyLong())).thenReturn(Optional.of(testMember2));
         when(mealDiaryCommentsRepository.save(any(MealDiaryComments.class))).thenReturn(savedComment);
-        doNothing().when(firebaseCloudMessageUtil).sendMessageTo(anyLong(), anyString(), anyString());
 
         // when
         MealDiaryCommentCreateDTO.MealDiaryCommentResponseDTO response = mealDiaryCommentService.create(request);

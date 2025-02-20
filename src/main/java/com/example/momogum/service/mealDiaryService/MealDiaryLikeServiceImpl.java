@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class MealDiaryLikeServiceImpl implements MealDiaryLikeService {
 
-    private static final Logger log = LoggerFactory.getLogger(MealDiaryLikeServiceImpl.class);
     private final MealDiaryRepository mealDiaryRepository;
     private final MealDiaryLikesRepository mealDiaryLikesRepository;
     private final UserEntityRepository userEntityRepository;

@@ -23,12 +23,14 @@ public class AppointmentInviteDTO {
 
     }
 
-
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AppointmentInviteResponseDTO {
+
+        @Schema(description = "사용자 id")
+        private Long userId;
 
         @Schema(description = "사용자 닉네임")
         private String nickname;

@@ -17,6 +17,13 @@ public interface FollowingRepository extends JpaRepository<Following, Long> {
   // 맞팔 여부 확인
   boolean existsByUserAndFollowing(UserEntity user, UserEntity following);
 
+
+  @Query("SELECT CASE WHEN COUNT(f) > 0 THEN TRUE ELSE FALSE END " +
+          "FROM Following f " +
+          "WHERE f.user = :currentUser AND f.following = :targetUser")
+  boolean isFollowing(@Param("currentUser") UserEntity currentUser,
+                      @Param("targetUser") UserEntity targetUser);
+
   // 특정 사용자의 모든 팔로우 관계 조회
   List<Following> findByUserId(Long userId);
 

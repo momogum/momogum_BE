@@ -8,7 +8,7 @@ import java.util.List;
 
 public class TargetProfileConverter {
 
-  public static UserDTO.FullProfileDTO toFullProfileDTO(UserEntity user, List<ViewMealDiaryResponse> mealDiaries) {
+  public static UserDTO.FullProfileDTO toFullProfileDTO(UserEntity user, List<ViewMealDiaryResponse> mealDiaries, boolean isFollow) {
     return UserDTO.FullProfileDTO.builder()
         .id(user.getId())
         .nickname(user.getNickname())
@@ -17,6 +17,7 @@ public class TargetProfileConverter {
         .about(user.getAbout())
         .followerCount(user.getFollowerCount())
         .followingCount(user.getFollowingCount())
+            .isFollowing(isFollow)
         .viewMealDiary(mealDiaries)
         .build();
   }

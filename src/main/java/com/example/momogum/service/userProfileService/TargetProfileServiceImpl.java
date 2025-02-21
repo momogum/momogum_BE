@@ -46,8 +46,11 @@ public class TargetProfileServiceImpl implements TargetProfileService {
   @Transactional(readOnly = true)
   public UserDTO.FullProfileDTO getTargetProfile(Long currentUserId, Long targetUserId) {
     UserEntity targetUser = getTargetUser(targetUserId);
+    UserEntity currentUser = getCurrentUser(currentUserId);
 
-    return TargetProfileConverter.toFullProfileDTO(targetUser, getTargetMealDiaries(currentUserId, targetUserId));
+    boolean isFollow = followingRepository.isFollowing(currentUser,targetUser);
+
+    return TargetProfileConverter.toFullProfileDTO(targetUser, getTargetMealDiaries(currentUserId, targetUserId),isFollow);
   }
 
   /**

@@ -158,8 +158,8 @@ class MealDiaryStoryServiceImplTest {
 
 
     @Test
-    @DisplayName("이미 조회 엔티티가 있는 스토리의 경우, 더 생성하지 않는다")
-    public void get_notSave_mealDiaryStoryView(){
+    @DisplayName("이미 조회 엔티티가 있고 isViewed 값이 true인 스토리의 경우, 객체를 더 생성하지 않는다")
+    public void get_notSave_mealDiaryStoryView_true(){
         //given
         MealDiaryStoryView mealDiaryStoryView = MealDiaryStoryView.builder()
                 .id(1L)
@@ -176,6 +176,31 @@ class MealDiaryStoryServiceImplTest {
         mealDiaryStoryService.get(1L, 1L);
 
         //then
+        verify(mealDiaryStoryViewRepository, times(0)).save(any());
+    }
+
+
+    @Test
+    @DisplayName("이미 조회 엔티티가 있고 isViewed 값이 false인 스토리의 경우, true로 전환한다")
+    public void get_notSave_mealDiaryStoryView_false(){
+        //given
+        MealDiaryStoryView mealDiaryStoryView = MealDiaryStoryView.builder()
+                .id(1L)
+                .isViewed(false)
+                .mealDiaryStory(testMealDiaryStory)
+                .userEntity(testMember)
+                .build();
+
+        when(userEntityRepository.findById(any())).thenReturn(Optional.ofNullable(testMember));
+        when(mealDiaryStoryRepository.findById(any())).thenReturn(Optional.ofNullable(testMealDiaryStory));
+        when(mealDiaryStoryViewRepository.findByUserEntityAndMealDiaryStory(any(),any())).thenReturn(mealDiaryStoryView);
+
+        // when
+        mealDiaryStoryService.get(1L, 1L);
+
+        //then
+        assertThat(mealDiaryStoryView.isViewed()).isTrue();
+
         verify(mealDiaryStoryViewRepository, times(0)).save(any());
     }
 

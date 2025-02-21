@@ -15,6 +15,7 @@ public class MealDiaryStoryView extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     private boolean isViewed;
 
     @ManyToOne(fetch = FetchType.LAZY)

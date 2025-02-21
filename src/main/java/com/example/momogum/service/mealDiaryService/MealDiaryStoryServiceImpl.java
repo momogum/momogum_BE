@@ -55,6 +55,8 @@ public class MealDiaryStoryServiceImpl implements MealDiaryStoryService {
                     .userEntity(findUser)
                     .build();
             mealDiaryStoryViewRepository.save(newMealDiaryView);
+        }else {
+            isViewed.setViewed(true);
         }
 
         // 스토리를 작성한 회원의 프로필 이미지 입니다

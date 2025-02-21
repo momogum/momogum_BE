@@ -144,7 +144,7 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.APPOINTMENT_NOT_EXIST));
 
-        Appointment updatedAppointment = appointment.updateAppointment(request);
+        appointment.updateAppointment(request);
     }
 
     /**

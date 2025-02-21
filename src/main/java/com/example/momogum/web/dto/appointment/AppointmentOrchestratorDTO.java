@@ -1,6 +1,7 @@
 package com.example.momogum.web.dto.appointment;
 
 import com.example.momogum.domain.common.enums.CardCategory;
+import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentNameDTO.AppointmentNameRequestDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -86,6 +87,8 @@ public class AppointmentOrchestratorDTO {
 
         @Schema(description = "초대한 사람 이름")
         private String senderName;
+
+        private InvitationStatus status;
 
     }
 }

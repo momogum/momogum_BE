@@ -1,14 +1,10 @@
 package com.example.momogum.service.appointmentService.orchestrator;
 
-import com.example.momogum.apiPayLoad.code.status.ErrorStatus;
-import com.example.momogum.apiPayLoad.exception.GeneralException;
 import com.example.momogum.converter.appointmentConverter.AppointmentConverter;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.common.enums.InvitationStatus;
-import com.example.momogum.repository.appoinmentRepo.AppointmentRepository;
 import com.example.momogum.service.appointmentService.AppointmentCardService;
 import com.example.momogum.service.appointmentService.AppointmentInviteService;
-import com.example.momogum.service.appointmentService.AppointmentNameService;
 import com.example.momogum.service.appointmentService.AppointmentService;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
 import com.example.momogum.web.dto.appointment.AppointmentInviteDTO.AppointmentInviteRequestDTO;

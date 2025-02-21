@@ -88,7 +88,7 @@ public class AppointmentService {
      * 다가오는 확정된 전체 약속 조회 (ACCEPTED)
      */
     public List<AppointmentMainPageResponseDTO> getAcceptedAppointments(Long userId) {
-        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.PENDING)
+        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.ACCEPTED)
                 .stream()
                 .map(appointment -> appointmentConverter.toMainPageDTO(appointment, appointment.getSelectedCards()
                         .stream()

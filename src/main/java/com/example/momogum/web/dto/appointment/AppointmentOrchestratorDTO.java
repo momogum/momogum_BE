@@ -88,7 +88,7 @@ public class AppointmentOrchestratorDTO {
         @Schema(description = "초대한 사람 이름")
         private String senderName;
 
-        private InvitationStatus status;
+        private InvitationStatus status = InvitationStatus.ACCEPTED;
 
     }
 }

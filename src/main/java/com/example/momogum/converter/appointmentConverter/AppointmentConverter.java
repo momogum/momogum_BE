@@ -5,6 +5,7 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
+import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardRequestDTO;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +61,11 @@ public class AppointmentConverter {
      * 초대된 친구 목록 변환
      */
     private List<AppointmentInviteResponseDTO> convertInvitedFriends(List<AppointmentInvitation> invitations) {
+
+        if(invitations == null || invitations.isEmpty()) {
+            return createDummyInvitedFriends();
+        }
+
         return Optional.ofNullable(invitations)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -70,6 +77,22 @@ public class AppointmentConverter {
                                 .orElse(null))
                         .status(invite.getStatus())
                         .build()).toList();
+    }
+
+    private List<AppointmentInviteResponseDTO> createDummyInvitedFriends() {
+        return Arrays.asList(
+                AppointmentInviteResponseDTO.builder()
+                        .nickname("FrontHeadlock")
+                        .name("덕규")
+                        .profileImage("https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/basic_profile/default_image.png")
+                        .status(InvitationStatus.PENDING)
+                        .build(),
+                AppointmentInviteResponseDTO.builder()
+                        .nickname("kut7228")
+                        .name("쿠트")
+                        .profileImage("https://momogum-bucket.s3.ap-northeast-2.amazonaws.com/basic_profile/default_image.png")
+                        .status(InvitationStatus.PENDING)
+                        .build());
     }
 
 

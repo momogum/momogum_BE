@@ -113,6 +113,7 @@ public class AppointmentConverter {
                 .appointmentId(appointment.getId())
                 .invitedFriends(convertInvitedFriends(appointment.getInvitations()))
                 .selectedCard(selectedCard)
+                .status(InvitationStatus.ACCEPTED)
                 .senderId(sender != null ? sender.getId() : null)
                 .senderName(sender != null ? sender.getName() : "senderName이 존재하지 않습니다.")
                 .build();

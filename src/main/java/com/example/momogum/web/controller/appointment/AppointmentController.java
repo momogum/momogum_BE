@@ -2,7 +2,6 @@ package com.example.momogum.web.controller.appointment;
 
 import com.example.momogum.apiPayLoad.ApiResponse;
 import com.example.momogum.service.appointmentService.AppointmentService;
-import com.example.momogum.web.dto.appointment.AppointmentDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentMainPageResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.*;
 
 @RestController
 @RequestMapping("/appointment")
@@ -34,7 +31,7 @@ public class AppointmentController {
             description = "현재 사용자가 확정한 승인된 전체 식사 약속 목록을 조회합니다.")
     @GetMapping(value = "{userId}/accept", produces = "application/json; charset=UTF-8")
     public ApiResponse<List<AppointmentMainPageResponseDTO>> getAcceptedInvitations(@PathVariable Long userId) {
-        return ApiResponse.onSuccess(appointmentService.getAllAcceptedAppointments(userId));
+        return ApiResponse.onSuccess(appointmentService.getAcceptedAppointments(userId));
     }
 
     @Operation(summary = "확정된 식사 약속 조회 API",

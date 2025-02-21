@@ -7,7 +7,6 @@ import com.example.momogum.domain.UserEntity;
 import com.example.momogum.domain.appointment.Appointment;
 import com.example.momogum.domain.appointment.AppointmentCard;
 import com.example.momogum.domain.appointment.AppointmentInvitation;
-import com.example.momogum.domain.appointment.AppointmentName;
 import com.example.momogum.domain.common.enums.InvitationStatus;
 import com.example.momogum.repository.appoinmentRepo.AppointmentCardRepository;
 import com.example.momogum.repository.appoinmentRepo.AppointmentInviteRepository;
@@ -16,7 +15,6 @@ import com.example.momogum.repository.userEntityRepo.UserEntityRepository;
 import com.example.momogum.web.dto.appointment.AppointmentCardDTO.AppointmentCardResponseDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentDetailsDTO;
 import com.example.momogum.web.dto.appointment.AppointmentDTO.AppointmentMainPageResponseDTO;
-import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO;
 import com.example.momogum.web.dto.appointment.AppointmentOrchestratorDTO.AppointmentOrchestratorRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -89,8 +87,8 @@ public class AppointmentService {
     /**
      * 다가오는 확정된 전체 약속 조회 (ACCEPTED)
      */
-    public List<AppointmentMainPageResponseDTO> getAllAcceptedAppointments(Long userId) {
-        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.ACCEPTED)
+    public List<AppointmentMainPageResponseDTO> getAcceptedAppointments(Long userId) {
+        return appointmentInviteRepository.findAppointmentsByStatus(userId, InvitationStatus.PENDING)
                 .stream()
                 .map(appointment -> appointmentConverter.toMainPageDTO(appointment, appointment.getSelectedCards()
                         .stream()

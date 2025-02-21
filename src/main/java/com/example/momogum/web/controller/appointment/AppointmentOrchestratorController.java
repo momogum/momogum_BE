@@ -22,7 +22,7 @@ public class AppointmentOrchestratorController {
 
     @Operation(summary = "전체 약속잡기 실행 API",
             description = "친구 초대, 카드 선택, 약속 식사 모임 이름 저장 등 전체 약속잡기 프로세스를 실행하고, 그 결과를 반환합니다.")
-    @PostMapping("/whole")
+    @PostMapping(value = "/whole", produces = "application/json; charset=UTF-8")
     public ApiResponse<AppointmentOrchestratorResponseDTO> createWholeAppointment(
             @RequestBody AppointmentOrchestratorRequestDTO request) {
         AppointmentOrchestratorResponseDTO WholeAppointment = orchestrator.createWholeAppointment(request);

@@ -37,6 +37,7 @@ public class AppointmentInviteService {
 
     /**
      * GET 약속에 초대 가능한 친구 목록 반환 (나를 팔로워하는 사람들)
+     *
      * @return List<AppointmentInviteResponseDTO> 객체
      */
     @Transactional(readOnly = true)
@@ -66,14 +67,20 @@ public class AppointmentInviteService {
 
     /**
      * POST 약속 잡기에 친구 초대
+     *
      * @return List<AppointmentInviteResponseDTO> 객체
      */
     @Transactional
     public List<AppointmentInviteResponseDTO> inviteFriends(AppointmentInviteRequestDTO request) {
         validateAppointmentInviteRequest(request);
 
+        //더미 데이터 활용: 요청 값이 없으면 기본 더미 데이터 사용
+        List<Long> requestedUserIds = Optional.ofNullable(request.getUserIds())
+                .filter(ids -> !ids.isEmpty())
+                .orElse(Arrays.asList(14L, 12L));
+
         // 1. 초대할 사용자 조회 (DB에서 존재하는 userIds만 가져오기)
-        List<UserEntity> users = userEntityRepository.findByIdIn(request.getUserIds());
+        List<UserEntity> users = userEntityRepository.findByIdIn(requestedUserIds);
 
         if (users.isEmpty()) {
             return Collections.emptyList();
@@ -95,7 +102,7 @@ public class AppointmentInviteService {
         List<AppointmentInvitation> invitationsToSave = new ArrayList<>();
         List<AppointmentInviteResponseDTO> invitedUsers = new ArrayList<>();
 
-        // 4️⃣ 초대할 사용자 필터링 후 추가
+        // 4, 초대할 사용자 필터링 후 추가
         for (Long userId : request.getUserIds()) {
             UserEntity user = userMap.get(userId);
 
@@ -107,7 +114,7 @@ public class AppointmentInviteService {
                 continue;
             }
 
-            // 5️⃣ 초대 객체 생성 후 리스트 추가
+            // 5. 초대 객체 생성 후 리스트 추가
             AppointmentInvitation invitation = AppointmentInvitation.builder()
                     .appointment(appointment)
                     .userEntity(user)
@@ -118,15 +125,13 @@ public class AppointmentInviteService {
             invitedUsers.add(converter.toResponseDTO(user, InvitationStatus.PENDING));
         }
 
-        // 6️⃣ 실제 DB 저장 (빈 리스트가 아닐 경우에만 실행)
+        // 6.  실제 DB 저장 (빈 리스트가 아닐 경우에만 실행)
         if (!invitationsToSave.isEmpty()) {
             appointmentInviteRepository.saveAll(invitationsToSave);
         }
 
         return invitedUsers;
     }
-
-
 
 
     private static void validateAppointmentInviteRequest(AppointmentInviteRequestDTO request) {

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.example.momogum.web.dto.appointment.AppointmentInviteDTO.*;
@@ -32,14 +33,14 @@ public class AppointmentOrchestratorDTO {
         private Long appointmentId;
 
         @Schema(description = "초대받은 사용자들의 고유 id 입니다.")
-        private List<Long > userIds;
+        private List<Long > userIds = Arrays.asList(12L, 14L);;
 
         @Schema(description = "약속 카드 카테고리 입니다.")
         private CardCategory cardCategory;
 
         @Schema(description = "선택한 카드 이미지 URL 입니다.")
         private String selectedCardUrl;
-
+{}
         @Schema(description = "약속 식사 모임 이름 정하기 DTO 입니다.")
         private AppointmentNameRequestDTO appointmentName;
     }

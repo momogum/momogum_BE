@@ -48,7 +48,6 @@ public class AppointmentOrchestrator {
 
         return appointmentConverter.toResponseDTO(appointment, selectCard);
 
-
     }
 }
 
